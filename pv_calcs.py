@@ -1,17 +1,18 @@
 from dotenv import load_dotenv
 import json
 import os
+import pandas as pd
 from pvgis_api import PVGISClient
 import requests
 
 
 client = PVGISClient()
 
-# Load environment variables from .env file
 load_dotenv()
-
 API_URL = "https://api.api-ninjas.com/v1/geocoding?city=CITY"
 LOCATION_API_KEY = os.getenv("API_KEY")
+modules = pd.read_csv("modules/CEC Modules_noheaders.csv")
+
 
 # inputs
 city_name = "Berlin"
