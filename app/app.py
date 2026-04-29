@@ -1,57 +1,42 @@
-from contextlib import asynccontextmanager
-from database import SessionDep, lifespan
-from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Query
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from models import User, UserCreate, UserPublic, UserUpdate
+from app.utils.auth import (DUMMY_HASH, Token, create_access_token, get_current_user,
+                        get_password_hash, password_hash, verify_password)
+from app.utils.database import SessionDep, lifespan
+from datetime import timedelta
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from app.models import User, UserCreate, UserPublic, UserUpdate
 import os
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlmodel import create_engine, select
 from typing import Annotated
-
-load_dotenv()
-connection_string = os.getenv("DATABASE_URL")
-if not connection_string:
-    raise ValueError("DATABASE_URL is not set in your .env file")
-
-engine = create_engine(connection_string, echo=True)
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-
-
-def get_session():
-    with Session(engine) as session:
-        yield session
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    create_db_and_tables()
-    yield
-
-SessionDep = Annotated[Session, Depends(get_session)]
 
 app = FastAPI(lifespan=lifespan)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+CurrentUser = Annotated[User, Depends(get_current_user)]
 
-def fake_decode_token(token):
-    return User(
-        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+@app.post("/token")
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: SessionDep) -> Token:
+
+    user = session.exec(select(User).where(User.username == form_data.username)).first()
+    password_to_check = user.hashed_password if user else DUMMY_HASH
+    password_valid = verify_password(form_data.password, password_to_check)
+
+    if not user or not password_valid:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=(int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))))
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
     )
+    return Token(access_token=access_token, token_type="bearer")
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    user = fake_decode_token(token)
-    return user
-
-
-@app.get("/users/me")
-async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
-    return current_user
-
-
-@app.get("/items/")
-async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
-    return {"token": token}
+@app.get("/users/me", response_model=UserPublic)
+def read_users_me(current_user: CurrentUser):
+    return "patata"
 
 @app.get("/")
 def index():
@@ -59,7 +44,11 @@ def index():
 
 @app.post("/users/", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
 def create_user(user: UserCreate, session: SessionDep):
-    db_user = User.model_validate(user) 
+    # valid_user = User.model_validate(user)
+    db_user = User(
+            username=user.username,
+            hashed_password=get_password_hash(user.password)
+        )    
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
@@ -97,4 +86,3 @@ def delete_user(user_id: int, session: SessionDep):
     session.delete(user)
     session.commit()
     return {"ok": True}
-
