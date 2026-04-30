@@ -1,5 +1,6 @@
+from app.routers import users
 from app.utils.database import lifespan
-from routers import auth, users
+from app.routers import auth
 from fastapi import FastAPI
 
 app = FastAPI(lifespan=lifespan)

@@ -1,5 +1,5 @@
 from app.utils.auth import get_current_user, get_password_hash
-from app.models import User, UserCreate, UserPublic, UserUpdate
+from app.models.users import User, UserCreate, UserPublic, UserUpdate
 from app.utils.database import SessionDep
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select

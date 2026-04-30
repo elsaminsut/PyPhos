@@ -1,4 +1,4 @@
-from app.models import User
+from app.models.users import User
 from app.utils.database import get_session
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv

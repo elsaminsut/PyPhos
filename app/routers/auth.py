@@ -1,4 +1,4 @@
-from app.models import User
+from app.models.users import User
 from app.utils.auth import (DUMMY_HASH, Token, create_access_token, verify_password)
 from app.utils.database import SessionDep
 from datetime import timedelta
