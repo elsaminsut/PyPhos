@@ -1,3 +1,5 @@
+from app.models.projects import Project
+from app.models.users import User
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI
