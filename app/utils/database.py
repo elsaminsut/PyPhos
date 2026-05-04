@@ -16,7 +16,8 @@ if not connection_string:
 engine = create_engine(connection_string, echo=True)
 
 def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+    # SQLModel.metadata.create_all(engine)
+    pass
 
 
 def get_session():
