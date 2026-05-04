@@ -14,16 +14,16 @@ class Project(ProjectBase, table=True): # table model
     __tablename__ = "projects"
 
     id: int | None = Field(default=None, primary_key=True)
-    location: str # from API call from user input, will be used to get lat and long
+    location: str # from API call from user input, will be used to get lat and lon
     lat: float
-    long: float
+    lon: float
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
 
     user_id: int = Field(foreign_key="users.id", index=True) # indexing for faster lookups
     owner: Optional["User"] = Relationship(back_populates="projects")
 
-    scenarios: list["Scenario"] = Relationship(back_populates="project")
+    scenarios: list["Scenario"] = Relationship(back_populates="projects")
 
 
 class ProjectPublic(ProjectBase):

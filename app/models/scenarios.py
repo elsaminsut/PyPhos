@@ -4,11 +4,11 @@ from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.models.projects import Project
+    from app.models.modules import Module
 
 
 class ScenarioBase(SQLModel): # data model
-    name: str = Field(index=True)
-    module_id: int
+    name: str | None = Field(index=True)
     module_amount: int
     tilt: float
     azimuth: float
@@ -25,18 +25,22 @@ class Scenario(ScenarioBase, table=True): # table model
     project_id: int = Field(foreign_key="projects.id", index=True) # indexing for faster lookups
     project: Optional["Project"] = Relationship(back_populates="scenarios") 
 
+    module_id: int = Field(foreign_key="modules.id", index=True)
+    module: Optional["Module"] = Relationship(back_populates="scenarios")
+
 
 class ScenarioPublic(ScenarioBase):
     id: int # redeclares id to be an integer (and not None)
     project_id: int
-    installed_power: float
-    losses: float
+    installed_power: float | None
+    losses: float | None
     created_at: datetime
 
 
 class ScenarioCreate(ScenarioBase):
     name: str
     project_id: int
+    module_id: int
 
 
 class ScenarioUpdate(SQLModel):

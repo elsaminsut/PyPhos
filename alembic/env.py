@@ -22,6 +22,7 @@ from sqlmodel import SQLModel
 from app.models.users import User
 from app.models.projects import Project
 from app.models.scenarios import Scenario
+from app.models.modules import Module
 
 target_metadata = SQLModel.metadata
 
