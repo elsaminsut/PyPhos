@@ -24,14 +24,15 @@ def validate_project_ownership(project: Project, user: User):
 
 
 @router.post("/projects/", response_model=ProjectPublic)
-def create_project(project: ProjectCreate, session: SessionDep):
+def create_project(current_user: CurrentUser, project: ProjectCreate, session: SessionDep):
     location, lat, lon = get_location_data(project.city_input).values()
     db_project = Project(
             name=project.name,
             city_input=project.city_input,
             location=location,
             lat=lat,
-            lon=lon
+            lon=lon,
+            user_id=current_user.id
         )
     session.add(db_project)
     session.commit()
