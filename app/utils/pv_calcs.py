@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-import json
 import os
 import pandas as pd
 from pvgis_api import PVGISClient
@@ -11,7 +10,7 @@ client = PVGISClient()
 load_dotenv()
 API_URL = "https://api.api-ninjas.com/v1/geocoding?city=CITY"
 LOCATION_API_KEY = os.getenv("API_KEY")
-modules = pd.read_csv("modules/CEC Modules_noheaders.csv")
+# modules = pd.read_csv("modules/CEC Modules_noheaders.csv")
 
 
 # inputs
@@ -22,10 +21,14 @@ azimuth = 0
 tilt = 90
 
 # calculation 
-location_response = requests.get(API_URL.replace("CITY", city_name), headers={"X-Api-Key": LOCATION_API_KEY})
-location_name = location_response.json()[0]["name"]
-latitude = location_response.json()[0]["latitude"]
-longitude = location_response.json()[0]["longitude"]
+def get_location_data(city_name: str) -> dict:
+    location_response = requests.get(API_URL.replace("CITY", city_name), headers={"X-Api-Key": LOCATION_API_KEY})
+    location_name = location_response.json()[0]["name"]
+    latitude = location_response.json()[0]["latitude"]
+    longitude = location_response.json()[0]["longitude"]
+    return {"name": location_name, "latitude": latitude, "longitude": longitude}
+
+location_name, latitude, longitude = get_location_data(city_name).values()
 
 installed_power = nominal_power * module_amount / 1000 # kWp
 

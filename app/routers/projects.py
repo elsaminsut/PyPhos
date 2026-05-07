@@ -2,6 +2,7 @@ from app.utils.auth import get_current_user
 from app.utils.database import SessionDep
 from app.models.projects import Project, ProjectPublic, ProjectCreate, ProjectUpdate
 from app.models.users import User
+from app.utils.pv_calcs import get_location_data
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
@@ -24,9 +25,13 @@ def validate_project_ownership(project: Project, user: User):
 
 @router.post("/projects/", response_model=ProjectPublic)
 def create_project(project: ProjectCreate, session: SessionDep):
+    location, lat, lon = get_location_data(project.city_input).values()
     db_project = Project(
             name=project.name,
-            city_input=project.city_input
+            city_input=project.city_input,
+            location=location,
+            lat=lat,
+            lon=lon
         )
     session.add(db_project)
     session.commit()
