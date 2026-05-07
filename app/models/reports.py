@@ -1,3 +1,6 @@
+from app.models.modules import ModulePublic
+from app.models.projects import ProjectPublic
+from app.models.scenarios import ScenarioPublic
 from datetime import datetime
 from sqlmodel import Field, SQLModel
 from typing import TYPE_CHECKING
@@ -8,7 +11,7 @@ if TYPE_CHECKING:
 
 class ReportBase(SQLModel): # data model
     energy_yield: float
-    monthly_yield: float
+    monthly_yield: str # json string to be parsed into a dictionary {month: yield}
     radiation: float
     specific_yield: float
 
@@ -24,16 +27,15 @@ class Report(ReportBase, table=True): # table model
     scenario_id: int = Field(foreign_key="scenarios.id", index=True) # indexing for faster lookups
 
 class ReportPublic(ReportBase):
-    id: int # redeclares id to be an integer (and not None), doesn't show pwd
+    id: int # redeclares id to be an integer (and not None)
+    scenario_id: int
     created_at: datetime
     updated_at: datetime
 
 class ReportCreate(ReportBase):
     scenario_id: int
 
-
-class ReportUpdate(SQLModel):
-    energy_yield: float | None = None
-    monthly_yield: float | None = None
-    radiation: float | None = None
-    specific_yield: float | None = None
+class ReportDetail(ReportPublic):
+    scenario: ScenarioPublic
+    project: ProjectPublic
+    module: ModulePublic
