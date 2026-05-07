@@ -1,10 +1,9 @@
-from app.utils.auth import get_current_user, get_password_hash
+from app.utils.auth import get_current_user
 from app.utils.database import SessionDep
 from app.models.projects import Project, ProjectPublic, ProjectCreate, ProjectUpdate
 from app.models.users import User
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import select
 from typing import Annotated
 
 router = APIRouter()
@@ -17,9 +16,11 @@ def validate_project_exists(project_id: int, session: SessionDep) -> Project:
         raise HTTPException(status_code=404, detail="Project not found")
     return project
 
+
 def validate_project_ownership(project: Project, user: User):
     if project.user_id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
+
 
 @router.post("/projects/", response_model=ProjectPublic)
 def create_project(project: ProjectCreate, session: SessionDep):
