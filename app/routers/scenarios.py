@@ -1,5 +1,6 @@
 from app.utils.auth import get_current_user
 from app.utils.database import SessionDep
+from app.models.modules import Module, ModulePublic
 from app.models.scenarios import Scenario, ScenarioPublic, ScenarioCreate, ScenarioUpdate
 from app.models.projects import Project
 from app.models.users import User
@@ -32,13 +33,19 @@ def validate_user_owns_project(project_id: int, user: User, session: SessionDep)
 @router.post("/scenarios/", response_model=ScenarioPublic)
 def create_scenario(current_user: CurrentUser, scenario: ScenarioCreate, session: SessionDep):
     validate_user_owns_project(scenario.project_id, current_user, session)
+    module = session.get(Module, scenario.module_id)
+    if not module:
+        raise HTTPException(status_code=404, detail="Module not found")
+    installed_power = scenario.module_amount * module.nominal_power
     db_scenario = Scenario(
             name=scenario.name,
             project_id=scenario.project_id,
             module_id=scenario.module_id,
             module_amount=scenario.module_amount,
             tilt=scenario.tilt,
-            azimuth=scenario.azimuth
+            azimuth=scenario.azimuth,
+            installed_power=installed_power,
+            losses=0.13 # default losses, to be updated later
         )
     session.add(db_scenario)
     session.commit()

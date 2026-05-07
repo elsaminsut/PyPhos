@@ -27,7 +27,7 @@ class Project(ProjectBase, table=True): # table model
 
 
 class ProjectPublic(ProjectBase):
-    id: int # redeclares id to be an integer (and not None), doesn't show pwd
+    id: int # redeclares id to be an integer (and not None)
     location: str
     user_id: int
 

@@ -4,21 +4,12 @@ import pandas as pd
 from pvgis_api import PVGISClient
 import requests
 
-
 client = PVGISClient()
 
 load_dotenv()
 API_URL = "https://api.api-ninjas.com/v1/geocoding?city=CITY"
 LOCATION_API_KEY = os.getenv("API_KEY")
 # modules = pd.read_csv("modules/CEC Modules_noheaders.csv")
-
-
-# inputs
-city_name = "Berlin"
-nominal_power = 140 # Wp
-module_amount = 10
-azimuth = 0
-tilt = 90
 
 # calculation 
 def get_location_data(city_name: str) -> dict:
@@ -28,32 +19,19 @@ def get_location_data(city_name: str) -> dict:
     longitude = location_response.json()[0]["longitude"]
     return {"name": location_name, "latitude": latitude, "longitude": longitude}
 
-location_name, latitude, longitude = get_location_data(city_name).values()
 
-installed_power = nominal_power * module_amount / 1000 # kWp
-
-result = client.pv_calculation(
-    lat=latitude, lon=longitude,
-    peakpower=installed_power,
-    loss=14,
-    angle=tilt,
-    aspect=azimuth
-)
-
-
-# results
-radiation = result["outputs"]["totals"]["fixed"]["H(i)_y"]
-energy_yield = result["outputs"]["totals"]["fixed"]["E_y"]
-monthly_results = result["outputs"]["monthly"]["fixed"]
-monthly_energy_yield = [monthly_results[i]["E_m"] for i in range(len(monthly_results))]
-
-spec_yield = round(energy_yield / installed_power, 2)
-
-print("Location: ", location_name)
-print("Latitude: ", latitude)
-print("Longitude: ", longitude)
-print("---")
-print(f"Energy yield: {energy_yield} (kWh/year)")
-print(f"Monthly energy yield: {monthly_energy_yield} (kWh/month)")
-print(f"Radiation: {radiation} (kWh/m²/year)")
-print(f"Specific yield: {spec_yield} (kWh/kWp/year)")
+def pv_calculation(latitude: float, longitude: float, installed_power: float, tilt: float, azimuth: float, losses: float) -> dict:
+    result = client.pv_calculation(
+        lat=latitude, lon=longitude,
+        peakpower=installed_power,
+        loss=losses,
+        angle=tilt,
+        aspect=azimuth
+    )
+    radiation = result["outputs"]["totals"]["fixed"]["H(i)_y"]
+    energy_yield = round(result["outputs"]["totals"]["fixed"]["E_y"] / 1000, 2) # convert to kWh
+    monthly_results = result["outputs"]["monthly"]["fixed"]
+    monthly_energy_yield = [round(monthly_results[i]["E_m"] / 1000, 2) for i in range(len(monthly_results))] # convert to kWh
+    spec_yield = round(energy_yield * 1000 / installed_power, 2)
+    return {"radiation": radiation, "energy_yield": energy_yield, 
+            "monthly_energy_yield": monthly_energy_yield, "spec_yield": spec_yield}
