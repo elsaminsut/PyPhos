@@ -1,0 +1,63 @@
+from app.utils.auth import get_current_user, get_password_hash
+from app.utils.database import SessionDep
+from app.models.projects import Project, ProjectPublic, ProjectCreate, ProjectUpdate
+from app.models.users import User
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import select
+from typing import Annotated
+
+router = APIRouter()
+
+CurrentUser = Annotated[User, Depends(get_current_user)]
+
+def validate_project_exists(project_id: int, session: SessionDep) -> Project:
+    project = session.get(Project, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
+def validate_project_ownership(project: Project, user: User):
+    if project.user_id != user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+@router.post("/projects/", response_model=ProjectPublic)
+def create_project(project: ProjectCreate, session: SessionDep):
+    db_project = Project(
+            name=project.name,
+            city_input=project.city_input
+        )
+    session.add(db_project)
+    session.commit()
+    session.refresh(db_project)
+    return db_project
+
+@router.get("/projects/me", response_model=list[ProjectPublic])
+def read_projects_me(current_user: CurrentUser):
+    return current_user.projects
+
+@router.get("/projects/{project_id}", response_model=ProjectPublic)
+def read_project(current_user: CurrentUser, project_id: int, session: SessionDep) -> Project:
+    project = validate_project_exists(project_id, session)
+    validate_project_ownership(project, current_user)
+    return project
+
+@router.patch("/projects/{project_id}", response_model=ProjectPublic)
+def update_project(current_user: CurrentUser, project_id: int, project: ProjectUpdate, session: SessionDep):
+    project_db = validate_project_exists(project_id, session)
+    validate_project_ownership(project_db, current_user)
+    project_data = project.model_dump(exclude_unset=True)
+    project_data["updated_at"] = datetime.now()
+    project_db.sqlmodel_update(project_data)
+    session.add(project_db)
+    session.commit()
+    session.refresh(project_db)
+    return project_db
+
+@router.delete("/projects/{project_id}")
+def delete_project(current_user: CurrentUser, project_id: int, session: SessionDep):
+    project = validate_project_exists(project_id, session)
+    validate_project_ownership(project, current_user)
+    session.delete(project)
+    session.commit()
+    return {"ok": True}
