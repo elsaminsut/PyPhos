@@ -23,7 +23,7 @@ class Project(ProjectBase, table=True): # table model
     user_id: int = Field(foreign_key="users.id", index=True) # indexing for faster lookups
     owner: Optional["User"] = Relationship(back_populates="projects")
 
-    scenarios: list["Scenario"] = Relationship(back_populates="projects")
+    scenarios: list["Scenario"] = Relationship(back_populates="project")
 
 
 class ProjectPublic(ProjectBase):

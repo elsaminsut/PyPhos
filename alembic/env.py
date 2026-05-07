@@ -19,10 +19,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from sqlmodel import SQLModel
-from app.models.users import User
-from app.models.projects import Project
-from app.models.scenarios import Scenario
-from app.models.modules import Module
+import app.models
 
 target_metadata = SQLModel.metadata
 

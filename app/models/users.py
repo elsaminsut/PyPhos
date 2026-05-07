@@ -20,7 +20,6 @@ class User(UserBase, table=True): # table model
 
 class UserPublic(UserBase):
     id: int # redeclares id to be an integer (and not None), doesn't show pwd
-    username: str
 
 
 class UserCreate(UserBase):
