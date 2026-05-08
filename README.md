@@ -30,9 +30,9 @@ Built for anyone who needs to quickly estimate how much energy a solar installat
 
 | Entity | Description |
 |---|---|
-| `User` | Salesperson account |
-| `Project` | Customer project with location (lat/lon) |
-| `Scenario` | A configuration within a project — module, quantity, tilt, azimuth |
+| `User` | Registered user account |
+| `Project` | Prospective project with location |
+| `Scenario` | Specific configuration within a project: module type, quantity, tilt, azimuth |
 | `Module` | PV module database seeded from CEC data |
 | `Report` | Calculation output: annual yield, monthly breakdown, radiation |
 
@@ -50,7 +50,6 @@ Built for anyone who needs to quickly estimate how much energy a solar installat
 | GET/PATCH/DELETE | `/projects/{id}/scenarios/{id}` | Read, update or delete a scenario |
 | POST | `/projects/{id}/scenarios/{id}/calculate` | Run yield calculation |
 | GET | `/projects/{id}/scenarios/{id}/report` | Fetch calculation report |
-| GET | `/modules/` | Search module database |
 
 ---
 
@@ -60,8 +59,8 @@ Built for anyone who needs to quickly estimate how much energy a solar installat
 
 ```bash
 # clone and install
-git clone https://github.com/yourusername/phosphor.git
-cd phosphor
+git clone https://github.com/yourusername/pyphos.git
+cd pyphos
 python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r requirements.txt
@@ -77,8 +76,8 @@ alembic upgrade head
 fastapi dev app/app.py
 ```
 
-The API will be available at `http://localhost:8000`.  
-Interactive docs at `http://localhost:8000/docs`.
+The API will be available at `http://localhost:8000`
+Interactive docs at `http://localhost:8000/docs`
 
 ---
 
