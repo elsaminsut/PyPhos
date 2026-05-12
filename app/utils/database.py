@@ -8,10 +8,14 @@ from sqlalchemy import create_engine
 from sqlmodel import Session, SQLModel
 from typing import Annotated
 
-load_dotenv()
+# Only load .env locally
+if os.getenv("RENDER") is None:
+    load_dotenv()
+
 connection_string = os.getenv("DATABASE_URL")
+
 if not connection_string:
-    raise ValueError("DATABASE_URL is not set in your .env file")
+    raise ValueError("DATABASE_URL is not set in environment variables")
 
 engine = create_engine(connection_string, echo=True)
 
