@@ -43,8 +43,8 @@ def read_user(user_id: int, session: SessionDep) -> User:
     return user
 
 @router.patch("/users/{user_id}", response_model=UserPublic)
-def update_user(user_id: int, user: UserUpdate, session: SessionDep):
-    user_db = session.get(User, user_id)
+def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep):
+    user_db = session.get(User, current_user.id)
     if not user_db:
         raise HTTPException(status_code=404, detail="User not found")
     user_data = user.model_dump(exclude_unset=True) # fields in UserUpdate, except those that are not set
@@ -55,8 +55,8 @@ def update_user(user_id: int, user: UserUpdate, session: SessionDep):
     return user_db
 
 @router.delete("/users/{user_id}")
-def delete_user(user_id: int, session: SessionDep):
-    user = session.get(User, user_id)
+def delete_user(current_user: CurrentUser, session: SessionDep):
+    user = session.get(User, current_user.id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     session.delete(user)
