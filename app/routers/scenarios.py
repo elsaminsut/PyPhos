@@ -30,16 +30,16 @@ def validate_user_owns_project(project_id: int, user: User, session: SessionDep)
         raise HTTPException(status_code=403, detail="Not authorized")
 
 
-@router.post("/scenarios/", response_model=ScenarioPublic)
-def create_scenario(current_user: CurrentUser, scenario: ScenarioCreate, session: SessionDep):
-    validate_user_owns_project(scenario.project_id, current_user, session)
+@router.post("/projects/{project_id}/scenarios/", response_model=ScenarioPublic)
+def create_scenario(current_user: CurrentUser, project_id: int, scenario: ScenarioCreate, session: SessionDep):
+    validate_user_owns_project(project_id, current_user, session)
     module = session.get(Module, scenario.module_id)
     if not module:
         raise HTTPException(status_code=404, detail="Module not found")
     installed_power = scenario.module_amount * module.nominal_power
     db_scenario = Scenario(
             name=scenario.name,
-            project_id=scenario.project_id,
+            project_id=project_id,
             module_id=scenario.module_id,
             module_amount=scenario.module_amount,
             tilt=scenario.tilt,
