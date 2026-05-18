@@ -29,16 +29,13 @@ def validate_user_owns_project(project_id: int, user: User, session: SessionDep)
         raise HTTPException(status_code=404, detail="Project not found")
     if project.user_id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
+    return project
 
 
 @router.post("/projects/{project_id}/scenarios/{scenario_id}/calculate")
 def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
-    validate_user_owns_project(project_id, current_user, session)
+    project = validate_user_owns_project(project_id, current_user, session)
     scenario = validate_scenario_exists(scenario_id, project_id, session)
-    project = session.get(Project, project_id)
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-
     results = pv_calculation(
         latitude=project.lat,
         longitude=project.lon,
@@ -47,14 +44,41 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
         azimuth=scenario.azimuth,
         losses=0.13
     )
-    db_report = Report(
-            scenario_id=scenario.id,
-            energy_yield=results["energy_yield"],
-            monthly_yield=str(results["monthly_energy_yield"]), # convert list to string for storage
-            radiation=results["radiation"],
-            specific_yield=results["spec_yield"]
-        )
-    session.add(db_report)
-    session.commit()
-    session.refresh(db_report)
-    return db_report
+
+    existing_report = session.exec(select(Report).where(Report.scenario_id == scenario_id)).first()
+    if existing_report:
+        existing_report.energy_yield = results["energy_yield"]
+        existing_report.monthly_yield = str(results["monthly_energy_yield"])
+        existing_report.radiation = results["radiation"]
+        existing_report.specific_yield = results["spec_yield"]
+        existing_report.updated_at = datetime.now()
+        session.commit()
+        session.refresh(existing_report)
+        return existing_report
+    else:
+        db_report = Report(
+                scenario_id=scenario.id,
+                energy_yield=results["energy_yield"],
+                monthly_yield=str(results["monthly_energy_yield"]), # convert list to string for storage
+                radiation=results["radiation"],
+                specific_yield=results["spec_yield"]
+            )
+        session.add(db_report)
+        session.commit()
+        session.refresh(db_report)
+        return db_report
+
+@router.get("/projects/{project_id}/reports", response_model=list[Report])
+def get_all_reports(current_user: CurrentUser, project_id: int, session: SessionDep):
+    validate_user_owns_project(project_id, current_user, session)
+    reports = session.exec(select(Report)
+                           .join(Scenario, Report.scenario_id == Scenario.id)
+                           .where(Scenario.project_id == project_id)).all()
+    return reports
+
+@router.get("/projects/{project_id}/scenarios/{scenario_id}/reports", response_model=list[Report])
+def get_reports_by_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
+    validate_user_owns_project(project_id, current_user, session)
+    validate_scenario_exists(scenario_id, project_id, session)
+    reports = session.exec(select(Report).where(Report.scenario_id == scenario_id)).all()
+    return reports
