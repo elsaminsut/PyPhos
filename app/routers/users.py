@@ -9,18 +9,12 @@ router = APIRouter()
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-
-@router.get("/users/me", response_model=UserPublic)
-def read_users_me(current_user: CurrentUser):
-    return current_user
-
 @router.get("/")
 def index():
     return {"message": "Hello World"}
 
-@router.post("/users/", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
-def create_user(user: UserCreate, session: SessionDep):
-    # valid_user = User.model_validate(user)
+@router.post("/register/", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
+def register_user(user: UserCreate, session: SessionDep):
     db_user = User(
             username=user.username,
             hashed_password=get_password_hash(user.password)
@@ -34,13 +28,6 @@ def create_user(user: UserCreate, session: SessionDep):
 def read_users(session: SessionDep) -> list[User]:
     users = session.exec(select(User)).all()
     return users
-
-@router.get("/users/{user_id}", response_model=UserPublic)
-def read_user(user_id: int, session: SessionDep) -> User:
-    user = session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
 
 @router.patch("/users/{user_id}", response_model=UserPublic)
 def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep):
