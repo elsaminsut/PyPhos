@@ -39,8 +39,8 @@ def create_project(current_user: CurrentUser, project: ProjectCreate, session: S
     session.refresh(db_project)
     return db_project
 
-@router.get("/projects/me", response_model=list[ProjectPublic])
-def read_projects_me(current_user: CurrentUser):
+@router.get("/projects/", response_model=list[ProjectPublic])
+def read_projects(current_user: CurrentUser):
     return current_user.projects
 
 @router.get("/projects/{project_id}", response_model=ProjectPublic)
