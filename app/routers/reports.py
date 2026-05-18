@@ -10,7 +10,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 from typing import Annotated
 
-router = APIRouter()
+router = APIRouter(
+    tags=["Reports"]
+)
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 

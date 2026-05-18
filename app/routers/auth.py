@@ -1,5 +1,5 @@
-from app.models.users import User
-from app.utils.auth import (DUMMY_HASH, Token, create_access_token, verify_password)
+from app.models.users import User, UserCreate, UserPublic
+from app.utils.auth import (DUMMY_HASH, Token, create_access_token, get_password_hash, verify_password)
 from app.utils.database import SessionDep
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -8,9 +8,23 @@ from typing import Annotated
 from sqlmodel import select
 import os
 
-router = APIRouter()
+router = APIRouter(
+    tags=["Authentication"]
+)
 
-@router.post("/login")
+@router.post("/register/", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
+def register_user(user: UserCreate, session: SessionDep):
+    """Register a new user with a username and password. Returns the created user without the password."""
+    db_user = User(
+            username=user.username,
+            hashed_password=get_password_hash(user.password)
+        )    
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
+
+@router.post("/login/")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep) -> Token:
