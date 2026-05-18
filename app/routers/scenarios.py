@@ -9,7 +9,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 from typing import Annotated
 
-router = APIRouter()
+router = APIRouter(
+    tags=["Scenarios"]
+)
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
@@ -32,6 +34,10 @@ def validate_user_owns_project(project_id: int, user: User, session: SessionDep)
 
 @router.post("/projects/{project_id}/scenarios/", response_model=ScenarioPublic)
 def create_scenario(current_user: CurrentUser, project_id: int, scenario: ScenarioCreate, session: SessionDep):
+    """
+    Create a new scenario for a project, only if the project exists and belongs to the current user.
+    Takes a scenario name, a module, the amount of modules, and the system's tilt and azimuth.
+    Calculates the installed power based on the module amount and nominal power of the selected module."""
     validate_user_owns_project(project_id, current_user, session)
     module = session.get(Module, scenario.module_id)
     if not module:
@@ -54,18 +60,21 @@ def create_scenario(current_user: CurrentUser, project_id: int, scenario: Scenar
 
 @router.get("/projects/{project_id}/scenarios/", response_model=list[ScenarioPublic])
 def read_scenarios(current_user: CurrentUser, project_id: int, session: SessionDep):
+    """Get a list of all scenarios for a project, only if the project exists and belongs to the current user."""
     validate_user_owns_project(project_id, current_user, session)
     scenarios = session.exec(select(Scenario).where(Scenario.project_id == project_id)).all()
     return scenarios
 
 @router.get("/projects/{project_id}/scenarios/{scenario_id}", response_model=ScenarioPublic)
 def read_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep) -> Scenario:
+    """Get a single scenario by ID, only if the project exists and belongs to the current user."""
     validate_user_owns_project(project_id, current_user, session)
     scenario = validate_scenario_exists(scenario_id, project_id, session)
     return scenario
 
 @router.patch("/projects/{project_id}/scenarios/{scenario_id}", response_model=ScenarioPublic)
 def update_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, scenario: ScenarioUpdate, session: SessionDep):
+    """Update a scenario by ID, only if the project exists and belongs to the current user. Updates the updated_at timestamp to the current time."""
     validate_user_owns_project(project_id, current_user, session)
     scenario_db = validate_scenario_exists(scenario_id, project_id, session)
     scenario_data = scenario.model_dump(exclude_unset=True)
@@ -78,6 +87,7 @@ def update_scenario(current_user: CurrentUser, project_id: int, scenario_id: int
 
 @router.delete("/projects/{project_id}/scenarios/{scenario_id}")
 def delete_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
+    """Delete a scenario by ID, only if the project exists and belongs to the current user."""
     validate_user_owns_project(project_id, current_user, session)
     scenario = validate_scenario_exists(scenario_id, project_id, session)
     session.delete(scenario)
