@@ -34,6 +34,13 @@ def validate_user_owns_project(project_id: int, user: User, session: SessionDep)
 
 @router.post("/projects/{project_id}/scenarios/{scenario_id}/calculate")
 def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
+    """
+    Trigger a yield calculation for a scenario.
+    
+    Calls the PVGIS API with the scenario's module specs and orientation,
+    estimates system losses, and stores the results as a report.
+    If a report already exists for this scenario it will be overwritten.
+    """
     project = validate_user_owns_project(project_id, current_user, session)
     scenario = validate_scenario_exists(scenario_id, project_id, session)
     results = pv_calculation(
@@ -70,14 +77,19 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
 
 @router.get("/projects/{project_id}/reports", response_model=list[Report])
 def get_all_reports(current_user: CurrentUser, project_id: int, session: SessionDep):
+    """
+    Get all reports for a project."""
     validate_user_owns_project(project_id, current_user, session)
     reports = session.exec(select(Report)
                            .join(Scenario, Report.scenario_id == Scenario.id)
                            .where(Scenario.project_id == project_id)).all()
     return reports
 
-@router.get("/projects/{project_id}/scenarios/{scenario_id}/reports", response_model=list[Report])
-def get_reports_by_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
+@router.get("/projects/{project_id}/scenarios/{scenario_id}/report", response_model=list[Report])
+def get_report_by_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
+    """
+    Get the report for a specific scenario.
+    """
     validate_user_owns_project(project_id, current_user, session)
     validate_scenario_exists(scenario_id, project_id, session)
     reports = session.exec(select(Report).where(Report.scenario_id == scenario_id)).all()
