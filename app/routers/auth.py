@@ -10,11 +10,11 @@ import os
 
 router = APIRouter()
 
-@router.post("/token")
+@router.post("/login")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep) -> Token:
-
+    """Authenticate user and return an access token."""
     user = session.exec(select(User).where(User.username == form_data.username)).first()
     password_to_check = user.hashed_password if user else DUMMY_HASH
     password_valid = verify_password(form_data.password, password_to_check)

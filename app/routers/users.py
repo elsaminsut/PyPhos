@@ -15,6 +15,7 @@ def index():
 
 @router.post("/register/", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
 def register_user(user: UserCreate, session: SessionDep):
+    """Register a new user with a username and password. Returns the created user without the password."""
     db_user = User(
             username=user.username,
             hashed_password=get_password_hash(user.password)
@@ -26,11 +27,13 @@ def register_user(user: UserCreate, session: SessionDep):
 
 @router.get("/users/", response_model=list[UserPublic])
 def read_users(session: SessionDep) -> list[User]:
+    """Get a list of all users."""
     users = session.exec(select(User)).all()
     return users
 
 @router.patch("/users/{user_id}", response_model=UserPublic)
 def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep):
+    """Update the current user's username and/or password. Updates the updated_at timestamp to the current time."""
     user_db = session.get(User, current_user.id)
     if not user_db:
         raise HTTPException(status_code=404, detail="User not found")
@@ -43,9 +46,10 @@ def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep
 
 @router.delete("/users/{user_id}")
 def delete_user(current_user: CurrentUser, session: SessionDep):
-    user = session.get(User, current_user.id)
-    if not user:
+    """Delete the current user's account."""
+    user_db = session.get(User, current_user.id)
+    if not user_db:
         raise HTTPException(status_code=404, detail="User not found")
-    session.delete(user)
+    session.delete(user_db)
     session.commit()
     return {"ok": True}
