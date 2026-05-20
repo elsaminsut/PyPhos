@@ -22,7 +22,7 @@ app = FastAPI(
 
 @app.get("/", tags=["General"])
 def index():
-    return {"message": "PyPhos API is running. Visit /docs for the API documentation."}
+    return docs_metadata.index_response
 
 app.include_router(users.router)
 app.include_router(auth.router)

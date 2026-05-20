@@ -36,3 +36,44 @@ trigger a yield calculation, and retrieve the results as a report.
 All endpoints except `/register` and `/login` require a Bearer JWT token.
 Obtain a token via `POST /login`.
     """
+
+index_response = {
+        "name": "PyPhos API",
+        "version": "0.2.0",
+        "description": "A FastAPI-based REST API for solar photovoltaic system calculations and project management",
+        "documentation": {
+            "swagger_ui": "/docs",
+            "openapi_spec": "/openapi.json"
+        },
+        "endpoints": {
+            "auth": {
+                "register": "/register",
+                "login": "/login"
+            },
+            "projects": {
+                "create": "/projects/",
+                "list": "/projects/",
+                "get": "/projects/{project_id}",
+                "update": "/projects/{project_id}",
+                "delete": "/projects/{project_id}",
+            },
+            "scenarios": {
+                "create": "/projects/{project_id}/scenarios/",
+                "list": "/projects/{project_id}/scenarios/",
+                "get": "/projects/{project_id}/scenarios/{scenario_id}",
+                "update": "/projects/{project_id}/scenarios/{scenario_id}",
+                "delete": "/projects/{project_id}/scenarios/{scenario_id}",
+            },
+            "reports": {
+                "create": "/projects/{project_id}/scenarios/{scenario_id}/calculate",
+                "list": "/projects/{project_id}/reports",
+                "get": "/projects/{project_id}/scenarios/{scenario_id}/report",
+            },
+            "users": {
+                "create": "/users/",
+                "list": "/users/",
+                "update": "/users/{user_id}",
+                "delete": "/users/{user_id}"
+            }
+        }
+    }
