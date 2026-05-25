@@ -7,6 +7,7 @@ from app.routers import scenarios
 from app.routers import reports
 from app.utils.database import lifespan
 from fastapi import FastAPI
+import uvicorn
 
 app = FastAPI(
     lifespan=lifespan,
@@ -29,3 +30,6 @@ app.include_router(auth.router)
 app.include_router(projects.router)
 app.include_router(scenarios.router)
 app.include_router(reports.router)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
