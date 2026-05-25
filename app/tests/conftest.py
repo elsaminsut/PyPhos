@@ -1,6 +1,5 @@
 import datetime
 import pytest
-import requests
 from sqlalchemy import create_engine
 from sqlmodel import Session, SQLModel
 from fastapi.testclient import TestClient
@@ -9,7 +8,6 @@ from app.app import app
 
 BASE_URL = "http://localhost:8000"
 
-# Create in-memory SQLite engine for tests
 @pytest.fixture(scope="session")
 def test_engine():
     """Create an in-memory SQLite database for all tests."""
@@ -33,6 +31,7 @@ def override_session(test_session):
     
     app.dependency_overrides[SessionDep] = get_test_session
     yield
+
     # Clean up after test
     app.dependency_overrides.clear()
 
