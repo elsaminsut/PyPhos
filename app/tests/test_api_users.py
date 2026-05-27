@@ -15,13 +15,13 @@ def test_get_users(client, register_user):
     usernames = [user.get("username") for user in response.json()]
 
     assert response.status_code == 200
+    assert len(usernames) > 0
     assert register_user.json().get("username") in usernames
 
 
-def test_update_user_info(client, auth_token, register_user):
+def test_update_user_info(auth_client, register_user):
     user_id = register_user.json().get("id")
-    headers = {"Authorization": f"Bearer {auth_token}"}
-    response = client.patch(f"/users/{user_id}", headers=headers, json={"username": "newusername"})
+    response = auth_client.patch(f"/users/{user_id}", json={"username": "newusername"})
 
     assert response.status_code == 200
     assert response.json().get("username") == "newusername"
@@ -35,11 +35,10 @@ def test_update_user_info_bad_token(client, register_user):
     assert response.status_code == 401
     
 
-def test_delete_user(client, auth_token, register_user):
+def test_delete_user(auth_client, register_user):
     user_id = register_user.json().get("id")
-    headers = {"Authorization": f"Bearer {auth_token}"}
-    response = client.delete(f"/users/{user_id}", headers=headers)
-    user_ids_in_db = [user.get("id") for user in client.get("/users/").json()]
+    response = auth_client.delete(f"/users/{user_id}")
+    user_ids_in_db = [user.get("id") for user in auth_client.get("/users/").json()]
 
     assert response.status_code == 200
     assert user_id not in user_ids_in_db
