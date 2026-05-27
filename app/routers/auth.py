@@ -1,3 +1,5 @@
+from fastapi.responses import RedirectResponse
+
 from app.models.users import User, UserCreate, UserPublic
 from app.utils.auth import (DUMMY_HASH, Token, create_access_token, get_password_hash, verify_password)
 from app.utils.database import SessionDep
@@ -44,3 +46,8 @@ async def login_for_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
+
+@router.post("/token")
+def redirect_to_login():
+    """Redirect /token to /login for compatibility with OAuth2PasswordRequestForm."""
+    return RedirectResponse(url="/login/")
