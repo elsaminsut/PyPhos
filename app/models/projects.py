@@ -1,5 +1,7 @@
+from app.utils.utils import validate_name
 from datetime import datetime
 from sqlmodel import Field, SQLModel, Relationship
+from pydantic import field_validator
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -36,7 +38,17 @@ class ProjectCreate(ProjectBase):
     name: str
     city_input: str # from user input
 
+    @field_validator('name', 'city_input')
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        return validate_name(v)
+
 
 class ProjectUpdate(SQLModel):
     name: str | None = None
-    location: str | None = None
+    city_input: str | None = None
+
+    @field_validator('name', 'city_input')
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        return validate_name(v)
