@@ -23,10 +23,15 @@ def create_scenario(current_user: CurrentUser, project_id: int, scenario: Scenar
     Calculates the installed power based on the module amount and nominal power of the selected module.
     """
     validate_user_owns_project(project_id, current_user, session)
+    
+    # Validate that module exists
     module = session.get(Module, scenario.module_id)
     if not module:
         raise HTTPException(status_code=404, detail="Module not found")
+    
+    # Calculate installed power
     installed_power = scenario.module_amount * module.nominal_power
+    
     db_scenario = Scenario(
             name=scenario.name,
             project_id=project_id,
@@ -61,6 +66,13 @@ def update_scenario(current_user: CurrentUser, project_id: int, scenario_id: int
     """Update a scenario by ID, only if the project exists and belongs to the current user. Updates the updated_at timestamp to the current time."""
     validate_user_owns_project(project_id, current_user, session)
     scenario_db = validate_scenario_belongs_to_project(scenario_id, project_id, session)
+    
+    # If module_id is being updated, validate that the module exists and belongs to the project
+    if scenario.module_id is not None:
+        module = session.get(Module, scenario.module_id)
+        if not module:
+            raise HTTPException(status_code=404, detail="Module not found")
+    
     scenario_data = scenario.model_dump(exclude_unset=True)
     scenario_data["updated_at"] = datetime.now()
     scenario_db.sqlmodel_update(scenario_data)

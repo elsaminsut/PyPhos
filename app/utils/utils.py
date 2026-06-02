@@ -56,6 +56,49 @@ def validate_name(name: str) -> str:
     return name
 
 
+def validate_module_amount(amount: str) -> int:
+    """
+    Validate module amount requirements:
+    - Must be larger than 1 and smaller than 1000
+    - Must be an integer
+    """
+    try:
+        amount = int(amount)
+        if amount < 1 or amount > 1000:
+            raise ValueError('Module amount must be a positive integer between 1 and 1000')
+        return amount
+    except ValueError as e:
+        raise ValueError('Module amount must be a valid integer') from e
+    
+
+def validate_tilt(tilt: str) -> float:
+    """
+    Validate tilt requirements:
+    - Must be a float between 0 and 90
+    """
+    try:
+        tilt = float(tilt)
+        if tilt < 0 or tilt > 90:
+            raise ValueError('Tilt must be a float between 0 and 90')
+        return tilt
+    except ValueError as e:
+        raise ValueError('Tilt must be a valid float') from e
+    
+
+def validate_azimuth(azimuth: str) -> float:
+    """
+    Validate azimuth requirements:
+    - Must be a float between 0 and 360
+    """
+    try:
+        azimuth = float(azimuth)
+        if azimuth < 0 or azimuth > 360:
+            raise ValueError('Azimuth must be a float between 0 and 360')
+        return azimuth
+    except ValueError as e:
+        raise ValueError('Azimuth must be a valid float') from e
+
+
 def validate_user_owns_project(project_id: int, user: User, session: SessionDep) -> Project:
     project = session.get(Project, project_id)
     if not project:
