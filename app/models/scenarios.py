@@ -7,6 +7,7 @@ from typing import Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from app.models.projects import Project
     from app.models.modules import Module
+    from app.models.reports import Report
 
 
 def apply_scenario_validators(validator_name: str, value):
@@ -42,10 +43,12 @@ class Scenario(ScenarioBase, table=True): # table model
     updated_at: datetime = Field(default_factory=datetime.now)
 
     project_id: int = Field(foreign_key="projects.id", index=True) # indexing for faster lookups
-    project: Optional["Project"] = Relationship(back_populates="scenarios") 
+    project: Optional["Project"] = Relationship(back_populates="scenarios")
 
     module_id: int = Field(foreign_key="modules.id", index=True)
     module: Optional["Module"] = Relationship(back_populates="scenarios")
+
+    reports: list["Report"] = Relationship(back_populates="scenario", cascade_delete=True)
 
 
 class ScenarioPublic(ScenarioBase):

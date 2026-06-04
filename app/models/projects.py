@@ -25,7 +25,7 @@ class Project(ProjectBase, table=True): # table model
     user_id: int = Field(foreign_key="users.id", index=True) # indexing for faster lookups
     owner: Optional["User"] = Relationship(back_populates="projects")
 
-    scenarios: list["Scenario"] = Relationship(back_populates="project")
+    scenarios: list["Scenario"] = Relationship(back_populates="project", cascade_delete=True)
 
 
 class ProjectPublic(ProjectBase):
@@ -47,6 +47,20 @@ class ProjectCreate(ProjectBase):
 class ProjectUpdate(SQLModel):
     name: str | None = None
     city_input: str | None = None
+
+    @field_validator('name', mode='before')
+    @classmethod
+    def validate_name(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        return validate_name(v)
+
+    @field_validator('city_input', mode='before')
+    @classmethod
+    def validate_city_input(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        return validate_name(v)
 
     @field_validator('name', 'city_input')
     @classmethod
