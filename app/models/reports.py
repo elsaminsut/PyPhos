@@ -2,8 +2,8 @@ from app.models.modules import ModulePublic
 from app.models.projects import ProjectPublic
 from app.models.scenarios import ScenarioPublic
 from datetime import datetime
-from sqlmodel import Field, SQLModel
-from typing import TYPE_CHECKING
+from sqlmodel import Field, SQLModel, Index, Relationship
+from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.models.users import User
@@ -18,6 +18,8 @@ class ReportBase(SQLModel): # data model
 
 class Report(ReportBase, table=True): # table model
     __tablename__ = "reports"
+    
+    __table_args__ = (Index("ix_reports_scenario_id_unique", "scenario_id", unique=True),) # unique constraint: one report per scenario
 
     id: int | None = Field(default=None, primary_key=True)
 
@@ -25,6 +27,7 @@ class Report(ReportBase, table=True): # table model
     updated_at: datetime = Field(default_factory=datetime.now)
 
     scenario_id: int = Field(foreign_key="scenarios.id", index=True) # indexing for faster lookups
+    scenario: Optional["Scenario"] = Relationship(back_populates="reports")
 
 class ReportPublic(ReportBase):
     id: int # redeclares id to be an integer (and not None)

@@ -16,9 +16,26 @@ router = APIRouter(
 
 @router.post("/register/", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
 def register_user(user: UserCreate, session: SessionDep):
-    """Register a new user with a username and password. Returns the created user without the password."""
+    """Register a new user with a username, email and password. Returns the created user without the password."""
+    # Check if username already exists
+    existing_user = session.exec(select(User).where(User.username == user.username)).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered"
+        )
+    
+    # Check if email already exists
+    existing_email = session.exec(select(User).where(User.email == user.email)).first()
+    if existing_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
     db_user = User(
             username=user.username,
+            email=user.email,
             hashed_password=get_password_hash(user.password)
         )    
     session.add(db_user)
