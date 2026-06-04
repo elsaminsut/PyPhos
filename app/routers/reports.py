@@ -3,12 +3,13 @@ from app.utils.database import SessionDep
 from app.utils.pv_calcs import pv_calculation
 from app.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project
 from app.models.scenarios import Scenario
-from app.models.reports import Report
+from app.models.reports import Report, ReportPublic
 from app.models.users import User
 from datetime import datetime
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import select
 from typing import Annotated
+import json
 
 router = APIRouter(
     tags=["Reports"]
@@ -16,7 +17,7 @@ router = APIRouter(
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-@router.post("/projects/{project_id}/scenarios/{scenario_id}/calculate")
+@router.post("/projects/{project_id}/scenarios/{scenario_id}/calculate", response_model=ReportPublic)
 def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
     """
     Trigger a yield calculation for a scenario.
@@ -27,6 +28,8 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
     """
     project = validate_user_owns_project(project_id, current_user, session)
     scenario = validate_scenario_belongs_to_project(scenario_id, project_id, session)
+    
+    # Call PVGIS calculation
     results = pv_calculation(
         latitude=project.lat,
         longitude=project.lon,
@@ -36,30 +39,43 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
         losses=0.13
     )
 
+    # Check if report already exists for this scenario
     existing_report = session.exec(select(Report).where(Report.scenario_id == scenario_id)).first()
+    
+    # Convert monthly list to JSON string
+    monthly_yield_json = json.dumps(results["monthly_energy_yield"])
+    
     if existing_report:
         existing_report.energy_yield = results["energy_yield"]
-        existing_report.monthly_yield = str(results["monthly_energy_yield"])
+        existing_report.monthly_yield = monthly_yield_json
         existing_report.radiation = results["radiation"]
         existing_report.specific_yield = results["spec_yield"]
         existing_report.updated_at = datetime.now()
+        session.add(existing_report)
         session.commit()
         session.refresh(existing_report)
         return existing_report
     else:
         db_report = Report(
-                scenario_id=scenario.id,
-                energy_yield=results["energy_yield"],
-                monthly_yield=str(results["monthly_energy_yield"]), # convert list to string for storage
-                radiation=results["radiation"],
-                specific_yield=results["spec_yield"]
+            scenario_id=scenario.id,
+            energy_yield=results["energy_yield"],
+            monthly_yield=monthly_yield_json,
+            radiation=results["radiation"],
+            specific_yield=results["spec_yield"]
+        )
+        try:
+            session.add(db_report)
+            session.commit()
+            session.refresh(db_report)
+            return db_report
+        except Exception as e:
+            session.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to create report"
             )
-        session.add(db_report)
-        session.commit()
-        session.refresh(db_report)
-        return db_report
 
-@router.get("/projects/{project_id}/reports", response_model=list[Report])
+@router.get("/projects/{project_id}/reports", response_model=list[ReportPublic])
 def get_all_reports(current_user: CurrentUser, project_id: int, session: SessionDep):
     """Get all reports for a project."""
     validate_user_owns_project(project_id, current_user, session)
@@ -68,10 +84,16 @@ def get_all_reports(current_user: CurrentUser, project_id: int, session: Session
                            .where(Scenario.project_id == project_id)).all()
     return reports
 
-@router.get("/projects/{project_id}/scenarios/{scenario_id}/report", response_model=list[Report])
+@router.get("/projects/{project_id}/scenarios/{scenario_id}/report", response_model=ReportPublic)
 def get_report_by_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
     """Get the report for a specific scenario."""
     validate_user_owns_project(project_id, current_user, session)
     validate_scenario_belongs_to_project(scenario_id, project_id, session)
-    reports = session.exec(select(Report).where(Report.scenario_id == scenario_id)).all()
-    return reports
+    
+    report = session.exec(select(Report).where(Report.scenario_id == scenario_id)).first()
+    if not report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No report found for this scenario"
+        )
+    return report

@@ -2,8 +2,9 @@ from app.models.modules import ModulePublic
 from app.models.projects import ProjectPublic
 from app.models.scenarios import ScenarioPublic
 from datetime import datetime
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Index
 from typing import TYPE_CHECKING
+import json
 
 if TYPE_CHECKING:
     from app.models.users import User
@@ -18,6 +19,8 @@ class ReportBase(SQLModel): # data model
 
 class Report(ReportBase, table=True): # table model
     __tablename__ = "reports"
+    
+    __table_args__ = (Index("ix_reports_scenario_id_unique", "scenario_id", unique=True),) # unique constraint: one report per scenario
 
     id: int | None = Field(default=None, primary_key=True)
 
