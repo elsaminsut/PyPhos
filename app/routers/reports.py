@@ -24,7 +24,7 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
     
     Calls the PVGIS API with the scenario's module specs and orientation,
     estimates system losses, and stores the results as a report.
-    If a report already exists for this scenario it will be overwritten.
+    Note: If concurrent requests are made for the same scenario, the last one will update the report.
     """
     project = validate_user_owns_project(project_id, current_user, session)
     scenario = validate_scenario_belongs_to_project(scenario_id, project_id, session)
@@ -46,6 +46,7 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
     monthly_yield_json = json.dumps(results["monthly_energy_yield"])
     
     if existing_report:
+        # Update existing report, preserving created_at
         existing_report.energy_yield = results["energy_yield"]
         existing_report.monthly_yield = monthly_yield_json
         existing_report.radiation = results["radiation"]
@@ -77,23 +78,40 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
 
 @router.get("/projects/{project_id}/reports", response_model=list[ReportPublic])
 def get_all_reports(current_user: CurrentUser, project_id: int, session: SessionDep):
-    """Get all reports for a project."""
-    validate_user_owns_project(project_id, current_user, session)
-    reports = session.exec(select(Report)
-                           .join(Scenario, Report.scenario_id == Scenario.id)
-                           .where(Scenario.project_id == project_id)).all()
-    return reports
+    """Get all reports for a project. Only returns reports for projects owned by the current user."""
+    try:
+        validate_user_owns_project(project_id, current_user, session)
+        reports = session.exec(select(Report)
+                               .join(Scenario, Report.scenario_id == Scenario.id)
+                               .where(Scenario.project_id == project_id)).all()
+        return reports
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving reports"
+        )
 
 @router.get("/projects/{project_id}/scenarios/{scenario_id}/report", response_model=ReportPublic)
 def get_report_by_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
-    """Get the report for a specific scenario."""
-    validate_user_owns_project(project_id, current_user, session)
-    validate_scenario_belongs_to_project(scenario_id, project_id, session)
-    
-    report = session.exec(select(Report).where(Report.scenario_id == scenario_id)).first()
-    if not report:
+    """Get the report for a specific scenario. Returns a single report or 404 if not found."""
+    try:
+        validate_user_owns_project(project_id, current_user, session)
+        validate_scenario_belongs_to_project(scenario_id, project_id, session)
+        
+        report = session.exec(select(Report).where(Report.scenario_id == scenario_id)).first()
+        if not report:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No report found for this scenario"
+            )
+        return report
+    except HTTPException:
+        raise
+    except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No report found for this scenario"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving report"
         )
-    return report
+    

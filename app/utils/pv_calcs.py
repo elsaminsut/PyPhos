@@ -14,14 +14,61 @@ LOCATION_API_KEY = os.getenv("API_KEY")
 
 # calculation 
 def get_location_data(city_name: str) -> dict:
-    location_response = requests.get(API_URL.replace("CITY", city_name), headers={"X-Api-Key": LOCATION_API_KEY})
-    location_name = location_response.json()[0]["name"]
-    latitude = location_response.json()[0]["latitude"]
-    longitude = location_response.json()[0]["longitude"]
-    return {"name": location_name, "latitude": latitude, "longitude": longitude}
+    """
+    Get location data (latitude, longitude) from geocoding API.
+    Retries up to 3 times with exponential backoff on failure.
+    """
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            location_response = requests.get(
+                API_URL.replace("CITY", city_name),
+                headers={"X-Api-Key": LOCATION_API_KEY},
+                timeout=5
+            )
+            location_response.raise_for_status()
+            
+            data = location_response.json()
+            if not data or len(data) == 0:
+                raise ValueError(f"No location found for city: {city_name}")
+            
+            location_data = data[0]
+            return {
+                "name": location_data.get("name", city_name),
+                "latitude": location_data.get("latitude"),
+                "longitude": location_data.get("longitude")
+            }
+        except requests.exceptions.Timeout:
+            if attempt == max_retries - 1:
+                raise HTTPException(
+                    status_code=504,
+                    detail="Location service timeout. Please try again."
+                )
+            time.sleep(2 ** attempt)
+        except requests.exceptions.RequestException as e:
+            if attempt == max_retries - 1:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Location service unavailable. Please try again later."
+                )
+            time.sleep(2 ** attempt)
+        except (ValueError, KeyError) as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid location: {city_name}. Please check the spelling."
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail="Error processing location data."
+            )
 
 
 def pv_calculation(latitude: float, longitude: float, installed_power: float, tilt: float, azimuth: float, losses: float) -> dict:
+    """
+     Call the PVGIS API to calculate energy yield based on location, system specs and losses.
+     Retries up to 3 times with exponential backoff on failure.
+    """
     max_retries = 3
     for attempt in range(max_retries):
         try:
