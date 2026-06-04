@@ -1,4 +1,4 @@
-from app.utils.utils import validate_name
+from app.utils.validators import validate_name
 from datetime import datetime
 from sqlmodel import Field, SQLModel, Relationship
 from pydantic import field_validator

@@ -1,4 +1,4 @@
-from app.utils.utils import validate_username, validate_password
+from app.utils.validators import validate_username, validate_password
 from sqlmodel import Field, SQLModel, Relationship
 from pydantic import field_validator, EmailStr
 from typing import List, TYPE_CHECKING

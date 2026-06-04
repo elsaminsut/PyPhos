@@ -1,4 +1,4 @@
-from app.utils.utils import validate_azimuth, validate_name, validate_module_amount, validate_tilt
+from app.utils.validators import validate_azimuth, validate_name, validate_module_amount, validate_tilt
 from datetime import datetime
 from pydantic import field_validator
 from sqlmodel import Field, SQLModel, Relationship
