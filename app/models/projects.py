@@ -1,4 +1,4 @@
-from app.utils.utils import validate_name
+from app.utils.validators import validate_name
 from datetime import datetime
 from sqlmodel import Field, SQLModel, Relationship
 from pydantic import field_validator
@@ -50,19 +50,14 @@ class ProjectUpdate(SQLModel):
 
     @field_validator('name', mode='before')
     @classmethod
-    def validate_name(cls, v: str | None) -> str | None:
+    def check_name(cls, v: str | None) -> str | None:
         if v is None:
             return v
         return validate_name(v)
 
     @field_validator('city_input', mode='before')
     @classmethod
-    def validate_city_input(cls, v: str | None) -> str | None:
+    def check_city_input(cls, v: str | None) -> str | None:
         if v is None:
             return v
-        return validate_name(v)
-
-    @field_validator('name', 'city_input')
-    @classmethod
-    def validate_name(cls, v: str) -> str:
         return validate_name(v)
