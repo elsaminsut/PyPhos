@@ -33,12 +33,12 @@ class UserCreate(UserBase):
 
     @field_validator('username')
     @classmethod
-    def validate_username(cls, v: str) -> str:
+    def check_username(cls, v: str) -> str:
         return validate_username(v)
 
     @field_validator('password')
     @classmethod
-    def validate_pwd(cls, v: str) -> str:
+    def check_password(cls, v: str) -> str:
         return validate_password(v)
 
 
@@ -47,14 +47,16 @@ class UserUpdate(SQLModel):
     email: EmailStr | None = None
     password: str | None = None # plain text password
 
-    @field_validator('username')
+    @field_validator('username', mode='before')
     @classmethod
-    def validate_username(cls, v: str) -> str:
+    def check_username(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
         return validate_username(v)
 
     @field_validator('password', mode='before')
     @classmethod
-    def validate_pwd(cls, v: str) -> str:
+    def check_password(cls, v: str | None) -> str | None:
         """Validate password if provided during update"""
         if v is None:
             return v
