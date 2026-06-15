@@ -1,6 +1,6 @@
-from app.utils.auth import get_current_user
-from app.models.users import User, UserPublic, UserUpdate
-from app.utils.database import SessionDep
+from backend.utils.auth import get_current_user
+from backend.models.users import User, UserPublic, UserUpdate
+from backend.utils.database import SessionDep
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 from typing import Annotated

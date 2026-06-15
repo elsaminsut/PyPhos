@@ -1,9 +1,9 @@
-from app.utils.auth import get_current_user
-from app.utils.database import SessionDep
-from app.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project
-from app.models.modules import Module
-from app.models.scenarios import Scenario, ScenarioPublic, ScenarioCreate, ScenarioUpdate
-from app.models.users import User
+from backend.utils.auth import get_current_user
+from backend.utils.database import SessionDep
+from backend.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project
+from backend.models.modules import Module
+from backend.models.scenarios import Scenario, ScenarioPublic, ScenarioCreate, ScenarioUpdate
+from backend.models.users import User
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import select

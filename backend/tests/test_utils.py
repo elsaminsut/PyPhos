@@ -1,5 +1,5 @@
 import pytest
-import app.utils.pv_calcs as pv_calcs
+import backend.utils.pv_calcs as pv_calcs
 
 def test_location_smoke():
     location = pv_calcs.get_location_data("Berlin")

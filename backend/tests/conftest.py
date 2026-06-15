@@ -1,11 +1,12 @@
 import datetime
-from wsgiref import headers
+import uuid
+
 import pytest
 from sqlalchemy import create_engine
 from sqlmodel import Session, SQLModel
 from fastapi.testclient import TestClient
-from app.utils.database import SessionDep
-from app.app import app
+from backend.utils.database import SessionDep
+from backend.app import app
 
 BASE_URL = "http://localhost:8000"
 
@@ -44,10 +45,11 @@ def client(override_session):
 
 @pytest.fixture
 def create_user():
-    current_time = int(datetime.datetime.now().timestamp())
+    unique = uuid.uuid4().hex[:8]
     new_user = {
-        "username": f"user_{current_time}",
-        "password": "password"
+        "username": f"user_{unique}",
+        "email": f"user_{unique}@example.com",
+        "password": "Password1!"
     }
     return new_user
 

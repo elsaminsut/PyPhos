@@ -1,8 +1,7 @@
 from fastapi.responses import RedirectResponse
-
-from app.models.users import User, UserCreate, UserPublic
-from app.utils.auth import (DUMMY_HASH, Token, create_access_token, get_password_hash, verify_password)
-from app.utils.database import SessionDep
+from backend.models.users import User, UserCreate, UserPublic
+from backend.utils.auth import (DUMMY_HASH, Token, create_access_token, get_password_hash, verify_password)
+from backend.utils.database import SessionDep
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm

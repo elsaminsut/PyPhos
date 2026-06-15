@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, SQLModel, Relationship
 
 if TYPE_CHECKING:
-    from app.models.scenarios import Scenario
+    from backend.models.scenarios import Scenario
 
 class PVTech(Enum):
     mono_c_Si = "Mono-c-Si"

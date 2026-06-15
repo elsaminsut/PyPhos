@@ -1,11 +1,11 @@
-import app.models
-import app.utils.docs_metadata as docs_metadata
-from app.routers import auth
-from app.routers import projects
-from app.routers import users
-from app.routers import scenarios
-from app.routers import reports
-from app.utils.database import lifespan
+import backend.models
+import backend.utils.docs_metadata as docs_metadata
+from backend.routers import auth
+from backend.routers import projects
+from backend.routers import users
+from backend.routers import scenarios
+from backend.routers import reports
+from backend.utils.database import lifespan
 from fastapi import FastAPI
 import uvicorn
 

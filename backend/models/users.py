@@ -1,10 +1,10 @@
-from app.utils.validators import validate_username, validate_password
+from backend.utils.validators import validate_username, validate_password
 from sqlmodel import Field, SQLModel, Relationship
 from pydantic import field_validator, EmailStr
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.models.projects import Project
+    from backend.models.projects import Project
 
 
 class UserBase(SQLModel): # data model

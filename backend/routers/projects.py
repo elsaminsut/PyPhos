@@ -1,9 +1,9 @@
-from app.utils.auth import get_current_user
-from app.utils.database import SessionDep
-from app.utils.utils import validate_user_owns_project
-from app.models.projects import Project, ProjectPublic, ProjectCreate, ProjectUpdate
-from app.models.users import User
-from app.utils.pv_calcs import get_location_data
+from backend.utils.auth import get_current_user
+from backend.utils.database import SessionDep
+from backend.utils.utils import validate_user_owns_project
+from backend.models.projects import Project, ProjectPublic, ProjectCreate, ProjectUpdate
+from backend.models.users import User
+from backend.utils.pv_calcs import get_location_data
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
