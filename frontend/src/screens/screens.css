@@ -1,0 +1,16 @@
+main {
+    padding: 32px;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.projects-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
