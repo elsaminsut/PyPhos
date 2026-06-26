@@ -1,21 +1,6 @@
 import re
 
 
-def validate_username(username: str) -> str:
-    """
-    Validate username requirements:
-    - Between 5 and 20 characters
-    - Only alphanumeric characters and underscores
-    """
-    if len(username) < 5 or len(username) > 20:
-        raise ValueError('Username must be between 5 and 20 characters')
-    
-    if not re.match(r'^[a-zA-Z0-9_]+$', username):
-        raise ValueError('Username can only contain alphanumeric characters and underscores')
-    
-    return username
-
-
 def validate_password(password: str) -> str:
     """
     Validate password requirements:

@@ -1,4 +1,4 @@
-from backend.utils.validators import validate_username, validate_password
+from backend.utils.validators import validate_password
 from sqlmodel import Field, SQLModel, Relationship
 from pydantic import field_validator, EmailStr
 from typing import List, TYPE_CHECKING
@@ -8,7 +8,6 @@ if TYPE_CHECKING:
 
 
 class UserBase(SQLModel): # data model
-    username: str = Field(index=True)
     email: EmailStr = Field(index=True)
 
 
@@ -27,14 +26,8 @@ class UserPublic(UserBase):
 
 
 class UserCreate(UserBase):
-    username: str
     email: EmailStr
     password: str # plain text password
-
-    @field_validator('username')
-    @classmethod
-    def check_username(cls, v: str) -> str:
-        return validate_username(v)
 
     @field_validator('password')
     @classmethod
@@ -43,16 +36,8 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(SQLModel):
-    username: str | None = None
     email: EmailStr | None = None
     password: str | None = None # plain text password
-
-    @field_validator('username', mode='before')
-    @classmethod
-    def check_username(cls, v: str | None) -> str | None:
-        if v is None:
-            return v
-        return validate_username(v)
 
     @field_validator('password', mode='before')
     @classmethod
