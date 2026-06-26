@@ -8,9 +8,3 @@ main {
     align-items: center;
     margin-bottom: 32px;
 }
-
-.projects-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-}
