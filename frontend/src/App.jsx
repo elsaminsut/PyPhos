@@ -1,18 +1,30 @@
-import './App.css'
+import React from "react"
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router"
+
+import { AuthProvider, AuthContext } from './lib/AuthContext';
 import AllProjects from './screens/AllProjects'
+import Login from './screens/Login'
 import Project from './screens/Project'
 import Scenario from './screens/Scenario'
-import { BrowserRouter, Routes, Route } from "react-router"
+
+import './App.css'
 
 export default function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/projects" element={<AllProjects />} />
-                <Route path="/projects/:projectId" element={<Project />} />
-                <Route path="/projects/:projectId/scenarios/:scenarioId" element={<Scenario />} />
-            </Routes>
-        </BrowserRouter>
+        <AuthProvider>
+            <Router>
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/projects" element={<PrivateRoute><AllProjects /></PrivateRoute>} />
+                    <Route path="/projects/:projectId" element={<PrivateRoute><Project /></PrivateRoute>} />
+                    <Route path="/projects/:projectId/scenarios/:scenarioId" element={<PrivateRoute><Scenario /></PrivateRoute>} />
+                </Routes>
+            </Router>
+        </AuthProvider>
     )
 }
 
+const PrivateRoute = ({ children }) => {
+  const { token } = React.useContext(AuthContext);
+  return token ? children : <Navigate to="/login" />;
+};
