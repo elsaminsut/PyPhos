@@ -6,20 +6,17 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  // resolve: {
-  //   alias: [
-  //     { find: '@/components', replacement: `${path.resolve(__dirname, '@/components')}/` },
-  //     { find: '@/', replacement: `${path.resolve(__dirname, 'src')}/` },
-  //   ],
-  // },
+  server: {
+    watch: {
+      usePolling: true,
+    },
+    proxy: {
+      '/api': 'http://localhost:8000',
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-    },
-  },
-  server: {
-    proxy: {
-      '/api': 'http://localhost:8000',
     },
   },
 })
