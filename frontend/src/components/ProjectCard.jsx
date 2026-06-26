@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default function ProjectCard() {
+export default function ProjectCard(props) {
     return (
         <Card className="w-full">
             <CardHeader>

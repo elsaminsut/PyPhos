@@ -25,11 +25,11 @@ app = FastAPI(
 def index():
     return docs_metadata.index_response
 
-app.include_router(users.router)
-app.include_router(auth.router)
-app.include_router(projects.router)
-app.include_router(scenarios.router)
-app.include_router(reports.router)
+app.include_router(users.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
+app.include_router(projects.router, prefix="/api")
+app.include_router(scenarios.router, prefix="/api")
+app.include_router(reports.router, prefix="/api")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
