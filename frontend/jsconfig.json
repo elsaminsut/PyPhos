@@ -1,18 +1,18 @@
-// {
-//   "compilerOptions": {
-//     "module": "ESNext",
-//     "moduleResolution": "bundler",
-//     "jsx": "react-jsx",
-//     "checkJs": false
-//   },
-//   "include": ["src"]
-// }
-
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "checkJs": false
+  },
+  "include": ["src"]
 }
+
+// {
+//   "compilerOptions": {
+//     "baseUrl": ".",
+//     "paths": {
+//       "@/*": ["./src/*"]
+//     }
+//   }
+// }
