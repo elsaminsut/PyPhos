@@ -1,9 +1,18 @@
+// {
+//   "compilerOptions": {
+//     "module": "ESNext",
+//     "moduleResolution": "bundler",
+//     "jsx": "react-jsx",
+//     "checkJs": false
+//   },
+//   "include": ["src"]
+// }
+
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "checkJs": false
-  },
-  "include": ["src"]
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }
