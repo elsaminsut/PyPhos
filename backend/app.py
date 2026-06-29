@@ -7,6 +7,7 @@ from backend.routers import scenarios
 from backend.routers import reports
 from backend.utils.database import lifespan
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 app = FastAPI(
@@ -25,6 +26,13 @@ app = FastAPI(
 def index():
     return docs_metadata.index_response
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(users.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(projects.router, prefix="/api")
