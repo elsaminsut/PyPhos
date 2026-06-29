@@ -10,8 +10,8 @@ export default function ProjectCard(props) {
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>Project Name</CardTitle>
-                <CardDescription>Location</CardDescription>
+                <CardTitle>{props.name}</CardTitle>
+                <CardDescription>{props.location}</CardDescription>
             </CardHeader>
             <CardContent>
                 <p>No scenarios yet</p>
