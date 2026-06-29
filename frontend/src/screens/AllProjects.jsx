@@ -1,18 +1,20 @@
+import React, { useContext, useEffect, useState } from "react"
+
+import { AuthContext } from "../lib/AuthContext";
 import Header from "../components/Header";
 import ProjectCard from "../components/ProjectCard";
-import './screens.css'
 import { Button } from "@/components/ui/button"
-import React, { useContext, useEffect, useState } from "react"
+
+import './screens.css'
 
 const AllProjects = () => {
     const { token } = useContext(AuthContext);
-    const [message, setMessage] = useState('');
     const [projects, setProjects] = useState([])
     
     useEffect(() => {
         const fetchProtectedContent = async () => {
             try {
-                const response = await fetch("/api/projects", {
+                const response = await fetch("/api/projects/", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 
@@ -25,15 +27,13 @@ const AllProjects = () => {
         
         fetchProtectedContent();
     }, [token])
-
-    console.log(projects)
     
-    const projectList = projects.map(project => {
+    const projectList = projects.map(project => (
         <ProjectCard
             key={project.id}
             name={project.name} 
             location={project.location} />
-    })
+    ))
     
     return (
     <>
@@ -45,8 +45,7 @@ const AllProjects = () => {
             </header>
             <div className="main-content">
                 <div className="flex flex-row gap-4">
-                    <ProjectCard />
-                    <ProjectCard />
+                    {projectList}
                 </div>
             </div>
         </main>
