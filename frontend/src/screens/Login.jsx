@@ -30,8 +30,8 @@ const LoginPage = () => {
     try {
       const response = await fetch('/api/login/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ email, password })
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({ username: email, password })
       })
       
       const data = await response.json()
@@ -40,7 +40,7 @@ const LoginPage = () => {
         login(data.access_token)
         navigate('/projects')
       } else {
-        alert(data.msg)
+        alert(data.detail)
       }
     } catch (error) {
       console.error('Error logging in:', error)
