@@ -20,7 +20,7 @@ def read_users(session: SessionDep) -> list[User]:
 
 @router.patch("/{user_id}", response_model=UserPublic)
 def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep):
-    """Update the current user's username and/or password. Updates the updated_at timestamp to the current time."""
+    """Update the current user's email and/or password. Updates the updated_at timestamp to the current time."""
     user_db = session.get(User, current_user.id)
     user_data = user.model_dump(exclude_unset=True) # fields in UserUpdate, except those that are not set
     user_db.sqlmodel_update(user_data)
