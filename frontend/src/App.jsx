@@ -1,7 +1,8 @@
-import React from "react"
+import { useContext } from "react"
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router"
 
 import { AuthProvider, AuthContext } from './lib/AuthContext';
+import { isTokenValid } from './lib/utils';
 import AllProjects from './screens/AllProjects'
 import Login from './screens/Login'
 import Project from './screens/Project'
@@ -25,6 +26,6 @@ export default function App() {
 }
 
 const PrivateRoute = ({ children }) => {
-  const { token } = React.useContext(AuthContext);
-  return token ? children : <Navigate to="/login" />;
+  const { token } = useContext(AuthContext);
+  return isTokenValid(token) ? children : <Navigate to="/login" />
 };
