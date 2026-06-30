@@ -12,7 +12,7 @@ router = APIRouter(
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-@router.get("/", response_model=list[UserPublic])
+@router.get("", response_model=list[UserPublic])
 def read_users(session: SessionDep) -> list[User]:
     """Get a list of all users."""
     users = session.exec(select(User)).all()

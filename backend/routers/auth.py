@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["Authentication"]
 )
 
-@router.post("/register/", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
+@router.post("/register", response_model=UserPublic) # instead of using type annotation, response_model to specify the output model (which doesn't show password)
 def register_user(user: UserCreate, session: SessionDep):
     """Register a new user with a email and password. Returns the created user without the password."""
     # Check if email already exists
@@ -41,7 +41,7 @@ def register_user(user: UserCreate, session: SessionDep):
     session.refresh(db_user)
     return db_user
 
-@router.post("/login/")
+@router.post("/login")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep) -> Token:

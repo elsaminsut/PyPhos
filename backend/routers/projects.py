@@ -15,7 +15,7 @@ router = APIRouter(
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-@router.post("/", response_model=ProjectPublic)
+@router.post("", response_model=ProjectPublic)
 def create_project(current_user: CurrentUser, project: ProjectCreate, session: SessionDep):
     """
     Create a new project for the current user.
@@ -53,7 +53,7 @@ def create_project(current_user: CurrentUser, project: ProjectCreate, session: S
             detail="Failed to create project"
         )
 
-@router.get("/", response_model=list[ProjectPublic])
+@router.get("", response_model=list[ProjectPublic])
 def read_projects(current_user: CurrentUser):
     """Get a list of all projects owned by the current user."""
     try:
