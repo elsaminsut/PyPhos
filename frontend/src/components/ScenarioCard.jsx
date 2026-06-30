@@ -7,12 +7,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default function ScenarioCard() {
+export default function ScenarioCard(props) {
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>Scenario 1</CardTitle>
-                <CardDescription>10 modules South</CardDescription>
+                <CardTitle>Scenario {props.id}</CardTitle>
+                <CardDescription>{props.name}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Button>View report</Button>
