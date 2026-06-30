@@ -15,7 +15,7 @@ import Header from "../components/Header";
 import ScenarioCard from "../components/ScenarioCard";
 
 import { AuthContext } from "../lib/AuthContext"
-import { useApi } from "../lib/useApi"
+import { useApi } from "../lib/api"
 
 
 const Project = () => {
@@ -60,6 +60,7 @@ const Project = () => {
         }
     }
 
+    console.log(scenarios)
     return (
     <>
         <Header />
@@ -86,9 +87,14 @@ const Project = () => {
                     <Button>New Scenario</Button>
                 </div>
             </header>
-            {token ? 
             <div className="main-content">
-                {/* <div>Location: {project.location}</div> */}
+                <div className="flex justify-between items-center my-8">
+                    <div>
+                        <p>Location</p>
+                        <p>{project.location}</p>
+                    </div>
+                    <div className="bg-yellow-800 h-10 w-100 ">MAP</div>
+                </div>
                 <div className="flex flex-row gap-4">
                     {
                         scenarios.map(scenario => (
@@ -104,7 +110,6 @@ const Project = () => {
                 </div>
                 <p>{project.name}</p>
             </div>
-            : <p>Back to Login</p> }
         </main>
     </>
     )

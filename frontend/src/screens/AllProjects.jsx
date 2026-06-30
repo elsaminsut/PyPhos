@@ -8,10 +8,12 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import CreateProjectDialog from "../components/CreateProjectDialog"
 import { Button } from "@/components/ui/button"
 import Header from "../components/Header";
 import ProjectCard from "../components/ProjectCard"
-import { useApi } from "../lib/useApi"
+
+import { useApi } from "../lib/api"
 
 
 const AllProjects = () => {
@@ -27,7 +29,7 @@ const AllProjects = () => {
             <header className="mb-8">
                 <div className="flex justify-between items-center">
                     <h1>Your Projects</h1>
-                    <Button>New Project</Button>
+                    <CreateProjectDialog />
                 </div>
             </header>
             <div className="main-content">
