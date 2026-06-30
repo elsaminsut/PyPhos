@@ -1,54 +1,50 @@
-import React, { useContext, useEffect, useState } from "react"
+import { Link } from "react-router"
 
-import { AuthContext } from "../lib/AuthContext";
-import Header from "../components/Header";
-import ProjectCard from "../components/ProjectCard";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
+import Header from "../components/Header";
+import ProjectCard from "../components/ProjectCard"
+import { useApi } from "../lib/useApi"
 
-import './screens.css'
 
 const AllProjects = () => {
-    const { token } = useContext(AuthContext);
-    const [projects, setProjects] = useState([])
-    
-    useEffect(() => {
-        const fetchProtectedContent = async () => {
-            try {
-                const response = await fetch("/api/projects/", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                
-                const data = await response.json();
-                setProjects(data);
-            } catch (error) {
-                setProjects('You are not allowed to view this content.');
-            }
-        };
-        
-        fetchProtectedContent();
-    }, [token])
-    
-    const projectList = projects.map(project => (
-        <ProjectCard
-            key={project.id}
-            name={project.name} 
-            location={project.location} />
-    ))
+    const { data: projects, loading, error } = useApi("/api/projects/")
+
+    if (loading) return <p>Loading...</p>
+    if (error) return <p>Something went wrong.</p>
     
     return (
     <>
         <Header />
-        <main>
-            <header className="main-header">
-                <h1>Your Projects</h1>
-                <Button>New Project</Button>
+        <main className="p-8"> 
+            <header className="mb-8">
+                <div className="flex justify-between items-center">
+                    <h1>Your Projects</h1>
+                    <Button>New Project</Button>
+                </div>
             </header>
             <div className="main-content">
                 <div className="flex flex-row gap-4">
-                    {projectList}
+                    {
+                        projects.map(project => (
+                            <Link className="w-full" key={project.id} to={`/projects/${project.id}`}>
+                                <ProjectCard
+                                    key={project.id}
+                                    name={project.name} 
+                                    location={project.location} />
+                            </Link>
+                        ))
+                    }
                 </div>
             </div>
-        </main>
+        </main> 
     </>
     )
 }
