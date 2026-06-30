@@ -17,7 +17,7 @@ import { useApi } from "../lib/api"
 
 
 const AllProjects = () => {
-    const { data: projects, loading, error } = useApi("/api/projects/")
+    const { data: projects, loading, error } = useApi("/api/projects")
 
     if (loading) return <p>Loading...</p>
     if (error) return <p>Something went wrong.</p>

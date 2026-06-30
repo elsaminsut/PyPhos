@@ -15,7 +15,7 @@ router = APIRouter(
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-@router.post("/projects/{project_id}/scenarios/", response_model=ScenarioPublic)
+@router.post("/projects/{project_id}/scenarios", response_model=ScenarioPublic)
 def create_scenario(current_user: CurrentUser, project_id: int, scenario: ScenarioCreate, session: SessionDep):
     """
     Create a new scenario for a project, only if the project exists and belongs to the current user.
@@ -56,7 +56,7 @@ def create_scenario(current_user: CurrentUser, project_id: int, scenario: Scenar
             detail="Failed to create scenario"
         )
 
-@router.get("/projects/{project_id}/scenarios/", response_model=list[ScenarioPublic])
+@router.get("/projects/{project_id}/scenarios", response_model=list[ScenarioPublic])
 def read_scenarios(current_user: CurrentUser, project_id: int, session: SessionDep):
     """Get a list of all scenarios for a project, only if the project exists and belongs to the current user."""
     try:

@@ -22,7 +22,7 @@ const Project = () => {
     const params = useParams();
     const { token } = useContext(AuthContext)
     const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${params.projectId}`)
-    const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${params.projectId}/scenarios/`)
+    const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${params.projectId}/scenarios`)
     
     const [projectName, setProjectName] = useState("")
 
