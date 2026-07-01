@@ -20,13 +20,8 @@ import { useApi } from "../lib/api"
 const Project = () => {
     const { projectId, scenarioId } = useParams();
     const { token } = useContext(AuthContext)
-<<<<<<< HEAD
     const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${params.projectId}`)
     const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${params.projectId}/scenarios`)
-=======
-    const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
-    const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios/`)
->>>>>>> b9d83b7 (update: add project location as input field, no scenarios empty state)
     
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")
