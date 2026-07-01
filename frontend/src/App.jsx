@@ -6,6 +6,7 @@ import { isTokenValid } from './lib/utils';
 import AllProjects from './screens/AllProjects'
 import Login from './screens/Login'
 import Project from './screens/Project'
+import CreateScenario from './screens/CreateScenario'
 import Scenario from './screens/Scenario'
 
 import './App.css'
@@ -18,6 +19,7 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/projects" element={<PrivateRoute><AllProjects /></PrivateRoute>} />
                     <Route path="/projects/:projectId" element={<PrivateRoute><Project /></PrivateRoute>} />
+                    <Route path="/projects/:projectId/scenarios/create" element={<PrivateRoute><CreateScenario /></PrivateRoute>} />
                     <Route path="/projects/:projectId/scenarios/:scenarioId" element={<PrivateRoute><Scenario /></PrivateRoute>} />
                 </Routes>
             </Router>
