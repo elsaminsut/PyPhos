@@ -48,11 +48,11 @@ export default function CreateScenario() {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                        <BreadcrumbLink href="/projects/">Your projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/projects">Your projects</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                        <BreadcrumbLink href={`/projects/${project.id}/`}>{project.name} </BreadcrumbLink>
+                        <BreadcrumbLink href={`/projects/${project.id}`}>{project.name} </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
