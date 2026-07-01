@@ -102,7 +102,7 @@ const Project = () => {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                        <BreadcrumbLink href="/projects/">Your projects</BreadcrumbLink>
+                        <BreadcrumbLink href="/projects">Your projects</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
