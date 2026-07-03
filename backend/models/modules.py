@@ -4,12 +4,14 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, SQLModel, Relationship
 
 if TYPE_CHECKING:
-    from backend.models.scenarios import Scenario
+    from models.scenarios import Scenario
 
 class PVTech(Enum):
     mono_c_Si = "Mono-c-Si"
     multi_c_Si = "Multi-c-Si"
     thin_film = "Thin Film"
+    cdte = "CdTe"
+    cigs = "CIGS"
 
 class ModuleBase(SQLModel): # data model
     manufacturer: str
