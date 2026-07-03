@@ -5,6 +5,7 @@ from backend.routers import projects
 from backend.routers import users
 from backend.routers import scenarios
 from backend.routers import reports
+from backend.routers import modules
 from backend.utils.database import lifespan
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -38,6 +39,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(projects.router, prefix="/api")
 app.include_router(scenarios.router, prefix="/api")
 app.include_router(reports.router, prefix="/api")
+app.include_router(modules.router, prefix="/api")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
