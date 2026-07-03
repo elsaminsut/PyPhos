@@ -140,12 +140,12 @@ export default function Scenario() {
                             </FieldDescription>
                         </Field>
                         <Field>
-                            <FieldLabel htmlFor="orientation">Orientation</FieldLabel>
+                            <FieldLabel htmlFor="orientation">Azimuth</FieldLabel>
                             <Input id="orientation" type="number" value={orientation}
                             onBlur={() => handleScenarioFieldUpdate("azimuth", Number(orientation))}
                             onChange={(e) => setOrientation(e.target.value)} placeholder="e.g. 0" min="0" max="360"/>
                             <FieldDescription>
-                                The angle relative to the South, in degrees. South orientation is 0°
+                                Orientation relative to the South, in degrees. South orientation is 0°
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
