@@ -14,20 +14,23 @@ import Header from "../components/Header";
 import ScenarioCard from "../components/ScenarioCard";
 
 import { AuthContext } from "../lib/AuthContext"
-import { useApi } from "../lib/api"
+import { useApi, updateResourceField } from "../lib/api"
 
 
 const Project = () => {
     const { projectId, scenarioId } = useParams();
     const { token } = useContext(AuthContext)
-    const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${params.projectId}`)
-    const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${params.projectId}/scenarios`)
+    const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
+    const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios`)
     
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")
 
     useEffect(() => {
-        if (project) setProjectName(project.name)
+        if (project) {
+            setProjectName(project.name ?? "")
+            setProjectLocation(project.location ?? "")
+        }
     }, [project])
 
     useEffect(() => {
@@ -40,53 +43,23 @@ const Project = () => {
     async function handleNameSubmit(e) {
         e.preventDefault()
 
-        if (!projectName.trim()) {
-            console.error("Project name cannot be empty")
-            return
-        }
-
         try {
-            const response = await fetch(`/api/projects/${params.projectId}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ name: projectName.trim() })
-            })
-
-            if (!response.ok) {
-                console.error("Failed to update project name")
-            }
+            await updateResourceField(token, `/projects/${projectId}`, "name", projectName, { trim: true })
         } catch (error) {
             console.error("Error updating project name:", error)
         }
+        console.log("Project name updated:", projectName)
     }
 
-        async function handleLocationSubmit(e) {
+    async function handleLocationSubmit(e) {
         e.preventDefault()
 
-        if (!projectLocation.trim()) {
-            console.error("Project location cannot be empty")
-            return
-        }
-
         try {
-            const response = await fetch(`/api/projects/${params.projectId}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ location: projectLocation.trim() })
-            })
-
-            if (!response.ok) {
-                console.error("Failed to update project location")
-            }
+            await updateResourceField(token, `/projects/${projectId}`, "location", projectLocation, { trim: true })
         } catch (error) {
             console.error("Error updating project location:", error)
         }
+        console.log("Location updated:", projectLocation)
     }
 
     return (

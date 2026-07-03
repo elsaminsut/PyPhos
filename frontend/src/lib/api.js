@@ -65,15 +65,44 @@ async function request(endpoint, token, options = {}) {
 }
 
 export function createProject(token, { name, city_input }) {
+    if (!name.trim() || !city_input.trim()) {
+        console.error("Field cannot be empty")
+        return
+    }
     return request("/projects", token, {
         method: "POST",
         body: JSON.stringify({ name, city_input })
     })
 }
 
-export function updateProject(token, projectId, updates) {
-    return request(`/projects/${projectId}`, token, {
+export function updateResource(token, endpoint, updates) {
+    if (!updates || typeof updates !== "object" || Object.keys(updates).length === 0) {
+        console.error("No updates provided")
+        return
+    }
+
+    return request(endpoint, token, {
         method: "PATCH",
         body: JSON.stringify(updates)
     })
+}
+
+export function updateResourceField(token, endpoint, field, value, options = {}) {
+    const { trim = false, normalize = (currentValue) => currentValue } = options
+
+    if (value === null || value === undefined) {
+        return
+    }
+
+    let normalizedValue = normalize(value)
+
+    if (trim && typeof normalizedValue === "string") {
+        normalizedValue = normalizedValue.trim()
+    }
+
+    return updateResource(token, endpoint, { [field]: normalizedValue })
+}
+
+export function updateProject(token, projectId, updates) {
+    return updateResource(token, `/projects/${projectId}`, updates)
 }
