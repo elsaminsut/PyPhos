@@ -1,13 +1,13 @@
-from models.modules import ModulePublic
-from models.projects import ProjectPublic
-from models.scenarios import ScenarioPublic
+from backend.models.modules import ModulePublic
+from backend.models.projects import ProjectPublic
+from backend.models.scenarios import ScenarioPublic
 from datetime import datetime
 from sqlmodel import Field, SQLModel, Index, Relationship
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models.users import User
-    from models.scenarios import Scenario
+    from backend.models.users import User
+    from backend.models.scenarios import Scenario
 
 class ReportBase(SQLModel): # data model
     energy_yield: float
