@@ -37,6 +37,19 @@ export default function CreateScenario() {
     const { token } = useContext(AuthContext)
     const { data: project, loading: loading, error: error } = useApi(`/api/projects/${projectId}`)
 
+    const [scenarioName, setScenarioName] = useState("Scenario Name")
+
+    async function handleNameSubmit(e) {
+        e?.preventDefault?.()
+
+        try {
+            await updateResourceField(token, `/projects/${projectId}/scenarios/${scenarioId}`, "name", scenarioName, { trim: true })
+        } catch (error) {
+            console.error("Error updating scenario name:", error)
+        }
+        console.log("Scenario name updated:", scenarioName)
+    }
+
     if (loading) return <p>Loading...</p>
     if (error) return <p>Something went wrong.</p>
 
@@ -62,9 +75,9 @@ export default function CreateScenario() {
                 </Breadcrumb>
                 <div className="flex justify-between items-center">
                     <form>
-                        <input id="projectName"
-                            value="Scenario Name"
-                            // onChange={(e) => setProjectName(e.target.value)}
+                        <input id="scenarioName"
+                            value={scenarioName}
+                            onChange={(e) => setScenarioName(e.target.value)}
                         />
                     </form>
                     <Link key={project.id} to={`/projects/${project.id}`}>
@@ -76,17 +89,9 @@ export default function CreateScenario() {
                 <div className="flex gap-4">
                     <FieldGroup>
                         <h3>System configuration</h3>
-                        {/* <form>
-                            <label htmlFor="amount">Module amount</label>
-                            <input id="amount"
-                                value="aAaaa"
-                                // onChange={(e) => setProjectLocation(e.target.value)}
-                            />
-                        </form> */}
-
                         <Field>
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
-                            <Input id="amount" type="number" placeholder="e.g. 30" />
+                            <Input id="amount" type="number" placeholder="e.g. 100" />
                             <FieldDescription>
                                 Quantity of modules in the system
                             </FieldDescription>
@@ -99,10 +104,10 @@ export default function CreateScenario() {
                             </FieldDescription>
                         </Field>
                         <Field>
-                            <FieldLabel htmlFor="orientation">Orientation</FieldLabel>
+                            <FieldLabel htmlFor="orientation">Azimuth</FieldLabel>
                             <Input id="orientation" type="number" placeholder="e.g. 0" min="0" max="360"/>
                             <FieldDescription>
-                                The angle relative to the South, in degrees. South orientation is 0°
+                                Orientation relative to the South, in degrees. South orientation is 0°
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
@@ -125,12 +130,6 @@ export default function CreateScenario() {
                         </Field>
                         <Table>
                             <TableCaption>Selected solar module</TableCaption>
-                            {/* <TableHeader>
-                                <TableRow>
-                                <TableHead className="text-right">Technology</TableHead>
-                                <TableHead className="text-left">Nominal power</TableHead>
-                                </TableRow>
-                            </TableHeader> */}
                             <TableBody>
                                 <TableRow key="0">
                                     <TableCell className="font-semibold">Technology</TableCell>
