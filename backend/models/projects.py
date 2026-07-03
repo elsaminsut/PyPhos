@@ -1,12 +1,12 @@
-from utils.validators import validate_name
+from backend.utils.validators import validate_name
 from datetime import datetime
 from sqlmodel import Field, SQLModel, Relationship
 from pydantic import field_validator
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models.users import User
-    from models.scenarios import Scenario
+    from backend.models.users import User
+    from backend.models.scenarios import Scenario
 
 class ProjectBase(SQLModel): # data model
     name: str = Field(index=True)

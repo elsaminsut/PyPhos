@@ -2,8 +2,8 @@
 Seed script to import PV modules from CEC module database.
 Run after alembic migrations: python seed_modules.py
 """
-from utils.database import engine
-from models.modules import Module, PVTech
+from backend.utils.database import engine
+from backend.models.modules import Module, PVTech
 import pandas as pd
 from sqlmodel import Session, select
 
