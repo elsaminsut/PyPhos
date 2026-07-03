@@ -1,13 +1,13 @@
-from backend.utils.validators import validate_azimuth, validate_name, validate_module_amount, validate_tilt
+from utils.validators import validate_azimuth, validate_name, validate_module_amount, validate_tilt
 from datetime import datetime
 from pydantic import field_validator
 from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from backend.models.projects import Project
-    from backend.models.modules import Module
-    from backend.models.reports import Report
+    from models.projects import Project
+    from models.modules import Module
+    from models.reports import Report
 
 
 def apply_scenario_validators(validator_name: str, value):
