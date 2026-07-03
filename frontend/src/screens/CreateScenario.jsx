@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/table"
 
 import { AuthContext } from "../lib/AuthContext"
-import { useApi } from "../lib/api"
+import { createScenario, useApi } from "../lib/api"
 
 export default function CreateScenario() {
     const { projectId, scenarioId } = useParams();  
@@ -47,6 +47,9 @@ export default function CreateScenario() {
     const { data: manufacturers } = useApi("/api/modules/manufacturers")
 
     const [scenarioName, setScenarioName] = useState("Scenario Name")
+    const [moduleAmount, setModuleAmount] = useState("")
+    const [tilt, setTilt] = useState("")
+    const [azimuth, setAzimuth] = useState("")
     const [selectedManufacturer, setSelectedManufacturer] = useState(null)
     const [selectedModel, setSelectedModel] = useState(null)
 
@@ -65,6 +68,19 @@ export default function CreateScenario() {
         }
         console.log("Scenario name updated:", scenarioName)
     }
+
+    async function handleSubmit(e) {
+        e?.preventDefault?.()
+
+        try {
+            await createScenario(token, {"name": scenarioName, "projectId": projectId, "moduleId": selectedModule.id, "moduleAmount": moduleAmount, "tilt": tilt, "azimuth": azimuth, "nominalPower": selectedModule.nominal_power})
+        } catch (error) {
+            console.error("Error updating scenario:", error)
+        }
+        console.log("Scenario data created:", scenarioName)
+    }
+
+        
 
     if (loading) return <p>Loading...</p>
     if (error) return <p>Something went wrong.</p>
@@ -96,9 +112,7 @@ export default function CreateScenario() {
                             onChange={(e) => setScenarioName(e.target.value)}
                         />
                     </form>
-                    <Link key={project.id} to={`/projects/${project.id}`}>
-                        <Button >Create Scenario</Button>    
-                    </Link>
+                    <Button onClick={handleSubmit}>Create Scenario</Button>    
                 </div>
             </header>
             <div className="main-content">
@@ -107,21 +121,35 @@ export default function CreateScenario() {
                         <h3>System configuration</h3>
                         <Field>
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
-                            <Input id="amount" type="number" placeholder="e.g. 100" />
+                            <Input id="amount" 
+                            type="number" 
+                            placeholder="e.g. 100" 
+                            value={moduleAmount} 
+                            onChange={(e) => setModuleAmount(e.target.value)} />
                             <FieldDescription>
                                 Quantity of modules in the system
                             </FieldDescription>
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="tilt">Tilt</FieldLabel>
-                            <Input id="tilt" type="number" placeholder="e.g. 30" min="0" max="360"/>
+                            <Input id="tilt" 
+                            type="number" 
+                            placeholder="e.g. 30" 
+                            min="0" max="90" 
+                            value={tilt} 
+                            onChange={(e) => setTilt(e.target.value)} />
                             <FieldDescription>
-                                The angle towards the Sun, in degrees (between 0° and 360°)
+                                The angle towards the Sun, in degrees (between 0° and 90°)
                             </FieldDescription>
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="orientation">Azimuth</FieldLabel>
-                            <Input id="orientation" type="number" placeholder="e.g. 0" min="0" max="360"/>
+                            <Input id="orientation" 
+                            type="number" 
+                            placeholder="e.g. 0" 
+                            min="0" max="360" 
+                            value={azimuth} 
+                            onChange={(e) => setAzimuth(e.target.value)} />
                             <FieldDescription>
                                 Orientation relative to the South, in degrees. South orientation is 0°
                             </FieldDescription>
@@ -144,7 +172,7 @@ export default function CreateScenario() {
                                     )}
                                     </ComboboxList>
                                 </ComboboxContent>
-                                </Combobox>
+                            </Combobox>
                             <FieldDescription>
                                 The company that produced the solar module
                             </FieldDescription>
@@ -163,7 +191,7 @@ export default function CreateScenario() {
                                     ))}
                                     </ComboboxList>
                                 </ComboboxContent>
-                                </Combobox>
+                            </Combobox>
                             <FieldDescription>
                                 The model name for the selected manufacturer
                             </FieldDescription>
