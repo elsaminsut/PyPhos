@@ -11,6 +11,14 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox"
+import {
   Field,
   FieldDescription,
   FieldGroup,
@@ -36,8 +44,16 @@ export default function CreateScenario() {
     const { projectId, scenarioId } = useParams();  
     const { token } = useContext(AuthContext)
     const { data: project, loading: loading, error: error } = useApi(`/api/projects/${projectId}`)
+    const { data: manufacturers } = useApi("/api/modules/manufacturers")
 
     const [scenarioName, setScenarioName] = useState("Scenario Name")
+    const [selectedManufacturer, setSelectedManufacturer] = useState(null)
+    const [selectedModel, setSelectedModel] = useState(null)
+
+    const { data: modules } = useApi(
+    selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
+
+    const selectedModule = modules?.find((module) => module.model === selectedModel)
 
     async function handleNameSubmit(e) {
         e?.preventDefault?.()
@@ -116,16 +132,40 @@ export default function CreateScenario() {
                         <h3>Solar module</h3>
                         <Field>
                             <FieldLabel htmlFor="manufacturer">Manufacturer</FieldLabel>
-                            <Input id="manufacturer" type="text" placeholder="e.g. 30"/>
+                            <Combobox items={manufacturers} onValueChange={setSelectedManufacturer}>
+                                <ComboboxInput placeholder="Select a manufacturer" />
+                                <ComboboxContent>
+                                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                    <ComboboxList>
+                                    {(item) => (
+                                        <ComboboxItem key={item} value={item}>
+                                        {item}
+                                        </ComboboxItem>
+                                    )}
+                                    </ComboboxList>
+                                </ComboboxContent>
+                                </Combobox>
                             <FieldDescription>
                                 The company that produced the solar module
                             </FieldDescription>
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="model">Model</FieldLabel>
-                            <Input id="model" type="text" placeholder="e.g. 0"/>
+                            <Combobox items={modules} onValueChange={setSelectedModel}>
+                                <ComboboxInput placeholder="Select a model" />
+                                <ComboboxContent>
+                                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                    <ComboboxList>
+                                    {selectedManufacturer && modules && modules.map((module) => (
+                                        <ComboboxItem key={module.id} value={module.model}>
+                                            {module.model}
+                                        </ComboboxItem>
+                                    ))}
+                                    </ComboboxList>
+                                </ComboboxContent>
+                                </Combobox>
                             <FieldDescription>
-                                The model name of the solar module
+                                The model name for the selected manufacturer
                             </FieldDescription>
                         </Field>
                         <Table>
@@ -133,19 +173,19 @@ export default function CreateScenario() {
                             <TableBody>
                                 <TableRow key="0">
                                     <TableCell className="font-semibold">Technology</TableCell>
-                                    <TableCell>Mono c-Si</TableCell>
+                                    <TableCell>{selectedModule? selectedModule.technology : "—"}</TableCell>
                                 </TableRow>
                                 <TableRow key="1">
                                     <TableCell className="font-semibold">Nominal power</TableCell>
-                                    <TableCell>400 Wp</TableCell>
+                                    <TableCell>{selectedModule? `${selectedModule.nominal_power} Wp` : "—"}</TableCell>
                                 </TableRow>
                                 <TableRow key="2">
                                     <TableCell className="font-semibold">Area</TableCell>
-                                    <TableCell>1.6 m²</TableCell>
+                                    <TableCell>{selectedModule? `${selectedModule.area} m²` : "—"}</TableCell>
                                 </TableRow>
                                 <TableRow key="3">
                                     <TableCell className="font-semibold">Temperature coefficient</TableCell>
-                                    <TableCell>-0.48%/°C</TableCell>
+                                    <TableCell>{selectedModule? `${selectedModule.temp_coeff_pmax} %/°C` : "—"}</TableCell>
                                 </TableRow>
 
                             </TableBody>
