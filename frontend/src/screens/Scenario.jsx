@@ -11,6 +11,14 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox"
+import {
   Field,
   FieldDescription,
   FieldGroup,
@@ -37,24 +45,28 @@ export default function Scenario() {
     const { token } = useContext(AuthContext)
     const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
     const { data: scenario, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios/${scenarioId}`)
+    const { data: manufacturers } = useApi("/api/modules/manufacturers")
     
     const [scenarioName, setScenarioName] = useState("")
     const [moduleAmount, setModuleAmount] = useState("")
     const [tilt, setTilt] = useState("")
-    const [orientation, setOrientation] = useState("")
-    const [manufacturer, setManufacturer] = useState("")
-    const [model, setModel] = useState("")
-
+    const [azimuth, setAzimuth] = useState("")
+    const [selectedManufacturer, setSelectedManufacturer] = useState("")
+    const [selectedModel, setSelectedModel] = useState("")
+    
+    const { data: modules } = useApi(
+        selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
+        
     useEffect(() => {
         if (scenario) {
-            setScenarioName(scenario.name ?? "")
-            setModuleAmount(scenario.module_amount ?? "")
-            setTilt(scenario.tilt ?? "")
-            setOrientation(scenario.azimuth ?? "")
-            setManufacturer(scenario.manufacturer ?? "")
-            setModel(scenario.model ?? "")
-        }
-    }, [scenario])
+                setScenarioName(scenario.name ?? "")
+                setModuleAmount(scenario.module_amount ?? "")
+                setTilt(scenario.tilt ?? "")
+                setAzimuth(scenario.azimuth ?? "")
+                setSelectedManufacturer(scenario.manufacturer ?? "")
+                setSelectedModel(scenario.model ?? "")
+            }
+        }, [scenario])
 
     async function handleNameSubmit(e) {
         e?.preventDefault?.()
@@ -124,7 +136,8 @@ export default function Scenario() {
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
                             <Input id="amount" type="number" value={moduleAmount}
                             onBlur={() => handleScenarioFieldUpdate("module_amount", Number(moduleAmount))}
-                            onChange={(e) => setModuleAmount(e.target.value)} />
+                            onChange={(e) => setModuleAmount(e.target.value)}
+                            placeholder="e.g. 100"/>
                             <FieldDescription>
                                 Quantity of modules in the system
                             </FieldDescription>
@@ -140,10 +153,11 @@ export default function Scenario() {
                             </FieldDescription>
                         </Field>
                         <Field>
-                            <FieldLabel htmlFor="orientation">Azimuth</FieldLabel>
-                            <Input id="orientation" type="number" value={orientation}
-                            onBlur={() => handleScenarioFieldUpdate("azimuth", Number(orientation))}
-                            onChange={(e) => setOrientation(e.target.value)} placeholder="e.g. 0" min="0" max="360"/>
+                            <FieldLabel htmlFor="azimuth">Azimuth</FieldLabel>
+                            <Input id="azimuth" type="number" value={azimuth}
+                            onBlur={() => handleScenarioFieldUpdate("azimuth", Number(azimuth))}
+                            onChange={(e) => setAzimuth(e.target.value)}
+                            placeholder="e.g. 0" min="0" max="360"/>
                             <FieldDescription>
                                 Orientation relative to the South, in degrees. South orientation is 0°
                             </FieldDescription>
@@ -154,16 +168,40 @@ export default function Scenario() {
                         <h3>Solar module</h3>
                         <Field>
                             <FieldLabel htmlFor="manufacturer">Manufacturer</FieldLabel>
-                            <Input id="manufacturer" type="text" placeholder="e.g. 30"/>
+                            <Combobox items={manufacturers} onValueChange={setSelectedManufacturer}>
+                                <ComboboxInput placeholder="Select a manufacturer" value={selectedManufacturer} />
+                                <ComboboxContent>
+                                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                    <ComboboxList>
+                                    {(item) => (
+                                        <ComboboxItem key={item} value={item}>
+                                        {item}
+                                        </ComboboxItem>
+                                    )}
+                                    </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
                             <FieldDescription>
                                 The company that produced the solar module
                             </FieldDescription>
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="model">Model</FieldLabel>
-                            <Input id="model" type="text" placeholder="e.g. 0"/>
+                            <Combobox items={modules} onValueChange={setSelectedModel}>
+                                <ComboboxInput placeholder="Select a model" value={selectedModel} />
+                                <ComboboxContent>
+                                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                    <ComboboxList>
+                                    {selectedManufacturer && modules && modules.map((module) => (
+                                        <ComboboxItem key={module.id} value={module.model}>
+                                            {module.model}
+                                        </ComboboxItem>
+                                    ))}
+                                    </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
                             <FieldDescription>
-                                The model name of the solar module
+                                The model name for the selected manufacturer
                             </FieldDescription>
                         </Field>
                         <Table>

@@ -75,6 +75,17 @@ export function createProject(token, { name, city_input }) {
     })
 }
 
+export function createScenario(token, { name, projectId, moduleId, moduleAmount, tilt, azimuth, nominalPower }) {
+    if (!name.trim() || !moduleId || !moduleAmount.trim() || !tilt.trim() || !azimuth.trim()) {
+        console.error("Field cannot be empty")
+        return
+    }
+    return request(`/projects/${projectId}/scenarios`, token, {
+        method: "POST",
+        body: JSON.stringify({ name, project_id: projectId, module_id: moduleId, module_amount: parseInt(moduleAmount), tilt: parseFloat(tilt), azimuth: parseFloat(azimuth), nominal_power: nominalPower })
+    })
+}
+
 export function updateResource(token, endpoint, updates) {
     if (!updates || typeof updates !== "object" || Object.keys(updates).length === 0) {
         console.error("No updates provided")
