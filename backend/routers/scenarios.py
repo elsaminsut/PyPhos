@@ -77,6 +77,7 @@ def read_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, 
     try:
         validate_user_owns_project(project_id, current_user, session)
         scenario = validate_scenario_belongs_to_project(scenario_id, project_id, session)
+        session.refresh(scenario, ["module"])  # explicitly load the relationship
         return scenario
     except HTTPException:
         raise

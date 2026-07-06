@@ -1,3 +1,4 @@
+from backend.models.modules import ModulePublic
 from backend.utils.validators import validate_azimuth, validate_name, validate_module_amount, validate_tilt
 from datetime import datetime
 from pydantic import field_validator
@@ -54,6 +55,8 @@ class Scenario(ScenarioBase, table=True): # table model
 class ScenarioPublic(ScenarioBase):
     id: int # redeclares id to be an integer (and not None)
     project_id: int
+    module_id: int
+    module: ModulePublic | None = None
     installed_power: float | None
     losses: float | None
     created_at: datetime
