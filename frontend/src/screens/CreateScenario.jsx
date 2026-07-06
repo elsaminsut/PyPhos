@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router"
+import { Link, useNavigate, useParams } from "react-router"
 
 import {
     Breadcrumb,
@@ -43,6 +43,7 @@ import { createScenario, useApi } from "../lib/api"
 export default function CreateScenario() {
     const { projectId, scenarioId } = useParams();  
     const { token } = useContext(AuthContext)
+    const navigate = useNavigate()
     const { data: project, loading: loading, error: error } = useApi(`/api/projects/${projectId}`)
     const { data: manufacturers } = useApi("/api/modules/manufacturers")
 
@@ -74,6 +75,7 @@ export default function CreateScenario() {
 
         try {
             await createScenario(token, {"name": scenarioName, "projectId": projectId, "moduleId": selectedModule.id, "moduleAmount": moduleAmount, "tilt": tilt, "azimuth": azimuth, "nominalPower": selectedModule.nominal_power})
+            navigate(`/projects/${projectId}`)
         } catch (error) {
             console.error("Error updating scenario:", error)
         }
