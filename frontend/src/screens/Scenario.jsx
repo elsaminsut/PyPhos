@@ -63,8 +63,8 @@ export default function Scenario() {
                 setModuleAmount(scenario.module_amount ?? "")
                 setTilt(scenario.tilt ?? "")
                 setAzimuth(scenario.azimuth ?? "")
-                setSelectedManufacturer(scenario.manufacturer ?? "")
-                setSelectedModel(scenario.model ?? "")
+                setSelectedManufacturer(scenario.module?.manufacturer ?? "")
+                setSelectedModel(scenario.module?.model ?? "")
             }
         }, [scenario])
 
@@ -168,7 +168,10 @@ export default function Scenario() {
                         <h3>Solar module</h3>
                         <Field>
                             <FieldLabel htmlFor="manufacturer">Manufacturer</FieldLabel>
-                            <Combobox items={manufacturers} onValueChange={setSelectedManufacturer}>
+                            <Combobox items={manufacturers} onValueChange={(value) => {
+                                setSelectedManufacturer(value)
+                                setSelectedModel("")
+                            }}>
                                 <ComboboxInput placeholder="Select a manufacturer" value={selectedManufacturer} />
                                 <ComboboxContent>
                                     <ComboboxEmpty>No items found.</ComboboxEmpty>
@@ -187,7 +190,13 @@ export default function Scenario() {
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="model">Model</FieldLabel>
-                            <Combobox items={modules} onValueChange={setSelectedModel}>
+                            <Combobox items={modules} onValueChange={(value) => {
+                                setSelectedModel(value)
+                                const module = modules.find(m => m.model === value)
+                                if (module) {
+                                    handleScenarioFieldUpdate("module_id", module.id)
+                                }
+                            }}>
                                 <ComboboxInput placeholder="Select a model" value={selectedModel} />
                                 <ComboboxContent>
                                     <ComboboxEmpty>No items found.</ComboboxEmpty>
