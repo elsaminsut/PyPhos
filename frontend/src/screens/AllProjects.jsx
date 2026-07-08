@@ -25,7 +25,7 @@ const AllProjects = () => {
     return (
     <>
         <Header />
-        <main className="p-8"> 
+        <main className="max-w-[1000px] mx-auto px-8"> 
             <header className="mb-8">
                 <div className="flex justify-between items-center">
                     <h1>Your Projects</h1>

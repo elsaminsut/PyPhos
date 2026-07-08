@@ -93,7 +93,7 @@ export default function Scenario() {
     return (
     <>
         <Header />
-        <main className="p-8">
+        <main className="max-w-[1000px] mx-auto px-8">
             <header className="flex-col mb-8">
                 <Breadcrumb>
                     <BreadcrumbList>
