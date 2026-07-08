@@ -33,10 +33,6 @@ const Project = () => {
         }
     }, [project])
 
-    useEffect(() => {
-        if (project) setProjectLocation(project.location)
-    }, [project])
-
     if (projLoading || scenLoading) return <p>Loading...</p>
     if (projError || scenError) return <p>Something went wrong.</p>
     
@@ -65,7 +61,7 @@ const Project = () => {
     return (
     <>
         <Header />
-        <main className="p-8">
+        <main className="max-w-[1000px] mx-auto px-8">
             <header className="flex-col mb-8">
                 <Breadcrumb>
                     <BreadcrumbList>
@@ -74,7 +70,7 @@ const Project = () => {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                        <BreadcrumbPage>Project {project.id}</BreadcrumbPage>
+                        <BreadcrumbPage>{project.name}</BreadcrumbPage>
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
