@@ -117,3 +117,15 @@ export function updateResourceField(token, endpoint, field, value, options = {})
 export function updateProject(token, projectId, updates) {
     return updateResource(token, `/projects/${projectId}`, updates)
 }
+
+export function calculateScenario(token, projectId, scenarioId) {
+    return request(`/projects/${projectId}/scenarios/${scenarioId}/calculate`, token, {
+        method: "POST"
+    })
+}
+
+export function getReport(token, projectId, scenarioId) {
+    return request(`/projects/${projectId}/scenarios/${scenarioId}/report`, token, {
+        method: "GET"
+    })
+}

@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/table"
 
 import { AuthContext } from "../lib/AuthContext"
-import { createScenario, useApi } from "../lib/api"
+import { calculateScenario, createScenario, useApi } from "../lib/api"
 
 export default function CreateScenario() {
     const { projectId, scenarioId } = useParams();  
@@ -74,7 +74,16 @@ export default function CreateScenario() {
         e?.preventDefault?.()
 
         try {
-            await createScenario(token, {"name": scenarioName, "projectId": projectId, "moduleId": selectedModule.id, "moduleAmount": moduleAmount, "tilt": tilt, "azimuth": azimuth, "nominalPower": selectedModule.nominal_power})
+            const scenario = await createScenario(token, {
+                "name": scenarioName,
+                "projectId": projectId,
+                "moduleId": selectedModule.id,
+                "moduleAmount": moduleAmount,
+                "tilt": tilt,
+                "azimuth": azimuth,
+                "nominalPower": selectedModule.nominal_power
+            })
+            await calculateScenario(token, projectId, scenario.id)
             navigate(`/projects/${projectId}`)
         } catch (error) {
             console.error("Error updating scenario:", error)
