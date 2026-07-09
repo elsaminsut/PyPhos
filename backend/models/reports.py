@@ -16,6 +16,7 @@ class ReportBase(SQLModel): # data model
     monthly_radiation: list[float] | None = Field(default=None, sa_type=JSON)
     specific_yield: float
     perf_ratio: float | None
+    chart_data: list[dict] | None = Field(default=None, sa_type=JSON)
 
 
 class Report(ReportBase, table=True): # table model

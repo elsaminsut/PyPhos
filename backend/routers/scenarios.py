@@ -31,7 +31,7 @@ def create_scenario(current_user: CurrentUser, project_id: int, scenario: Scenar
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
         
         # Calculate installed power
-        installed_power = scenario.module_amount * module.nominal_power
+        installed_power = round(scenario.module_amount * module.nominal_power, 2)
         
         db_scenario = Scenario(
             name=scenario.name,
