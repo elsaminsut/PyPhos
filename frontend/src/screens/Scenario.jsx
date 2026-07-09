@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 
 import {
     Breadcrumb,
@@ -31,18 +31,16 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table"
 
 import { AuthContext } from "../lib/AuthContext"
-import { useApi, updateResourceField } from "../lib/api"
+import { calculateScenario, updateResource, updateResourceField, useApi } from "../lib/api"
 
 export default function Scenario() {
     const { projectId, scenarioId } = useParams();
     const { token } = useContext(AuthContext)
+    const navigate = useNavigate()
     const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
     const { data: scenario, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios/${scenarioId}`)
     const { data: manufacturers } = useApi("/api/modules/manufacturers")
@@ -87,6 +85,26 @@ export default function Scenario() {
         }
     }
 
+    async function handleSubmit(e) {
+        e?.preventDefault?.()
+
+        try {
+            const module = modules?.find((m) => m.model === selectedModel)
+
+            await updateResource(token, `/projects/${projectId}/scenarios/${scenarioId}`, {
+                name: scenarioName.trim(),
+                module_amount: Number(moduleAmount),
+                tilt: Number(tilt),
+                azimuth: Number(azimuth),
+                ...(module ? { module_id: module.id } : {}),
+            })
+            await calculateScenario(token, projectId, scenarioId)
+            navigate(`/projects/${projectId}`)
+        } catch (error) {
+            console.error("Error saving scenario:", error)
+        }
+    }
+
     if (projLoading || scenLoading) return <p>Loading...</p>
     if (projError || scenError) return <p>Something went wrong.</p>
 
@@ -123,9 +141,7 @@ export default function Scenario() {
                             onChange={(e) => setScenarioName(e.target.value)}
                         />
                     </form>
-                    <Link key={project.id} to={`/projects/${project.id}`}>
-                        <Button>View report</Button>    
-                    </Link>
+                    <Button onClick={handleSubmit}>Save scenario</Button>
                 </div>
             </header>
             <div className="main-content">
