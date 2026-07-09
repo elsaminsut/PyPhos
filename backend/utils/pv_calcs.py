@@ -87,11 +87,14 @@ def pv_calculation(latitude: float, longitude: float, installed_power: float, ti
 
     if result:
         radiation = result["outputs"]["totals"]["fixed"]["H(i)_y"]
-        energy_yield = round(result["outputs"]["totals"]["fixed"]["E_y"] / 1000, 2) # convert to kWh
         monthly_results = result["outputs"]["monthly"]["fixed"]
+        monthly_radiation = [round(monthly_results[i]["H(i)_m"], 1) for i in range(len(monthly_results))]
+        energy_yield = round(result["outputs"]["totals"]["fixed"]["E_y"] / 1000, 1) # convert to kWh
         monthly_energy_yield = [round(monthly_results[i]["E_m"] / 1000, 2) for i in range(len(monthly_results))] # convert to kWh
         spec_yield = round(energy_yield * 1000 / installed_power, 2)
+        perf_ratio = energy_yield / (radiation * installed_power)
 
-    return {"radiation": radiation, "energy_yield": energy_yield, 
-            "monthly_energy_yield": monthly_energy_yield, "spec_yield": spec_yield}
+    return {"radiation": radiation, "monthly_radiation": monthly_radiation, "energy_yield": energy_yield, 
+            "monthly_energy_yield": monthly_energy_yield, "spec_yield": spec_yield, "perf_ratio": perf_ratio}
 
+print(pv_calculation(get_location_data("Berlin")["latitude"], get_location_data("Berlin")["longitude"], 1000, 90, 0, 0.13))
