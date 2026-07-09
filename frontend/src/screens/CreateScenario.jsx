@@ -157,12 +157,12 @@ export default function CreateScenario() {
                             <FieldLabel htmlFor="orientation">Azimuth</FieldLabel>
                             <Input id="orientation" 
                             type="number" 
-                            placeholder="e.g. 0" 
-                            min="0" max="360" 
-                            value={azimuth} 
+                            placeholder="e.g. 0"
+                            min="-180" max="180"
+                            value={azimuth}
                             onChange={(e) => setAzimuth(e.target.value)} />
                             <FieldDescription>
-                                Orientation relative to the South, in degrees. South orientation is 0°
+                                Orientation relative to the South, in degrees (between -180° and 180°). South is 0°, West is positive, East is negative
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
@@ -226,7 +226,6 @@ export default function CreateScenario() {
                                     <TableCell className="font-semibold">Temperature coefficient</TableCell>
                                     <TableCell>{selectedModule? `${selectedModule.temp_coeff_pmax} %/°C` : "—"}</TableCell>
                                 </TableRow>
-
                             </TableBody>
                         </Table>
                         </FieldGroup>

@@ -67,12 +67,12 @@ def validate_tilt(tilt: str) -> float:
 def validate_azimuth(azimuth: str) -> float:
     """
     Validate azimuth requirements:
-    - Must be a float between 0 and 360
+    - Must be a float between -180 and 180 (0 = South, 90 = West, -90 = East)
     """
     try:
         azimuth = float(azimuth)
-        if azimuth < 0 or azimuth > 360:
-            raise ValueError('Azimuth must be a float between 0 and 360')
+        if azimuth < -180 or azimuth > 180:
+            raise ValueError('Azimuth must be a float between -180 and 180')
         return azimuth
     except ValueError as e:
         raise ValueError('Azimuth must be a valid float') from e
