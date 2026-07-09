@@ -31,6 +31,8 @@ class Project(ProjectBase, table=True): # table model
 class ProjectPublic(ProjectBase):
     id: int # redeclares id to be an integer (and not None)
     location: str
+    lat: float
+    lon: float
     user_id: int
 
 
