@@ -11,7 +11,13 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import Header from "../components/Header";
-import ScenarioCard from "../components/ScenarioCard";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableRow,
+} from "@/components/ui/table"
 
 import { AuthContext } from "../lib/AuthContext"
 import { useApi, updateResourceField, getReport } from "../lib/api"
@@ -27,7 +33,7 @@ const Project = () => {
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")
     
-    const [selectedScenario, setSelectedScenario] = useState("")
+    const [selectedScenario, setSelectedScenario] = useState(null)
     const [report, setReport] = useState("")
 
     useEffect(() => {
@@ -57,16 +63,6 @@ const Project = () => {
 
         fetchReport()
     }, [selectedScenario])
-
-    useEffect(() => {
-        if (!selectedScenario) return
-
-        const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"]
-        
-
-
-    }, [selectedScenario])
-
 
     console.log("Selected scenario:", selectedScenario)
     console.log("Report: ", report)
@@ -139,41 +135,65 @@ const Project = () => {
                     <div className="bg-gray-200 h-10 w-100 ">MAP</div>
                 </div>
                     {scenarios.length != 0 ?
+                        (selectedScenario ?
                         <div id="report">
                             <div id="name-tabs" className="flex flex-wrap gap-4">
                                 {scenarios.map(scenario => (
-                                    <Button variant="ghost" key={scenario.id} onClick={(e) => setSelectedScenario(scenario)}> 
+                                    <Button variant="ghost" key={scenario.id} onClick={(e) => setSelectedScenario(scenario)}>
                                         {scenario.name}
                                     </Button>
                                 ))}
                             </div>
                             <div id="report-content" className="flex flex-col gap-4">
-                                <div>
-                                    {selectedScenario.name}
+                                <div className="flex justify-between">
+                                    <div>{selectedScenario.name}</div>
+                                    <Link  to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
+                                        <Button variant="secondary">Edit scenario</Button>
+                                    </Link>
                                 </div>
-                                <div className="flex justify-between w-4/5">
-                                    <div>
-                                        <div>
-                                            System configuration
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <p>Module amount: {selectedScenario.module_amount} modules</p>
-                                            <p>Installed power: {selectedScenario.installed_power} kWp</p>
-                                            <p>Tilt: {selectedScenario.tilt}°</p>
-                                            <p>Azimuth: {selectedScenario.azimuth}°</p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div>
-                                            Solar module
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <p>Manufacturer: {selectedScenario.module.manufacturer}</p>
-                                            <p>Model: {selectedScenario.module.model}</p>
-                                            <p>Nominal power: {selectedScenario.module.nominal_power} Wp</p>
-                                            <p>Efficiency: 13%</p>
-                                        </div>
-                                    </div>
+                                <div className="flex gap-8 w-4/5">
+                                    <Table>
+                                        <TableCaption>System configuration</TableCaption>
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Module amount</TableCell>
+                                                <TableCell>{selectedScenario.module_amount} modules</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Installed power</TableCell>
+                                                <TableCell>{selectedScenario.installed_power} kWp</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Tilt</TableCell>
+                                                <TableCell>{selectedScenario.tilt}°</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Azimuth</TableCell>
+                                                <TableCell>{selectedScenario.azimuth}°</TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                    <Table>
+                                        <TableCaption>Solar module</TableCaption>
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Manufacturer</TableCell>
+                                                <TableCell>{selectedScenario.module?.manufacturer}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Model</TableCell>
+                                                <TableCell>{selectedScenario.module?.model}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Nominal power</TableCell>
+                                                <TableCell>{selectedScenario.module?.nominal_power} Wp</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell className="font-semibold">Efficiency</TableCell>
+                                                <TableCell>13%</TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
                                 </div>
                                 { report &&
                                 <div id="output" className="flex flex-col gap-4">
@@ -201,7 +221,7 @@ const Project = () => {
                                 }
                             </div>
                         </div>
-                        
+                        : <p>Loading...</p>)
                     : <p className="text-center">No scenarios yet</p>}
             </div>
         </main>
