@@ -27,7 +27,7 @@ const AllProjects = () => {
         <Header />
         <main className="max-w-[1000px] mx-auto px-8"> 
             <header className="mb-8">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center my-4">
                     <h1>Your Projects</h1>
                     <CreateProjectDialog />
                 </div>

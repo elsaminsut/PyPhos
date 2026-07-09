@@ -10,6 +10,12 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+} from "@/components/ui/card"
 import Header from "../components/Header";
 import Map from "../components/Map";
 import {
@@ -103,7 +109,7 @@ const Project = () => {
         <Header />
         <main className="max-w-[1000px] mx-auto px-8">
             <header className="flex-col mb-8">
-                <Breadcrumb>
+                <Breadcrumb className="my-4">
                     <BreadcrumbList>
                         <BreadcrumbItem>
                         <BreadcrumbLink href="/projects">Your projects</BreadcrumbLink>
@@ -207,23 +213,35 @@ const Project = () => {
                                 { report &&
                                 <div id="output" className="flex flex-col gap-4">
                                     <div>
-                                                <ChartBarInteractive data={report.chart_data} />
+                                        <ChartBarInteractive data={report.chart_data} />
                                     </div>
                                     <div>
                                         <div>
                                             System performance
                                         </div>
-                                        <div className="flex flex-col gap-1">
-                                            <p>Specific yield</p>
-                                            <div className="flex gap-2 text-xl font-bold">
-                                                <div>{report.specific_yield}</div>
-                                                <div>kWh/kWp</div>
-                                            </div>
-                                            <p>Performance ratio</p>
-                                            <div className="flex gap-2 text-xl font-bold">
-                                                <div>{report.perf_ratio}</div>
-                                                <div>%</div>
-                                            </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <Card>
+                                                <CardHeader>
+                                                    <CardDescription>Specific yield</CardDescription>
+                                                </CardHeader>
+                                                <CardContent>
+                                                    <div className="flex items-baseline gap-1.5">
+                                                        <span className="text-4xl font-bold tabular-nums">{report.specific_yield}</span>
+                                                        <span className="text-sm text-muted-foreground">kWh/kWp</span>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                            <Card>
+                                                <CardHeader>
+                                                    <CardDescription>Performance ratio</CardDescription>
+                                                </CardHeader>
+                                                <CardContent>
+                                                    <div className="flex items-baseline gap-1.5">
+                                                        <span className="text-4xl font-bold tabular-nums">{report.perf_ratio}</span>
+                                                        <span className="text-sm text-muted-foreground">%</span>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
                                         </div>
                                     </div>
                                 </div>

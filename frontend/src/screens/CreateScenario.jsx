@@ -98,7 +98,7 @@ export default function CreateScenario() {
         <Header />
         <main className="max-w-[1000px] mx-auto px-8">
             <header className="flex-col mb-8">
-                <Breadcrumb>
+                <Breadcrumb className="my-4">
                     <BreadcrumbList>
                         <BreadcrumbItem>
                         <BreadcrumbLink href="/projects">Your projects</BreadcrumbLink>
