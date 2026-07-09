@@ -157,9 +157,9 @@ export default function Scenario() {
                             <Input id="azimuth" type="number" value={azimuth}
                             onBlur={() => handleScenarioFieldUpdate("azimuth", Number(azimuth))}
                             onChange={(e) => setAzimuth(e.target.value)}
-                            placeholder="e.g. 0" min="0" max="360"/>
+                            placeholder="e.g. 0" min="-180" max="180"/>
                             <FieldDescription>
-                                Orientation relative to the South, in degrees. South orientation is 0°
+                                Orientation relative to the South, in degrees (between -180° and 180°). South is 0°, West is positive, East is negative
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
