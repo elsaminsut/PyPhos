@@ -14,17 +14,20 @@ import Header from "../components/Header";
 import ScenarioCard from "../components/ScenarioCard";
 
 import { AuthContext } from "../lib/AuthContext"
-import { useApi, updateResourceField } from "../lib/api"
+import { useApi, updateResourceField, getReport } from "../lib/api"
 
 
 const Project = () => {
-    const { projectId, scenarioId } = useParams();
+    const { projectId } = useParams();
     const { token } = useContext(AuthContext)
     const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
     const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios`)
     
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")
+    
+    const [selectedScenario, setSelectedScenario] = useState("")
+    const [report, setReport] = useState("")
 
     useEffect(() => {
         if (project) {
@@ -32,6 +35,31 @@ const Project = () => {
             setProjectLocation(project.location ?? "")
         }
     }, [project])
+
+    useEffect(() => {
+        if (scenarios && scenarios.length != 0) {
+            setSelectedScenario(scenarios.at(0))
+        }
+    }, [scenarios])
+
+    useEffect(() => {
+        if (!selectedScenario) return
+
+        const fetchReport = async () => {
+            try {
+                const data = await getReport(token, projectId, selectedScenario.id)
+                setReport(data)
+            } catch (error) {
+                setReport(null)
+            }
+        }
+
+        fetchReport()
+    }, [selectedScenario])
+
+
+    console.log("Selected scenario:", selectedScenario)
+    console.log("Report: ", report)
 
     if (projLoading || scenLoading) return <p>Loading...</p>
     if (projError || scenError) return <p>Something went wrong.</p>
@@ -97,19 +125,57 @@ const Project = () => {
                             />
                         </form>
                     </div>
-                    <div className="bg-yellow-800 h-10 w-100 ">MAP</div>
+                    <div className="bg-gray-200 h-10 w-100 ">MAP</div>
                 </div>
                     {scenarios.length != 0 ?
-                        <div className="grid grid-cols-2 gap-4">
-                            {scenarios.map(scenario => (
-                                <Link className="w-full" key={scenario.id} to={`/projects/${project.id}/scenarios/${scenario.id}`}>
-                                    <ScenarioCard
-                                        id={scenario.id}
-                                        name={scenario.name} 
-                                        />
-                                </Link>
-                            ))}
+                        <div id="report">
+                            <div id="name-tabs" className="flex gap-4">
+                                {scenarios.map(scenario => (
+                                    <Button variant="ghost" key={scenario.id} onClick={(e) => setSelectedScenario(scenario)}> 
+                                        {scenario.name}
+                                    </Button>
+                                ))}
+                            </div>
+                            <div id="report-content" className="flex flex-col gap-4">
+                                <div>
+                                    {selectedScenario.name}
+                                </div>
+                                <div>
+                                    <div>
+                                        System configuration
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <p>Module amount: {selectedScenario.module_amount} modules</p>
+                                        <p>Installed power: {selectedScenario.installed_power} kWp</p>
+                                        <p>Tilt: {selectedScenario.tilt}°</p>
+                                        <p>Azimuth: {selectedScenario.azimuth}°</p>
+                                    </div>
+                                </div>
+                                { report &&
+                                <div id="output" className="flex flex-col gap-4">
+                                    <div>
+                                        <div>
+                                            Energy production
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <p>Annual yield: {report.energy_yield} kWh</p>
+                                            <p>Monthly yield: {report.monthly_yield} kWh</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            System performance
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <p>Specific yield: {report.specific_yield} kWh/kWp</p>
+                                            <p>Performance ratio: 83%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
                         </div>
+                        
                     : <p className="text-center">No scenarios yet</p>}
             </div>
         </main>
