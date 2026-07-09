@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import Header from "../components/Header";
+import Map from "../components/Map";
 import {
     Table,
     TableBody,
@@ -32,7 +33,8 @@ const Project = () => {
     
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")
-    
+    const [projectCoords, setProjectCoords] = useState({ lat: null, lon: null })
+
     const [selectedScenario, setSelectedScenario] = useState(null)
     const [report, setReport] = useState("")
 
@@ -40,6 +42,7 @@ const Project = () => {
         if (project) {
             setProjectName(project.name ?? "")
             setProjectLocation(project.location ?? "")
+            setProjectCoords({ lat: project.lat ?? null, lon: project.lon ?? null })
         }
     }, [project])
 
@@ -86,7 +89,9 @@ const Project = () => {
         e.preventDefault()
 
         try {
-            await updateResourceField(token, `/projects/${projectId}`, "location", projectLocation, { trim: true })
+            const updated = await updateResourceField(token, `/projects/${projectId}`, "city_input", projectLocation, { trim: true })
+            setProjectLocation(updated.location ?? "")
+            setProjectCoords({ lat: updated.lat ?? null, lon: updated.lon ?? null })
         } catch (error) {
             console.error("Error updating project location:", error)
         }
@@ -125,33 +130,37 @@ const Project = () => {
                 <div className="flex justify-between items-center my-8">
                     <div>
                         <p>Location</p>
-                        <form onSubmit={handleLocationSubmit}>
+                        <form onBlur={handleLocationSubmit}>
                             <input id="projectLocation"
                                 value={projectLocation}
                                 onChange={(e) => setProjectLocation(e.target.value)}
                             />
                         </form>
                     </div>
-                    <div className="bg-gray-200 h-10 w-100 ">MAP</div>
+                    <Map lat={projectCoords.lat} lon={projectCoords.lon} className="h-40 w-120 rounded-lg border border-border" />
                 </div>
                     {scenarios.length != 0 ?
                         (selectedScenario ?
                         <div id="report">
-                            <div id="name-tabs" className="flex flex-wrap gap-4">
+                            <div id="name-tabs" className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border scrollbar-none">
                                 {scenarios.map(scenario => (
-                                    <Button variant="ghost" key={scenario.id} onClick={(e) => setSelectedScenario(scenario)}>
+                                    <Button
+                                        variant={selectedScenario.id === scenario.id ? "secondary" : "ghost"}
+                                        key={scenario.id}
+                                        onClick={(e) => setSelectedScenario(scenario)}
+                                    >
                                         {scenario.name}
                                     </Button>
                                 ))}
                             </div>
-                            <div id="report-content" className="flex flex-col gap-4">
+                            <div id="report-content" className="flex flex-col gap-4 my-8">
                                 <div className="flex justify-between">
                                     <div>{selectedScenario.name}</div>
                                     <Link  to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
                                         <Button variant="secondary">Edit scenario</Button>
                                     </Link>
                                 </div>
-                                <div className="flex gap-8 w-4/5">
+                                <div className="flex gap-8 w-full">
                                     <Table>
                                         <TableCaption>System configuration</TableCaption>
                                         <TableBody>
