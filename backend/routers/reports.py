@@ -42,15 +42,14 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
     # Check if report already exists for this scenario
     existing_report = session.exec(select(Report).where(Report.scenario_id == scenario_id)).first()
     
-    # Convert monthly list to JSON string
-    monthly_yield_json = json.dumps(results["monthly_energy_yield"])
-    
     if existing_report:
         # Update existing report, preserving created_at
         existing_report.energy_yield = results["energy_yield"]
-        existing_report.monthly_yield = monthly_yield_json
+        existing_report.monthly_yield = results["monthly_energy_yield"]
         existing_report.radiation = results["radiation"]
+        existing_report.monthly_radiation = results["monthly_radiation"]
         existing_report.specific_yield = results["spec_yield"]
+        existing_report.perf_ratio = results["perf_ratio"]
         existing_report.updated_at = datetime.now()
         session.add(existing_report)
         session.commit()
@@ -60,9 +59,11 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
         db_report = Report(
             scenario_id=scenario.id,
             energy_yield=results["energy_yield"],
-            monthly_yield=monthly_yield_json,
+            monthly_yield=results["monthly_energy_yield"],
             radiation=results["radiation"],
-            specific_yield=results["spec_yield"]
+            monthly_radiation=results["monthly_radiation"],
+            specific_yield=results["spec_yield"],
+            perf_ratio=results["perf_ratio"]
         )
         try:
             session.add(db_report)

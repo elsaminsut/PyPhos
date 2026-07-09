@@ -2,7 +2,7 @@ from backend.models.modules import ModulePublic
 from backend.models.projects import ProjectPublic
 from backend.models.scenarios import ScenarioPublic
 from datetime import datetime
-from sqlmodel import Field, SQLModel, Index, Relationship
+from sqlmodel import Field, SQLModel, Index, Relationship, JSON
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -11,9 +11,11 @@ if TYPE_CHECKING:
 
 class ReportBase(SQLModel): # data model
     energy_yield: float
-    monthly_yield: str # json string to be parsed into a dictionary {month: yield}
+    monthly_yield: list[float] = Field(default=None, sa_type=JSON)
     radiation: float
+    monthly_radiation: list[float] | None = Field(default=None, sa_type=JSON)
     specific_yield: float
+    perf_ratio: float | None
 
 
 class Report(ReportBase, table=True): # table model
