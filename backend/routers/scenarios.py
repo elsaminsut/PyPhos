@@ -99,9 +99,17 @@ def update_scenario(current_user: CurrentUser, project_id: int, scenario_id: int
             module = session.get(Module, scenario.module_id)
             if not module:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
-        
+        else:
+            module = scenario_db.module
+
         scenario_data = scenario.model_dump(exclude_unset=True)
         scenario_data["updated_at"] = datetime.now()
+
+        # Recalculate installed power if the module or module amount changed
+        if "module_id" in scenario_data or "module_amount" in scenario_data:
+            module_amount = scenario_data.get("module_amount", scenario_db.module_amount)
+            scenario_data["installed_power"] = round(module_amount * module.nominal_power, 2)
+
         scenario_db.sqlmodel_update(scenario_data)
         session.add(scenario_db)
         session.commit()
