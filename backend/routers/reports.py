@@ -50,6 +50,7 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
         existing_report.monthly_radiation = results["monthly_radiation"]
         existing_report.specific_yield = results["spec_yield"]
         existing_report.perf_ratio = results["perf_ratio"]
+        existing_report.chart_data = results["chart_data"]
         existing_report.updated_at = datetime.now()
         session.add(existing_report)
         session.commit()
@@ -63,7 +64,8 @@ def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: i
             radiation=results["radiation"],
             monthly_radiation=results["monthly_radiation"],
             specific_yield=results["spec_yield"],
-            perf_ratio=results["perf_ratio"]
+            perf_ratio=results["perf_ratio"],
+            chart_data=results["chart_data"]
         )
         try:
             session.add(db_report)

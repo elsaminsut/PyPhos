@@ -10,7 +10,7 @@ client = PVGISClient()
 load_dotenv()
 API_URL = "https://api.api-ninjas.com/v1/geocoding?city=CITY"
 LOCATION_API_KEY = os.getenv("API_KEY")
-# modules = pd.read_csv("modules/CEC Modules_noheaders.csv")
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 # calculation 
 def get_location_data(city_name: str) -> dict:
@@ -91,10 +91,14 @@ def pv_calculation(latitude: float, longitude: float, installed_power: float, ti
         monthly_radiation = [round(monthly_results[i]["H(i)_m"], 1) for i in range(len(monthly_results))]
         energy_yield = round(result["outputs"]["totals"]["fixed"]["E_y"] / 1000, 1) # convert to kWh
         monthly_energy_yield = [round(monthly_results[i]["E_m"] / 1000, 2) for i in range(len(monthly_results))] # convert to kWh
-        spec_yield = round(energy_yield * 1000 / installed_power, 2)
-        perf_ratio = energy_yield / (radiation * installed_power)
+        spec_yield = round(energy_yield / (installed_power / 1000), 2)
+        perf_ratio = round(energy_yield / (radiation * (installed_power / 1000)) * 100, 1)
+        chart_data = [
+            {"month": MONTHS[i], "yield": monthly_energy_yield[i], "radiation": monthly_radiation[i]}
+            for i in range(len(monthly_results))
+        ]
 
     return {"radiation": radiation, "monthly_radiation": monthly_radiation, "energy_yield": energy_yield, 
-            "monthly_energy_yield": monthly_energy_yield, "spec_yield": spec_yield, "perf_ratio": perf_ratio}
+            "monthly_energy_yield": monthly_energy_yield, "spec_yield": spec_yield, "perf_ratio": perf_ratio, "chart_data": chart_data}
 
-print(pv_calculation(get_location_data("Berlin")["latitude"], get_location_data("Berlin")["longitude"], 1000, 90, 0, 0.13))
+# print(pv_calculation(get_location_data("Berlin")["latitude"], get_location_data("Berlin")["longitude"], 1000, 90, 0, 0.13))
