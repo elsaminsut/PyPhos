@@ -15,6 +15,7 @@ import ScenarioCard from "../components/ScenarioCard";
 
 import { AuthContext } from "../lib/AuthContext"
 import { useApi, updateResourceField, getReport } from "../lib/api"
+import { ChartBarInteractive } from "../components/BarChart";
 
 
 const Project = () => {
@@ -57,9 +58,19 @@ const Project = () => {
         fetchReport()
     }, [selectedScenario])
 
+    useEffect(() => {
+        if (!selectedScenario) return
+
+        const months = ["Jan","Feb","Mar","Apr","May","Jun", "Jul","Aug","Sep","Oct","Nov","Dec"]
+        
+
+
+    }, [selectedScenario])
+
 
     console.log("Selected scenario:", selectedScenario)
     console.log("Report: ", report)
+
 
     if (projLoading || scenLoading) return <p>Loading...</p>
     if (projError || scenError) return <p>Something went wrong.</p>
@@ -129,7 +140,7 @@ const Project = () => {
                 </div>
                     {scenarios.length != 0 ?
                         <div id="report">
-                            <div id="name-tabs" className="flex gap-4">
+                            <div id="name-tabs" className="flex flex-wrap gap-4">
                                 {scenarios.map(scenario => (
                                     <Button variant="ghost" key={scenario.id} onClick={(e) => setSelectedScenario(scenario)}> 
                                         {scenario.name}
@@ -140,35 +151,50 @@ const Project = () => {
                                 <div>
                                     {selectedScenario.name}
                                 </div>
-                                <div>
+                                <div className="flex justify-between w-4/5">
                                     <div>
-                                        System configuration
+                                        <div>
+                                            System configuration
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <p>Module amount: {selectedScenario.module_amount} modules</p>
+                                            <p>Installed power: {selectedScenario.installed_power} kWp</p>
+                                            <p>Tilt: {selectedScenario.tilt}°</p>
+                                            <p>Azimuth: {selectedScenario.azimuth}°</p>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col gap-1">
-                                        <p>Module amount: {selectedScenario.module_amount} modules</p>
-                                        <p>Installed power: {selectedScenario.installed_power} kWp</p>
-                                        <p>Tilt: {selectedScenario.tilt}°</p>
-                                        <p>Azimuth: {selectedScenario.azimuth}°</p>
+                                    <div>
+                                        <div>
+                                            Solar module
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <p>Manufacturer: {selectedScenario.module.manufacturer}</p>
+                                            <p>Model: {selectedScenario.module.model}</p>
+                                            <p>Nominal power: {selectedScenario.module.nominal_power} Wp</p>
+                                            <p>Efficiency: 13%</p>
+                                        </div>
                                     </div>
                                 </div>
                                 { report &&
                                 <div id="output" className="flex flex-col gap-4">
                                     <div>
-                                        <div>
-                                            Energy production
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <p>Annual yield: {report.energy_yield} kWh</p>
-                                            <p>Monthly yield: {report.monthly_yield} kWh</p>
-                                        </div>
+                                                <ChartBarInteractive data={report.chart_data} />
                                     </div>
                                     <div>
                                         <div>
                                             System performance
                                         </div>
                                         <div className="flex flex-col gap-1">
-                                            <p>Specific yield: {report.specific_yield} kWh/kWp</p>
-                                            <p>Performance ratio: 83%</p>
+                                            <p>Specific yield</p>
+                                            <div className="flex gap-2 text-xl font-bold">
+                                                <div>{report.specific_yield}</div>
+                                                <div>kWh/kWp</div>
+                                            </div>
+                                            <p>Performance ratio</p>
+                                            <div className="flex gap-2 text-xl font-bold">
+                                                <div>{report.perf_ratio}</div>
+                                                <div>%</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
