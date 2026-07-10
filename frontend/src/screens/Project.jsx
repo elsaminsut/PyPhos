@@ -143,7 +143,9 @@ const Project = () => {
                             />
                         </form>
                     </div>
-                    <Map lat={projectCoords.lat} lon={projectCoords.lon} className="h-40 w-120 rounded-lg border border-border" />
+                    <div className="isolate">
+                        <Map lat={projectCoords.lat} lon={projectCoords.lon} className="h-40 w-120 rounded-lg border border-border" />
+                    </div>
                 </div>
                     {scenarios.length != 0 ?
                         (selectedScenario ?
