@@ -21,6 +21,7 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -36,6 +37,7 @@ import {
 
 import { AuthContext } from "../lib/AuthContext"
 import { calculateScenario, updateResource, updateResourceField, useApi } from "../lib/api"
+import { validateModuleAmount, validateName } from "../lib/validators"
 import { AngleSlider } from "../components/AngleSlider";
 
 export default function Scenario() {
@@ -52,10 +54,19 @@ export default function Scenario() {
     const [azimuth, setAzimuth] = useState("")
     const [selectedManufacturer, setSelectedManufacturer] = useState("")
     const [selectedModel, setSelectedModel] = useState("")
-    
+    const [touched, setTouched] = useState({})
+
     const { data: modules } = useApi(
         selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
-        
+
+    const nameCheck = validateName(scenarioName, "Scenario name")
+    const moduleAmountCheck = validateModuleAmount(moduleAmount)
+    const isFormValid = nameCheck.valid && moduleAmountCheck.valid
+
+    function markTouched(field) {
+        setTouched((t) => ({ ...t, [field]: true }))
+    }
+
     useEffect(() => {
         if (scenario) {
                 setScenarioName(scenario.name ?? "")
@@ -69,6 +80,9 @@ export default function Scenario() {
 
     async function handleNameSubmit(e) {
         e?.preventDefault?.()
+        markTouched("name")
+
+        if (!validateName(scenarioName, "Scenario name").valid) return
 
         try {
             await updateResourceField(token, `/projects/${projectId}/scenarios/${scenarioId}`, "name", scenarioName, { trim: true })
@@ -88,6 +102,11 @@ export default function Scenario() {
 
     async function handleSubmit(e) {
         e?.preventDefault?.()
+
+        if (!isFormValid) {
+            setTouched({ name: true, moduleAmount: true })
+            return
+        }
 
         try {
             const module = modules?.find((m) => m.model === selectedModel)
@@ -129,35 +148,51 @@ export default function Scenario() {
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-                <div className="flex justify-between items-center">
-                    <form onSubmit={handleNameSubmit}>
-                        <Input id="scenarioName"
-                            value={scenarioName}
-                            onBlur={() => handleNameSubmit()}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    handleNameSubmit(e)
-                                }
-                            }}
-                            onChange={(e) => setScenarioName(e.target.value)}
-                        />
+                <div className="flex justify-between items-start">
+                    <form onSubmit={handleNameSubmit} className="w-full max-w-xs">
+                        <Field data-invalid={touched.name && !nameCheck.valid}>
+                            <Input id="scenarioName"
+                                value={scenarioName}
+                                aria-invalid={touched.name && !nameCheck.valid}
+                                onBlur={() => handleNameSubmit()}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        handleNameSubmit(e)
+                                    }
+                                }}
+                                onChange={(e) => setScenarioName(e.target.value)}
+                            />
+                            {touched.name && !nameCheck.valid && (
+                                <FieldError>{nameCheck.message}</FieldError>
+                            )}
+                        </Field>
                     </form>
-                    <Button onClick={handleSubmit}>Save scenario</Button>
+                    <Button onClick={handleSubmit} disabled={!isFormValid}>Save scenario</Button>
                 </div>
             </header>
             <div className="main-content">
                 <div className="flex gap-4">
                     <FieldGroup>
                         <h3>System configuration</h3>
-                        <Field>
+                        <Field data-invalid={touched.moduleAmount && !moduleAmountCheck.valid}>
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
                             <Input id="amount" type="number" value={moduleAmount}
-                            onBlur={() => handleScenarioFieldUpdate("module_amount", Number(moduleAmount))}
+                            aria-invalid={touched.moduleAmount && !moduleAmountCheck.valid}
+                            onBlur={() => {
+                                markTouched("moduleAmount")
+                                if (validateModuleAmount(moduleAmount).valid) {
+                                    handleScenarioFieldUpdate("module_amount", Number(moduleAmount))
+                                }
+                            }}
                             onChange={(e) => setModuleAmount(e.target.value)}
                             placeholder="e.g. 100"/>
-                            <FieldDescription>
-                                Quantity of modules in the system
-                            </FieldDescription>
+                            {touched.moduleAmount && !moduleAmountCheck.valid ? (
+                                <FieldError>{moduleAmountCheck.message}</FieldError>
+                            ) : (
+                                <FieldDescription>
+                                    Quantity of modules in the system
+                                </FieldDescription>
+                            )}
                         </Field>
                         <Field>
                             <AngleSlider

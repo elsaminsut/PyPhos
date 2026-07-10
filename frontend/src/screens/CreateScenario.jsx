@@ -54,7 +54,6 @@ export default function CreateScenario() {
     const [selectedManufacturer, setSelectedManufacturer] = useState(null)
     const [selectedModel, setSelectedModel] = useState(null)
     const [touched, setTouched] = useState({})
-    const [submitError, setSubmitError] = useState(null)
 
     const { data: modules } = useApi(
     selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
@@ -82,7 +81,6 @@ export default function CreateScenario() {
 
     async function handleSubmit(e) {
         e?.preventDefault?.()
-        setSubmitError(null)
 
         if (!isFormValid) {
             setTouched({ name: true, moduleAmount: true })
@@ -103,11 +101,6 @@ export default function CreateScenario() {
             navigate(`/projects/${projectId}`)
         } catch (error) {
             console.error("Error creating scenario:", error)
-            setSubmitError(
-                typeof error.detail === "string"
-                    ? error.detail
-                    : "Failed to create scenario. Please check your inputs and try again."
-            )
         }
     }
 
@@ -152,9 +145,6 @@ export default function CreateScenario() {
                     </form>
                     <div className="flex flex-col items-end gap-1">
                         <Button onClick={handleSubmit} disabled={!isFormValid}>Create Scenario</Button>
-                        {submitError && (
-                            <p className="text-sm text-destructive">{submitError}</p>
-                        )}
                     </div>
                 </div>
             </header>
