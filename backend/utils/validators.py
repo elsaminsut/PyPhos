@@ -27,10 +27,10 @@ def validate_password(password: str) -> str:
 def validate_name(name: str) -> str:
     """
     Validate name (project or scenario) requirements:
-    - Between 5 and 50 characters
+    - Between 1 and 20 characters
     """
-    if len(name) < 5 or len(name) > 50:
-        raise ValueError('Name must be between 5 and 50 characters')
+    if len(name) < 1 or len(name) > 20:
+        raise ValueError('Name must be between 1 and 20 characters')
     
     return name
 
@@ -38,13 +38,13 @@ def validate_name(name: str) -> str:
 def validate_module_amount(amount: str) -> int:
     """
     Validate module amount requirements:
-    - Must be between 1 and 1000
+    - Must be between 1 and 5000
     - Must be an integer
     """
     try:
         amount = int(amount)
-        if amount < 1 or amount > 1000:
-            raise ValueError('Module amount must be a positive integer between 1 and 1000')
+        if amount < 1 or amount > 5000:
+            raise ValueError('Module amount must be a positive integer between 1 and 5000')
         return amount
     except ValueError as e:
         raise ValueError('Module amount must be a valid integer') from e

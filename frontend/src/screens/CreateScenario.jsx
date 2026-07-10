@@ -21,6 +21,7 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -36,6 +37,7 @@ import {
 
 import { AuthContext } from "../lib/AuthContext"
 import { calculateScenario, createScenario, useApi } from "../lib/api"
+import { validateModuleAmount, validateName } from "../lib/validators"
 import { AngleSlider } from "../components/AngleSlider";
 
 export default function CreateScenario() {
@@ -47,15 +49,25 @@ export default function CreateScenario() {
 
     const [scenarioName, setScenarioName] = useState("Scenario Name")
     const [moduleAmount, setModuleAmount] = useState("")
-    const [tilt, setTilt] = useState("")
-    const [azimuth, setAzimuth] = useState("")
+    const [tilt, setTilt] = useState(0)
+    const [azimuth, setAzimuth] = useState(0)
     const [selectedManufacturer, setSelectedManufacturer] = useState(null)
     const [selectedModel, setSelectedModel] = useState(null)
+    const [touched, setTouched] = useState({})
+    const [submitError, setSubmitError] = useState(null)
 
     const { data: modules } = useApi(
     selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
 
     const selectedModule = modules?.find((module) => module.model === selectedModel)
+
+    const nameCheck = validateName(scenarioName, "Scenario name")
+    const moduleAmountCheck = validateModuleAmount(moduleAmount)
+    const isFormValid = nameCheck.valid && moduleAmountCheck.valid && !!selectedModule
+
+    function markTouched(field) {
+        setTouched((t) => ({ ...t, [field]: true }))
+    }
 
     async function handleNameSubmit(e) {
         e?.preventDefault?.()
@@ -70,6 +82,12 @@ export default function CreateScenario() {
 
     async function handleSubmit(e) {
         e?.preventDefault?.()
+        setSubmitError(null)
+
+        if (!isFormValid) {
+            setTouched({ name: true, moduleAmount: true })
+            return
+        }
 
         try {
             const scenario = await createScenario(token, {
@@ -84,9 +102,13 @@ export default function CreateScenario() {
             await calculateScenario(token, projectId, scenario.id)
             navigate(`/projects/${projectId}`)
         } catch (error) {
-            console.error("Error updating scenario:", error)
+            console.error("Error creating scenario:", error)
+            setSubmitError(
+                typeof error.detail === "string"
+                    ? error.detail
+                    : "Failed to create scenario. Please check your inputs and try again."
+            )
         }
-        console.log("Scenario data created:", scenarioName)
     }
 
         
@@ -114,30 +136,48 @@ export default function CreateScenario() {
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-                <div className="flex justify-between items-center">
-                    <form>
-                        <Input id="scenarioName"
-                            value={scenarioName}
-                            onChange={(e) => setScenarioName(e.target.value)}
-                        />
+                <div className="flex justify-between items-start">
+                    <form className="w-full max-w-xs">
+                        <Field data-invalid={touched.name && !nameCheck.valid}>
+                            <Input id="scenarioName"
+                                value={scenarioName}
+                                aria-invalid={touched.name && !nameCheck.valid}
+                                onBlur={() => markTouched("name")}
+                                onChange={(e) => setScenarioName(e.target.value)}
+                            />
+                            {touched.name && !nameCheck.valid && (
+                                <FieldError>{nameCheck.message}</FieldError>
+                            )}
+                        </Field>
                     </form>
-                    <Button onClick={handleSubmit}>Create Scenario</Button>    
+                    <div className="flex flex-col items-end gap-1">
+                        <Button onClick={handleSubmit} disabled={!isFormValid}>Create Scenario</Button>
+                        {submitError && (
+                            <p className="text-sm text-destructive">{submitError}</p>
+                        )}
+                    </div>
                 </div>
             </header>
             <div className="main-content">
                 <div className="flex gap-4">
                     <FieldGroup>
                         <h3>System configuration</h3>
-                        <Field>
+                        <Field data-invalid={touched.moduleAmount && !moduleAmountCheck.valid}>
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
-                            <Input id="amount" 
-                            type="number" 
-                            placeholder="e.g. 100" 
-                            value={moduleAmount} 
+                            <Input id="amount"
+                            type="number"
+                            placeholder="e.g. 100"
+                            value={moduleAmount}
+                            aria-invalid={touched.moduleAmount && !moduleAmountCheck.valid}
+                            onBlur={() => markTouched("moduleAmount")}
                             onChange={(e) => setModuleAmount(e.target.value)} />
-                            <FieldDescription>
-                                Quantity of modules in the system
-                            </FieldDescription>
+                            {touched.moduleAmount && !moduleAmountCheck.valid ? (
+                                <FieldError>{moduleAmountCheck.message}</FieldError>
+                            ) : (
+                                <FieldDescription>
+                                    Quantity of modules in the system
+                                </FieldDescription>
+                            )}
                         </Field>
                         <Field>
                             <AngleSlider
