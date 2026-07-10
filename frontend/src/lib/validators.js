@@ -19,3 +19,29 @@ export function validateModuleAmount(value) {
     }
     return { valid: true, message: null }
 }
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+export function validateEmail(value) {
+    if (!EMAIL_REGEX.test(value ?? "")) {
+        return { valid: false, message: "Email must be a valid email address" }
+    }
+    return { valid: true, message: null }
+}
+
+export function validatePassword(value) {
+    const password = value ?? ""
+    if (password.length < 8 || password.length > 16) {
+        return { valid: false, message: "Password must be between 8 and 16 characters" }
+    }
+    if (!/[A-Z]/.test(password)) {
+        return { valid: false, message: "Password must contain at least one uppercase letter" }
+    }
+    if (!/[0-9]/.test(password)) {
+        return { valid: false, message: "Password must contain at least one number" }
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        return { valid: false, message: 'Password must contain at least one symbol (!@#$%^&*(),.?":{}|<>)' }
+    }
+    return { valid: true, message: null }
+}

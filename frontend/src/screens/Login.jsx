@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { useNavigate } from 'react-router'
 
 import { AuthContext } from '@/lib/AuthContext'
@@ -7,13 +7,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field"
-import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
-import { LoginForm } from "@/components/login-form"
+import { validateEmail, validatePassword } from "@/lib/validators"
 
 import FacadeImg from "../assets/martin-woortman-NzW5ytrqi34-unsplash.jpg"
 import '../index.css'
@@ -21,29 +20,46 @@ import '../index.css'
 const LoginPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [touched, setTouched] = useState({})
+  const [loginError, setLoginError] = useState(null)
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
+  const emailCheck = validateEmail(email)
+  const passwordCheck = validatePassword(password)
+  const isFormValid = emailCheck.valid && passwordCheck.valid
+
+  function markTouched(field) {
+    setTouched((t) => ({ ...t, [field]: true }))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+    setLoginError(null)
+
+    if (!isFormValid) {
+      setTouched({ email: true, password: true })
+      return
+    }
+
     try {
       const response = await fetch('/api/login/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded'},
         body: new URLSearchParams({ username: email, password })
       })
-      
+
       const data = await response.json()
-      
+
       if (response.ok) {
         login(data.access_token)
         navigate('/projects')
       } else {
-        alert(data.detail)
+        setLoginError(data.detail || "Failed to log in")
       }
     } catch (error) {
       console.error('Error logging in:', error)
+      setLoginError("Failed to log in. Please try again.")
     }
   };
 
@@ -61,7 +77,7 @@ const LoginPage = () => {
                           Login to your PyPhos account
                         </p>
                       </div>
-                      <Field>
+                      <Field data-invalid={touched.email && !emailCheck.valid}>
                         <FieldLabel htmlFor="email">Email</FieldLabel>
                         <Input
                           id="email"
@@ -69,11 +85,16 @@ const LoginPage = () => {
                           placeholder="m@example.com"
                           autoComplete="email"
                           value={email}
+                          aria-invalid={touched.email && !emailCheck.valid}
+                          onBlur={() => markTouched("email")}
                           onChange={(e) => setEmail(e.target.value)}
                           required
                         />
+                        {touched.email && !emailCheck.valid && (
+                          <FieldError>{emailCheck.message}</FieldError>
+                        )}
                       </Field>
-                      <Field>
+                      <Field data-invalid={touched.password && !passwordCheck.valid}>
                         <div className="flex items-center">
                           <FieldLabel htmlFor="password">Password</FieldLabel>
                           {/* <a
@@ -83,16 +104,24 @@ const LoginPage = () => {
                             Forgot your password?
                           </a> */}
                         </div>
-                        <Input 
-                          id="password" 
+                        <Input
+                          id="password"
                           type="password"
                           autoComplete="current-password"
                           value={password}
-                          onChange={(e) => setPassword(e.target.value)}                          
+                          aria-invalid={touched.password && !passwordCheck.valid}
+                          onBlur={() => markTouched("password")}
+                          onChange={(e) => setPassword(e.target.value)}
                           required />
+                        {touched.password && !passwordCheck.valid && (
+                          <FieldError>{passwordCheck.message}</FieldError>
+                        )}
                       </Field>
                       <Field>
-                        <Button type="submit">Login</Button>
+                        <Button type="submit" disabled={!isFormValid}>Login</Button>
+                        {loginError && (
+                          <p className="text-sm text-destructive text-center">{loginError}</p>
+                        )}
                       </Field>
                       <FieldDescription className="text-center">
                         Don&apos;t have an account? <a href="#">Sign up</a>
