@@ -36,6 +36,7 @@ import {
 
 import { AuthContext } from "../lib/AuthContext"
 import { calculateScenario, createScenario, useApi } from "../lib/api"
+import { AngleSlider } from "../components/AngleSlider";
 
 export default function CreateScenario() {
     const { projectId, scenarioId } = useParams();  
@@ -115,7 +116,7 @@ export default function CreateScenario() {
                 </Breadcrumb>
                 <div className="flex justify-between items-center">
                     <form>
-                        <input id="scenarioName"
+                        <Input id="scenarioName"
                             value={scenarioName}
                             onChange={(e) => setScenarioName(e.target.value)}
                         />
@@ -139,28 +140,30 @@ export default function CreateScenario() {
                             </FieldDescription>
                         </Field>
                         <Field>
-                            <FieldLabel htmlFor="tilt">Tilt</FieldLabel>
-                            <Input id="tilt" 
-                            type="number" 
-                            placeholder="e.g. 30" 
-                            min="0" max="90" 
-                            value={tilt} 
-                            onChange={(e) => setTilt(e.target.value)} />
-                            <FieldDescription>
-                                The angle towards the Sun, in degrees (between 0° and 90°)
-                            </FieldDescription>
+                            <AngleSlider
+                                name="Tilt"
+                                min={0}
+                                max={90}
+                                value={Number(tilt) || 0}
+                                onValueChange={(v) => setTilt(v)}
+                                onValueCommitted={(v) => setTilt(v)}
+                                />
+                                <FieldDescription>
+                                    The angle towards the Sun, in degrees (between 0° and 90°)
+                                </FieldDescription>
                         </Field>
                         <Field>
-                            <FieldLabel htmlFor="orientation">Azimuth</FieldLabel>
-                            <Input id="orientation" 
-                            type="number" 
-                            placeholder="e.g. 0"
-                            min="-180" max="180"
-                            value={azimuth}
-                            onChange={(e) => setAzimuth(e.target.value)} />
-                            <FieldDescription>
-                                Orientation relative to the South, in degrees (between -180° and 180°). South is 0°, West is positive, East is negative
-                            </FieldDescription>
+                            <AngleSlider
+                                name="Azimuth"
+                                min={-180}
+                                max={180}
+                                value={Number(azimuth) || 0}
+                                onValueChange={(v) => setAzimuth(v)}
+                                onValueCommitted={(v) => setAzimuth(v)}
+                                />
+                                <FieldDescription>
+                                    Orientation relative to the South, in degrees (between -180° and 180°). South is 0°, West is positive, East is negative
+                                </FieldDescription>
                         </Field>
                     </FieldGroup>
                     <div className="module w-full">
