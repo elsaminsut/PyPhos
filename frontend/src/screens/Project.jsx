@@ -26,6 +26,8 @@ import {
     TableCell,
     TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 
 import { AuthContext } from "../lib/AuthContext"
 import { useApi, updateResourceField, getReport } from "../lib/api"
@@ -157,17 +159,16 @@ const Project = () => {
                     {scenarios.length != 0 ?
                         (selectedScenario ?
                         <div id="report">
-                            <div id="name-tabs" className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border scrollbar-none">
-                                {scenarios.map(scenario => (
-                                    <Button
-                                        variant={selectedScenario.id === scenario.id ? "secondary" : "ghost"}
-                                        key={scenario.id}
+                            <Tabs defaultValue="overview" className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border 
+                            scrollbar-none sticky top-16 bg-background z-50">
+                                <TabsList variant="line">
+                                    {scenarios.map(scenario => (
+                                        <TabsTrigger value={scenario.name} key={scenario.id}
                                         onClick={(e) => setSelectedScenario(scenario)}
-                                    >
-                                        {scenario.name}
-                                    </Button>
-                                ))}
-                            </div>
+                                        >{scenario.name}</TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </Tabs>
                             <div id="report-content" className="flex flex-col gap-4 my-8">
                                 <div className="flex justify-between">
                                     <div>{selectedScenario.name}</div>
