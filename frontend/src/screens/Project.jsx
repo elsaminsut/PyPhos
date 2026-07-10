@@ -17,6 +17,7 @@ import {
     CardHeader,
 } from "@/components/ui/card"
 import Header from "../components/Header";
+import { Input } from "@/components/ui/input"
 import Map from "../components/Map";
 import {
     Table,
@@ -122,8 +123,14 @@ const Project = () => {
                 </Breadcrumb>
                 <div className="flex justify-between items-center">
                     <form onSubmit={handleNameSubmit}>
-                        <input id="projectName"
+                        <Input id="projectName"
                             value={projectName}
+                            onBlur={handleNameSubmit}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleNameSubmit(e)
+                                }
+                            }}
                             onChange={(e) => setProjectName(e.target.value)}
                         />
                     </form>
@@ -136,8 +143,8 @@ const Project = () => {
                 <div className="flex justify-between items-center my-8">
                     <div>
                         <p>Location</p>
-                        <form onBlur={handleLocationSubmit}>
-                            <input id="projectLocation"
+                        <form onSubmit={handleLocationSubmit} onBlur={handleLocationSubmit}>
+                            <Input id="projectLocation"
                                 value={projectLocation}
                                 onChange={(e) => setProjectLocation(e.target.value)}
                             />
