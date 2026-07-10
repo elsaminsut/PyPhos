@@ -10,11 +10,12 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 
 import { AuthContext } from "../lib/AuthContext"
 import { createProject } from "../lib/api"
+import { validateName } from "../lib/validators"
 
 export default function CreateProjectDialog() {
     const { token } = useContext(AuthContext)
@@ -25,11 +26,26 @@ export default function CreateProjectDialog() {
     const [cityInput, setCityInput] = useState("")
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState(null)
+    const [touched, setTouched] = useState({})
+
+    const nameCheck = validateName(name, "Project name")
+    const cityCheck = validateName(cityInput, "Location")
+    const isFormValid = nameCheck.valid && cityCheck.valid
+
+    function markTouched(field) {
+        setTouched((t) => ({ ...t, [field]: true }))
+    }
 
     async function handleSubmit(e) {
         e.preventDefault()
-        setSubmitting(true)
         setError(null)
+
+        if (!isFormValid) {
+            setTouched({ name: true, city: true })
+            return
+        }
+
+        setSubmitting(true)
 
         try {
             const project = await createProject(token, { name, city_input: cityInput })
@@ -52,29 +68,39 @@ export default function CreateProjectDialog() {
                     <DialogTitle>Create a new project</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">Project name</Label>
+                    <Field data-invalid={touched.name && !nameCheck.valid}>
+                        <FieldLabel htmlFor="name">Project name</FieldLabel>
                         <Input
                             id="name"
                             placeholder="Project name"
                             value={name}
+                            aria-invalid={touched.name && !nameCheck.valid}
+                            onBlur={() => markTouched("name")}
                             onChange={(e) => setName(e.target.value)}
                             required
                         />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <Label htmlFor="city">Location</Label>
+                        {touched.name && !nameCheck.valid && (
+                            <FieldError>{nameCheck.message}</FieldError>
+                        )}
+                    </Field>
+                    <Field data-invalid={touched.city && !cityCheck.valid}>
+                        <FieldLabel htmlFor="city">Location</FieldLabel>
                         <Input
                             id="city"
                             placeholder="City"
                             value={cityInput}
+                            aria-invalid={touched.city && !cityCheck.valid}
+                            onBlur={() => markTouched("city")}
                             onChange={(e) => setCityInput(e.target.value)}
                             required
                         />
-                    </div>
+                        {touched.city && !cityCheck.valid && (
+                            <FieldError>{cityCheck.message}</FieldError>
+                        )}
+                    </Field>
                     {error && <p className="text-sm text-red-500">{error}</p>}
                     <DialogFooter>
-                        <Button type="submit" disabled={submitting}>
+                        <Button type="submit" disabled={submitting || !isFormValid}>
                             {submitting ? "Saving..." : "Save"}
                         </Button>
                     </DialogFooter>
