@@ -16,8 +16,9 @@ import {
     CardDescription,
     CardHeader,
 } from "@/components/ui/card"
+import { ChartBarInteractive } from "../components/BarChart";
+import EditProjectDialog from "../components/EditProjectDialog"
 import Header from "../components/Header";
-import { Input } from "@/components/ui/input"
 import Map from "../components/Map";
 import {
     Table,
@@ -30,8 +31,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 
 import { AuthContext } from "../lib/AuthContext"
-import { useApi, updateResourceField, getReport } from "../lib/api"
-import { ChartBarInteractive } from "../components/BarChart";
+import { useApi, getReport } from "../lib/api"
+
 
 
 const Project = () => {
@@ -82,36 +83,18 @@ const Project = () => {
 
     if (projLoading || scenLoading) return <p>Loading...</p>
     if (projError || scenError) return <p>Something went wrong.</p>
-    
-    async function handleNameSubmit(e) {
-        e.preventDefault()
 
-        try {
-            await updateResourceField(token, `/projects/${projectId}`, "name", projectName, { trim: true })
-        } catch (error) {
-            console.error("Error updating project name:", error)
-        }
-        console.log("Project name updated:", projectName)
-    }
-
-    async function handleLocationSubmit(e) {
-        e.preventDefault()
-
-        try {
-            const updated = await updateResourceField(token, `/projects/${projectId}`, "city_input", projectLocation, { trim: true })
-            setProjectLocation(updated.location ?? "")
-            setProjectCoords({ lat: updated.lat ?? null, lon: updated.lon ?? null })
-        } catch (error) {
-            console.error("Error updating project location:", error)
-        }
-        console.log("Location updated:", projectLocation)
+    function handleProjectSaved(updated) {
+        setProjectName(updated.name ?? "")
+        setProjectLocation(updated.location ?? "")
+        setProjectCoords({ lat: updated.lat ?? null, lon: updated.lon ?? null })
     }
 
     return (
     <>
         <Header />
         <main className="max-w-[1000px] mx-auto px-8">
-            <header className="flex-col mb-8">
+            <header className="flex-col">
                 <Breadcrumb className="my-4">
                     <BreadcrumbList>
                         <BreadcrumbItem>
@@ -124,36 +107,15 @@ const Project = () => {
                     </BreadcrumbList>
                 </Breadcrumb>
                 <div className="flex justify-between items-center">
-                    <form onSubmit={handleNameSubmit}>
-                        <Input id="projectName"
-                            value={projectName}
-                            onBlur={handleNameSubmit}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    handleNameSubmit(e)
-                                }
-                            }}
-                            onChange={(e) => setProjectName(e.target.value)}
-                        />
-                    </form>
-                    <Link key={project.id} to={`/projects/${project.id}/scenarios/create`}>
-                        <Button >New Scenario</Button>    
-                    </Link>
+                    <h1>{projectName}</h1>
+                    <EditProjectDialog onSaved={handleProjectSaved} />
                 </div>
             </header>
             <div className="main-content">
-                <div className="flex justify-between items-center my-8">
-                    <div>
-                        <p>Location</p>
-                        <form onSubmit={handleLocationSubmit} onBlur={handleLocationSubmit}>
-                            <Input id="projectLocation"
-                                value={projectLocation}
-                                onChange={(e) => setProjectLocation(e.target.value)}
-                            />
-                        </form>
-                    </div>
+                <div className="flex flex-col gap-4 my-4">
+                    <h3>{projectLocation}</h3>
                     <div className="isolate">
-                        <Map lat={projectCoords.lat} lon={projectCoords.lon} className="h-40 w-120 rounded-lg border border-border" />
+                        <Map lat={projectCoords.lat} lon={projectCoords.lon} className="h-40 w-full rounded-lg border border-border" />
                     </div>
                 </div>
                     {scenarios.length != 0 ?
@@ -171,7 +133,7 @@ const Project = () => {
                             </Tabs>
                             <div id="report-content" className="flex flex-col gap-4 my-8">
                                 <div className="flex justify-between">
-                                    <div>{selectedScenario.name}</div>
+                                    <h3>{selectedScenario.name}</h3>
                                     <Link  to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
                                         <Button variant="secondary">Edit scenario</Button>
                                     </Link>
