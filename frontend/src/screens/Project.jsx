@@ -20,6 +20,7 @@ import { ChartBarInteractive } from "../components/BarChart";
 import EditProjectDialog from "../components/EditProjectDialog"
 import Header from "../components/Header";
 import Map from "../components/Map";
+import { Pencil } from "lucide-react"
 import {
     Table,
     TableBody,
@@ -121,22 +122,24 @@ const Project = () => {
                     {scenarios.length != 0 ?
                         (selectedScenario ?
                         <div id="report">
-                            <Tabs defaultValue="overview" className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border 
-                            scrollbar-none sticky top-16 bg-background z-50">
-                                <TabsList variant="line">
-                                    {scenarios.map(scenario => (
-                                        <TabsTrigger value={scenario.name} key={scenario.id}
-                                        onClick={(e) => setSelectedScenario(scenario)}
-                                        >{scenario.name}</TabsTrigger>
-                                    ))}
-                                </TabsList>
-                            </Tabs>
+                            <div id="tabs-section" className="flex justify-between">
+                                <Tabs defaultValue="overview" className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border 
+                                scrollbar-none sticky top-16 bg-background z-50">
+                                    <TabsList variant="line">
+                                        {scenarios.map(scenario => (
+                                            <TabsTrigger value={scenario.name} key={scenario.id}
+                                            onClick={(e) => setSelectedScenario(scenario)}
+                                            >{scenario.name}</TabsTrigger>
+                                        ))}
+                                    </TabsList>
+                                </Tabs>
+                                <Link to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
+                                    <Button variant="outline"><Pencil/></Button>
+                                </Link>
+                            </div>
                             <div id="report-content" className="flex flex-col gap-4 my-8">
                                 <div className="flex justify-between">
                                     <h3>{selectedScenario.name}</h3>
-                                    <Link  to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
-                                        <Button variant="secondary">Edit scenario</Button>
-                                    </Link>
                                 </div>
                                 <div className="flex gap-8 w-full">
                                     <Table>

@@ -2,6 +2,17 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router"
 
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
@@ -34,9 +45,11 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table"
+import { Trash2 } from "lucide-react"
+
 
 import { AuthContext } from "../lib/AuthContext"
-import { calculateScenario, updateResource, updateResourceField, useApi } from "../lib/api"
+import { calculateScenario, updateResource, updateResourceField, useApi, deleteScenario } from "../lib/api"
 import { validateModuleAmount, validateName } from "../lib/validators"
 import { AngleSlider } from "../components/AngleSlider";
 
@@ -62,6 +75,9 @@ export default function Scenario() {
     const nameCheck = validateName(scenarioName, "Scenario name")
     const moduleAmountCheck = validateModuleAmount(moduleAmount)
     const isFormValid = nameCheck.valid && moduleAmountCheck.valid
+
+    const [deleting, setDeleting] = useState(false)
+    const [deleteError, setDeleteError] = useState(null)
 
     function markTouched(field) {
         setTouched((t) => ({ ...t, [field]: true }))
@@ -125,6 +141,19 @@ export default function Scenario() {
         }
     }
 
+    async function handleDelete() {
+        setDeleteError(null)
+        setDeleting(true)
+
+        try {
+            await deleteScenario(token, projectId, scenarioId)
+            navigate(`/projects/${projectId}`)
+        } catch (err) {
+            setDeleteError(err.detail || "Failed to delete project")
+            setDeleting(false)
+        }
+    }
+
     if (projLoading || scenLoading) return <p>Loading...</p>
     if (projError || scenError) return <p>Something went wrong.</p>
 
@@ -171,7 +200,7 @@ export default function Scenario() {
                 </div>
             </header>
             <div className="main-content">
-                <div className="flex gap-4">
+                <div className="flex flex-col gap-4 w-3/4 m-auto">
                     <FieldGroup>
                         <h3>System configuration</h3>
                         <Field data-invalid={touched.moduleAmount && !moduleAmountCheck.valid}>
@@ -221,7 +250,7 @@ export default function Scenario() {
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
-                    <div className="module w-full">
+                    <div className="module">
                         <FieldGroup>
                         <h3>Solar module</h3>
                         <Field>
@@ -294,6 +323,39 @@ export default function Scenario() {
                             </TableBody>
                         </Table>
                         </FieldGroup>
+                        </div>
+                        <div className="flex items-center justify-between gap-4 rounded-lg border border-destructive/40 p-4">
+                            <div className="flex flex-col gap-0.5">
+                                <p className="text-sm font-medium">Delete this scenario</p>
+                                <p className="text-sm text-muted-foreground">
+                                    This will permanently delete this scenario along with all of its reports.
+                                </p>
+                            </div>
+                            <AlertDialog>
+                                <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
+                                    <Trash2 />
+                                    Delete
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete "{scenarioName}"?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will permanently delete this scenario along with all of its reports. This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            variant="destructive"
+                                            onClick={handleDelete}
+                                            disabled={deleting}
+                                        >
+                                            {deleting ? "Deleting..." : "Delete"}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                     </div>
                 </div>
             </div>

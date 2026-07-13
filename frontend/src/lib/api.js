@@ -120,6 +120,12 @@ export function deleteProject(token, projectId) {
     })
 }
 
+export function deleteScenario(token, projectId, scenarioId) {
+    return request(`/projects/${projectId}/scenarios/${scenarioId}`, token, {
+        method: "DELETE"
+    })
+}
+
 export function calculateScenario(token, projectId, scenarioId) {
     return request(`/projects/${projectId}/scenarios/${scenarioId}/calculate`, token, {
         method: "POST"
