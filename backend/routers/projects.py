@@ -6,6 +6,7 @@ from backend.models.users import User
 from backend.utils.pv_calcs import get_location_data
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlmodel import select
 from typing import Annotated
 
 router = APIRouter(
@@ -54,10 +55,13 @@ def create_project(current_user: CurrentUser, project: ProjectCreate, session: S
         )
 
 @router.get("", response_model=list[ProjectPublic])
-def read_projects(current_user: CurrentUser):
+def read_projects(current_user: CurrentUser, session: SessionDep):
     """Get a list of all projects owned by the current user."""
     try:
-        return current_user.projects
+        projects = session.exec(
+            select(Project).where(Project.user_id == current_user.id).order_by(Project.created_at)
+        ).all()
+        return projects
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
