@@ -114,6 +114,12 @@ export function updateProject(token, projectId, updates) {
     return updateResource(token, `/projects/${projectId}`, updates)
 }
 
+export function deleteProject(token, projectId) {
+    return request(`/projects/${projectId}`, token, {
+        method: "DELETE"
+    })
+}
+
 export function calculateScenario(token, projectId, scenarioId) {
     return request(`/projects/${projectId}/scenarios/${scenarioId}/calculate`, token, {
         method: "POST"
