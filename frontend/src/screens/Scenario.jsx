@@ -200,7 +200,7 @@ export default function Scenario() {
                 </div>
             </header>
             <div className="main-content">
-                <div className="flex flex-col gap-4 w-3/4 m-auto">
+                <div className="flex flex-col gap-4 w-3/4 mx-auto my-8">
                     <FieldGroup>
                         <h3>System configuration</h3>
                         <Field data-invalid={touched.moduleAmount && !moduleAmountCheck.valid}>

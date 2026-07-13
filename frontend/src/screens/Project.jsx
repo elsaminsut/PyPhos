@@ -20,7 +20,7 @@ import { ChartBarInteractive } from "../components/BarChart";
 import EditProjectDialog from "../components/EditProjectDialog"
 import Header from "../components/Header";
 import Map from "../components/Map";
-import { Pencil } from "lucide-react"
+import { Pencil, Plus } from "lucide-react"
 import {
     Table,
     TableBody,
@@ -133,9 +133,14 @@ const Project = () => {
                                         ))}
                                     </TabsList>
                                 </Tabs>
-                                <Link to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
-                                    <Button variant="outline"><Pencil/></Button>
-                                </Link>
+                                <div className="flex flex-nowrap">
+                                    <Link to={`/projects/${project.id}/scenarios/create`}>
+                                        <Button variant="outline"><Plus/></Button>
+                                    </Link>
+                                    <Link to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
+                                        <Button variant="outline"><Pencil/></Button>
+                                    </Link>
+                                </div>
                             </div>
                             <div id="report-content" className="flex flex-col gap-4 my-8">
                                 <div className="flex justify-between">
