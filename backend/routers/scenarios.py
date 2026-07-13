@@ -61,7 +61,9 @@ def read_scenarios(current_user: CurrentUser, project_id: int, session: SessionD
     """Get a list of all scenarios for a project, only if the project exists and belongs to the current user."""
     try:
         validate_user_owns_project(project_id, current_user, session)
-        scenarios = session.exec(select(Scenario).where(Scenario.project_id == project_id)).all()
+        scenarios = session.exec(
+            select(Scenario).where(Scenario.project_id == project_id).order_by(Scenario.created_at)
+        ).all()
         return scenarios
     except HTTPException:
         raise
