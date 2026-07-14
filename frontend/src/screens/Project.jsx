@@ -186,7 +186,7 @@ const Project = () => {
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell className="font-semibold">Efficiency</TableCell>
-                                                <TableCell>13%</TableCell>
+                                                <TableCell>{selectedScenario.module?.efficiency}%</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>

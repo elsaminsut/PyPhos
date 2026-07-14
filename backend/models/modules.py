@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from pydantic import computed_field
 from typing import TYPE_CHECKING
 from sqlmodel import Field, SQLModel, Relationship
 
@@ -34,6 +35,12 @@ class Module(ModuleBase, table=True): # table model
 
 class ModulePublic(ModuleBase):
     id: int # redeclares id to be an integer (and not None)
+
+    @computed_field
+    @property
+    def efficiency(self) -> float:
+        """Module efficiency at STC (1000 W/m^2), as a percentage."""
+        return round((self.nominal_power / (self.area * 1000)) * 100, 1)
 
 
 class ModuleUpdate(SQLModel):
