@@ -1,3 +1,7 @@
+import { AuthContext } from '@/lib/AuthContext'
+import { useContext } from "react"
+import { useNavigate } from 'react-router'
+
 import {
   SettingsIcon,
   BellIcon,
@@ -20,6 +24,14 @@ import {
 import Logo from "../assets/pyphos-logo.svg"
 
 export default function Header() {
+  const { logout } = useContext(AuthContext)
+  const navigate = useNavigate()
+
+  function logOut() {
+      logout()
+      navigate('/')
+  }
+
   return (
     <header className="flex justify-between items-center px-8 py-4 bg-background
     sticky top-0 z-50 isolate">
@@ -30,13 +42,13 @@ export default function Header() {
         </Avatar></Button>} />
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate('/settings')}>
             <SettingsIcon />
             Settings
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>
           <LogOutIcon />
           Sign Out
         </DropdownMenuItem>
