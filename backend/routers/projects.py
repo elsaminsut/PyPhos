@@ -1,12 +1,13 @@
 from backend.utils.auth import get_current_user
 from backend.utils.database import SessionDep
 from backend.utils.utils import validate_user_owns_project
-from backend.models.projects import Project, ProjectPublic, ProjectCreate, ProjectUpdate
+from backend.models.projects import Project, ProjectListItem, ProjectPublic, ProjectCreate, ProjectUpdate
+from backend.models.scenarios import Scenario
 from backend.models.users import User
 from backend.utils.pv_calcs import get_location_data
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import select
+from sqlmodel import func, select
 from typing import Annotated
 
 router = APIRouter(
@@ -54,14 +55,22 @@ def create_project(current_user: CurrentUser, project: ProjectCreate, session: S
             detail="Failed to create project"
         )
 
-@router.get("", response_model=list[ProjectPublic])
+@router.get("", response_model=list[ProjectListItem])
 def read_projects(current_user: CurrentUser, session: SessionDep):
-    """Get a list of all projects owned by the current user."""
+    """Get a list of all projects owned by the current user, including each project's scenario count."""
     try:
-        projects = session.exec(
-            select(Project).where(Project.user_id == current_user.id).order_by(Project.created_at)
+        results = session.exec(
+            select(Project, func.count(Scenario.id))
+            .join(Scenario, Scenario.project_id == Project.id, isouter=True)
+            .where(Project.user_id == current_user.id)
+            .group_by(Project.id)
+            .order_by(Project.created_at)
         ).all()
-        return projects
+
+        return [
+            ProjectListItem(**project.model_dump(), scenario_count=scenario_count)
+            for project, scenario_count in results
+        ]
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

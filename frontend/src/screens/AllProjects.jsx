@@ -39,8 +39,9 @@ const AllProjects = () => {
                             <Link className="w-full" key={project.id} to={`/projects/${project.id}`}>
                                 <ProjectCard
                                     key={project.id}
-                                    name={project.name} 
-                                    location={project.location} />
+                                    name={project.name}
+                                    location={project.location}
+                                    scenarioCount={project.scenario_count} />
                             </Link>
                         ))
                     }
