@@ -8,6 +8,7 @@ import Login from './screens/Login'
 import Project from './screens/Project'
 import CreateScenario from './screens/CreateScenario'
 import Scenario from './screens/Scenario'
+import Settings from './screens/Settings'
 
 import './App.css'
 
@@ -17,6 +18,7 @@ export default function App() {
             <Router>
                 <Routes>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
                     <Route path="/projects" element={<PrivateRoute><AllProjects /></PrivateRoute>} />
                     <Route path="/projects/:projectId" element={<PrivateRoute><Project /></PrivateRoute>} />
                     <Route path="/projects/:projectId/scenarios/create" element={<PrivateRoute><CreateScenario /></PrivateRoute>} />
