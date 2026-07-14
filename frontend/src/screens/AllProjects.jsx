@@ -19,8 +19,8 @@ import { useApi } from "../lib/api"
 const AllProjects = () => {
     const { data: projects, loading, error } = useApi("/api/projects")
 
-    if (loading) return <p>Loading...</p>
-    if (error) return <p>Something went wrong.</p>
+    if (loading) return <p className="grid h-screen place-items-center">Loading...</p>
+    if (error) return <div className="grid h-screen place-items-center"><p>Something went wrong.</p></div>
     
     return (
     <>
