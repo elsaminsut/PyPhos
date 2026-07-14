@@ -83,8 +83,8 @@ const Project = () => {
     console.log("Report: ", report)
 
 
-    if (projLoading || scenLoading) return <p>Loading...</p>
-    if (projError || scenError) return <p>Something went wrong.</p>
+    if (projLoading || scenLoading) return <p className="grid h-screen place-items-center">Loading...</p>
+    if (projError || scenError) return <div className="grid h-screen place-items-center"><p>Something went wrong.</p></div>
 
     function handleProjectSaved(updated) {
         setProjectName(updated.name ?? "")
