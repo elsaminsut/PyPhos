@@ -36,6 +36,10 @@ class ProjectPublic(ProjectBase):
     user_id: int
 
 
+class ProjectListItem(ProjectPublic):
+    scenario_count: int
+
+
 class ProjectCreate(ProjectBase):
     name: str
     city_input: str # from user input
