@@ -19,13 +19,18 @@ def seed_modules():
                 print(f"Unknown technology: {row['Technology']} — skipping {row['Name']}")
                 continue
 
+            # trim manufacturer name from model name
+            manufacturer = row["Manufacturer"]
+            name = row["Name"]
+            model = name[len(manufacturer):].strip() if name.startswith(manufacturer) else name
+
             exists = session.exec(
-                select(Module).where(Module.model == row["Name"])
+                select(Module).where(Module.model == model, Module.manufacturer == manufacturer)
             ).first()
             if not exists:
                 module = Module(
-                    manufacturer=row["Manufacturer"],
-                    model=row["Name"],
+                    manufacturer=manufacturer,
+                    model=model,
                     technology=tech,
                     area=row["A_c"],
                     nominal_power=row["STC"],
