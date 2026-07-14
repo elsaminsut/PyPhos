@@ -200,7 +200,7 @@ const Project = () => {
                                         <div>
                                             System performance
                                         </div>
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-12">
                                             <Card>
                                                 <CardHeader>
                                                     <CardDescription>Specific yield</CardDescription>
@@ -212,7 +212,7 @@ const Project = () => {
                                                     </div>
                                                     <Progress value={Math.min(100, (report.specific_yield / report.radiation) * 100)} />
                                                     <p className="text-xs text-muted-foreground">
-                                                        {((report.specific_yield / report.radiation) * 100).toFixed(1)}% of {report.radiation} kWh/m² available radiation
+                                                        This figure represents the system perfomance relative to the module's rated capacity.
                                                     </p>
                                                 </CardContent>
                                             </Card>
@@ -226,6 +226,9 @@ const Project = () => {
                                                         <span className="text-sm text-muted-foreground">%</span>
                                                     </div>
                                                     <Progress value={Math.min(100, Math.max(0, report.perf_ratio))} />
+                                                    <p className="text-xs text-muted-foreground">
+                                                        This figure represents the system perfomance relative to the location's maximum theoretical output.
+                                                    </p>
                                                 </CardContent>
                                             </Card>
                                         </div>
