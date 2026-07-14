@@ -21,6 +21,7 @@ import EditProjectDialog from "../components/EditProjectDialog"
 import Header from "../components/Header";
 import Map from "../components/Map";
 import { Pencil, Plus } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
 import {
     Table,
     TableBody,
@@ -122,9 +123,9 @@ const Project = () => {
                     {scenarios.length != 0 ?
                         (selectedScenario ?
                         <div id="report">
-                            <div id="tabs-section" className="flex justify-between">
+                            <div id="tabs-section" className="flex justify-between sticky top-16 bg-background z-50">
                                 <Tabs defaultValue="overview" className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border 
-                                scrollbar-none sticky top-16 bg-background z-50">
+                                scrollbar-none  ">
                                     <TabsList variant="line">
                                         {scenarios.map(scenario => (
                                             <TabsTrigger value={scenario.name} key={scenario.id}
@@ -204,22 +205,27 @@ const Project = () => {
                                                 <CardHeader>
                                                     <CardDescription>Specific yield</CardDescription>
                                                 </CardHeader>
-                                                <CardContent>
+                                                <CardContent className="flex flex-col gap-3">
                                                     <div className="flex items-baseline gap-1.5">
                                                         <span className="text-4xl font-bold tabular-nums">{report.specific_yield}</span>
                                                         <span className="text-sm text-muted-foreground">kWh/kWp</span>
                                                     </div>
+                                                    <Progress value={Math.min(100, (report.specific_yield / report.radiation) * 100)} />
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {((report.specific_yield / report.radiation) * 100).toFixed(1)}% of {report.radiation} kWh/m² available radiation
+                                                    </p>
                                                 </CardContent>
                                             </Card>
                                             <Card>
                                                 <CardHeader>
                                                     <CardDescription>Performance ratio</CardDescription>
                                                 </CardHeader>
-                                                <CardContent>
+                                                <CardContent className="flex flex-col gap-3">
                                                     <div className="flex items-baseline gap-1.5">
                                                         <span className="text-4xl font-bold tabular-nums">{report.perf_ratio}</span>
                                                         <span className="text-sm text-muted-foreground">%</span>
                                                     </div>
+                                                    <Progress value={Math.min(100, Math.max(0, report.perf_ratio))} />
                                                 </CardContent>
                                             </Card>
                                         </div>
