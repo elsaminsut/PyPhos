@@ -124,6 +124,12 @@ export function updateUser(token, userId, updates) {
     return updateResource(token, `/users/${userId}`, updates)
 }
 
+export function deleteUser(token, userId) {
+    return request(`/users/${userId}`, token, {
+        method: "DELETE"
+    })
+}
+
 export function deleteScenario(token, projectId, scenarioId) {
     return request(`/projects/${projectId}/scenarios/${scenarioId}`, token, {
         method: "DELETE"
