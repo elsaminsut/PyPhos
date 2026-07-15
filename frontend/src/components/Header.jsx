@@ -24,8 +24,9 @@ import {
 import Logo from "../assets/pyphos-logo.svg"
 
 export default function Header() {
-  const { logout } = useContext(AuthContext)
+  const { user, logout } = useContext(AuthContext)
   const navigate = useNavigate()
+  const avatarLetter = user?.email?.[0]?.toUpperCase() ?? ""
 
   function logOut() {
       logout()
@@ -38,7 +39,7 @@ export default function Header() {
       <img src={Logo} alt="PyPhos Logo" className="h-8 w-auto"/>
       <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
-          <AvatarFallback>E</AvatarFallback>
+          <AvatarFallback>{avatarLetter}</AvatarFallback>
         </Avatar></Button>} />
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>

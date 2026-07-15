@@ -33,13 +33,12 @@ import { Input } from "@/components/ui/input"
 import { Trash2 } from "lucide-react"
 
 import { AuthContext } from "../lib/AuthContext"
-import { deleteUser, updateUser, useApi } from "../lib/api"
+import { deleteUser, updateUser } from "../lib/api"
 import { validateEmail, validatePassword } from "../lib/validators"
 
 export default function Settings() {
-    const { token, logout } = useContext(AuthContext)
+    const { token, user, setUser, logout } = useContext(AuthContext)
     const navigate = useNavigate()
-    const { data: user, loading, error } = useApi("/api/users/me")
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -77,10 +76,11 @@ export default function Settings() {
         setSubmitting(true)
 
         try {
-            await updateUser(token, user.id, {
+            const updated = await updateUser(token, user.id, {
                 email: email.trim(),
                 ...(password ? { password } : {}),
             })
+            setUser(updated)
             setPassword("")
             setSubmitSuccess(true)
         } catch (err) {
@@ -104,8 +104,7 @@ export default function Settings() {
         }
     }
 
-    if (loading) return <div className="grid h-screen place-items-center"><p>Loading...</p></div>
-    if (error) return <div className="grid h-screen place-items-center"><p>Something went wrong.</p></div>
+    if (!user) return <div className="grid h-screen place-items-center"><p>Loading...</p></div>
 
     return (
         <>
