@@ -60,8 +60,17 @@ def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep
 
 @router.delete("/{user_id}")
 def delete_user(current_user: CurrentUser, session: SessionDep):
-    """Delete the current user's account."""
-    user_db = session.get(User, current_user.id)
-    session.delete(user_db)
-    session.commit()
-    return {"ok": True}
+    """Delete the current user's account, along with all of their projects, scenarios, and reports."""
+    try:
+        user_db = session.get(User, current_user.id)
+        for project in user_db.projects:
+            session.delete(project)
+        session.delete(user_db)
+        session.commit()
+        return {"ok": True}
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete user"
+        )
