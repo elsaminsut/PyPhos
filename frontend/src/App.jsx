@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router"
 
 import { AuthProvider, AuthContext } from './lib/AuthContext';
 import { isTokenValid } from './lib/utils';
-import AllProjects from './screens/AllProjects'
 import Login from './screens/Login'
+import Signup from './screens/Signup'
+import AllProjects from './screens/AllProjects'
 import Project from './screens/Project'
 import CreateScenario from './screens/CreateScenario'
 import Scenario from './screens/Scenario'
@@ -18,6 +19,7 @@ export default function App() {
             <Router>
                 <Routes>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
                     <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
                     <Route path="/projects" element={<PrivateRoute><AllProjects /></PrivateRoute>} />
                     <Route path="/projects/:projectId" element={<PrivateRoute><Project /></PrivateRoute>} />
