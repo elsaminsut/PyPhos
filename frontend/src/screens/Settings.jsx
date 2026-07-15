@@ -1,5 +1,17 @@
 import { useContext, useEffect, useState } from "react"
+import { useNavigate } from "react-router"
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
   Breadcrumb,
@@ -18,13 +30,15 @@ import {
 } from "@/components/ui/field"
 import Header from "../components/Header"
 import { Input } from "@/components/ui/input"
+import { Trash2 } from "lucide-react"
 
 import { AuthContext } from "../lib/AuthContext"
-import { updateUser, useApi } from "../lib/api"
+import { deleteUser, updateUser, useApi } from "../lib/api"
 import { validateEmail, validatePassword } from "../lib/validators"
 
 export default function Settings() {
-    const { token } = useContext(AuthContext)
+    const { token, logout } = useContext(AuthContext)
+    const navigate = useNavigate()
     const { data: user, loading, error } = useApi("/api/users/me")
 
     const [email, setEmail] = useState("")
@@ -33,6 +47,8 @@ export default function Settings() {
     const [submitting, setSubmitting] = useState(false)
     const [submitError, setSubmitError] = useState(null)
     const [submitSuccess, setSubmitSuccess] = useState(false)
+    const [deleting, setDeleting] = useState(false)
+    const [deleteError, setDeleteError] = useState(null)
 
     const emailCheck = validateEmail(email)
     const passwordCheck = password === "" ? { valid: true, message: null } : validatePassword(password)
@@ -71,6 +87,20 @@ export default function Settings() {
             setSubmitError(err.detail || "Failed to update account")
         } finally {
             setSubmitting(false)
+        }
+    }
+
+    async function handleDelete() {
+        setDeleteError(null)
+        setDeleting(true)
+
+        try {
+            await deleteUser(token, user.id)
+            logout()
+            navigate("/")
+        } catch (err) {
+            setDeleteError(err.detail || "Failed to delete account")
+            setDeleting(false)
         }
     }
 
@@ -148,6 +178,39 @@ export default function Settings() {
                                 )}
                             </Field>
                         </FieldGroup>
+                    </div>
+                    <div className="flex items-center justify-between gap-4 rounded-lg border border-destructive/40 p-4 mt-8">
+                        <div className="flex flex-col gap-0.5">
+                            <p className="text-sm font-medium">Delete this account</p>
+                            <p className="text-sm text-muted-foreground">
+                                This will permanently delete your account along with all of your projects, scenarios, and reports.
+                            </p>
+                        </div>
+                        <AlertDialog>
+                            <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
+                                <Trash2 />
+                                Delete
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This will permanently delete your account along with all of your projects, scenarios, and reports. This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        variant="destructive"
+                                        onClick={handleDelete}
+                                        disabled={deleting}
+                                    >
+                                        {deleting ? "Deleting..." : "Delete"}
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </div>
             </main>
