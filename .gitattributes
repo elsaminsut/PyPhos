@@ -1,0 +1,29 @@
+# Normalize all text files to LF in the repo and on checkout, regardless of OS
+# or local core.autocrlf settings. This avoids line-ending churn when switching
+# between native Windows tools and WSL against the same working tree.
+* text=auto eol=lf
+
+# Source and config files (already covered by the default above; listed
+# explicitly so line-ending handling doesn't depend on git's auto-detection).
+*.py text
+*.js text
+*.jsx text
+*.json text
+*.css text
+*.html text
+*.md text
+*.svg text
+*.csv text
+*.ini text
+*.mako text
+*.txt text
+*.gitignore text
+*.dockerignore text
+Dockerfile text
+README text
+
+# Binary files — never normalize line endings, never diff.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
