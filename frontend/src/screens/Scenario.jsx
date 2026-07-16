@@ -151,6 +151,7 @@ export default function Scenario() {
 
         try {
             await deleteScenario(token, projectId, scenarioId)
+            toast.info("Scenario deleted", { position: "top-center" })
             navigate(`/projects/${projectId}`)
         } catch (err) {
             setDeleteError(err.detail || "Failed to delete project")
