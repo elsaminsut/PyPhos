@@ -31,6 +31,11 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 
 import { AuthContext } from "../lib/AuthContext"
@@ -136,12 +141,26 @@ const Project = () => {
                                     </TabsList>
                                 </Tabs>
                                 <div className="flex flex-nowrap">
-                                    <Link to={`/projects/${project.id}/scenarios/create`}>
-                                        <Button variant="outline"><Plus/></Button>
-                                    </Link>
-                                    <Link to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
-                                        <Button variant="outline"><Pencil/></Button>
-                                    </Link>
+                                    <Tooltip>
+                                        <TooltipTrigger render={
+                                            <Link to={`/projects/${project.id}/scenarios/create`}>
+                                                <Button size="icon" variant="outline"><Plus/></Button>
+                                            </Link>
+                                        } />
+                                        <TooltipContent>
+                                            <p>Create scenario</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <Tooltip>
+                                        <TooltipTrigger render={
+                                            <Link to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
+                                                <Button size="icon" variant="outline"><Pencil/></Button>
+                                            </Link>
+                                        } />
+                                        <TooltipContent>
+                                            <p>Edit scenario</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 </div>
                             </div>
                             <div id="report-content" className="flex flex-col gap-4 my-8">

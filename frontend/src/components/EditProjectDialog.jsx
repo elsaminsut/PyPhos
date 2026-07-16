@@ -25,6 +25,11 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Pencil, Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 import { AuthContext } from "../lib/AuthContext"
 import { deleteProject, updateProject, useApi } from "../lib/api"
@@ -104,8 +109,14 @@ export default function EditProjectDialog({ onSaved }) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger render={<Button size="icon" variant="outline" aria-label="Edit project" />}>
-                <Pencil />
+            <DialogTrigger render={
+                <Tooltip>
+                    <TooltipTrigger render={<Button size="icon" variant="outline" aria-label="Edit project"><Pencil/></Button>} />
+                    <TooltipContent>
+                        <p>Edit project</p>
+                    </TooltipContent>
+                </Tooltip>
+                }>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
