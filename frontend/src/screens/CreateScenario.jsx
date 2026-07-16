@@ -111,9 +111,9 @@ export default function CreateScenario() {
     if (error) return <div className="grid h-screen place-items-center"><p>Something went wrong.</p></div>
 
     return (
-    <>
+    <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="max-w-[1000px] mx-auto px-8">
+        <main className="max-w-[1000px] mx-auto px-8 flex-1 flex flex-col w-full">
             <header className="flex-col mb-8">
                 <Breadcrumb className="my-4">
                     <BreadcrumbList>
@@ -265,6 +265,6 @@ export default function CreateScenario() {
             </div>
         </main>
         <Footer />
-    </>
+    </div>
    )
 }
