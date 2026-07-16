@@ -239,7 +239,12 @@ const Project = () => {
                             </div>
                         </div>
                         : <p>Loading...</p>)
-                    : <p className="text-center">No scenarios yet</p>}
+                    : <div className="items-center justify-center gap-4">
+                        <p>No scenarios yet</p>
+                        <Link  to={`/projects/${project.id}/scenarios/create`}>
+                            <Button>Create Scenario</Button>
+                        </Link>
+                    </div>}
             </div>
         </main>
         <Footer />
