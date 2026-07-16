@@ -94,7 +94,7 @@ export default function EditProjectDialog({ onSaved }) {
 
         try {
             await deleteProject(token, projectId)
-            toast.success("Project deleted", { position: "top-center" })
+            toast.info("Project deleted", { position: "top-center" })
             navigate("/projects")
         } catch (err) {
             setDeleteError(err.detail || "Failed to delete project")
