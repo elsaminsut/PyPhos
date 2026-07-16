@@ -94,9 +94,9 @@ const Project = () => {
     }
 
     return (
-    <>
+    <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="max-w-[1000px] mx-auto px-8">
+        <main className="max-w-[1000px] mx-auto px-8 flex-1 flex flex-col w-full">
             <header className="flex-col">
                 <Breadcrumb className="my-4">
                     <BreadcrumbList>
@@ -114,7 +114,7 @@ const Project = () => {
                     <EditProjectDialog onSaved={handleProjectSaved} />
                 </div>
             </header>
-            <div className="main-content">
+            <div className="main-content flex-1 flex flex-col">
                 <div className="flex flex-col gap-4 my-4">
                     <h3>{projectLocation}</h3>
                     <div className="isolate">
@@ -239,7 +239,7 @@ const Project = () => {
                             </div>
                         </div>
                         : <p>Loading...</p>)
-                    : <div className="items-center justify-center gap-4">
+                    : <div className="flex-1 flex flex-col items-center justify-center gap-4">
                         <p>No scenarios yet</p>
                         <Link  to={`/projects/${project.id}/scenarios/create`}>
                             <Button>Create Scenario</Button>
@@ -248,7 +248,7 @@ const Project = () => {
             </div>
         </main>
         <Footer />
-    </>
+    </div>
     )
 }
 
