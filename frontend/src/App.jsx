@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router"
 
 import { AuthProvider, AuthContext } from './lib/AuthContext';
 import { isTokenValid } from './lib/utils';
+import { Toaster } from '@/components/ui/sonner'
 import Login from './screens/Login'
 import Signup from './screens/Signup'
 import AllProjects from './screens/AllProjects'
@@ -27,6 +28,7 @@ export default function App() {
                     <Route path="/projects/:projectId/scenarios/:scenarioId" element={<PrivateRoute><Scenario /></PrivateRoute>} />
                 </Routes>
             </Router>
+            <Toaster />
         </AuthProvider>
     )
 }

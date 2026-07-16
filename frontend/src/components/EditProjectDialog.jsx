@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Pencil, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 
 import { AuthContext } from "../lib/AuthContext"
 import { deleteProject, updateProject, useApi } from "../lib/api"
@@ -79,6 +80,7 @@ export default function EditProjectDialog({ onSaved }) {
             setProjectCoords({ lat: updated.lat ?? null, lon: updated.lon ?? null })
             onSaved?.(updated)
             setOpen(false)
+            toast.success("Project updated", { position: "top-center" })
         } catch (err) {
             setError(err.detail || "Failed to update project")
         } finally {
@@ -92,6 +94,7 @@ export default function EditProjectDialog({ onSaved }) {
 
         try {
             await deleteProject(token, projectId)
+            toast.success("Project deleted", { position: "top-center" })
             navigate("/projects")
         } catch (err) {
             setDeleteError(err.detail || "Failed to delete project")

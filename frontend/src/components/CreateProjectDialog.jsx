@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 import { AuthContext } from "../lib/AuthContext"
 import { createProject } from "../lib/api"
@@ -50,6 +51,7 @@ export default function CreateProjectDialog() {
         try {
             const project = await createProject(token, { name, city_input: cityInput })
             setOpen(false)
+            toast.success("Project created", { position: "top-center" })
             navigate(`/projects/${project.id}`)
         } catch (err) {
             setError(err.detail || "Failed to create project")

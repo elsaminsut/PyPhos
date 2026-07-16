@@ -47,7 +47,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Trash2 } from "lucide-react"
-
+import { toast } from "sonner"
 
 import { AuthContext } from "../lib/AuthContext"
 import { calculateScenario, updateResource, updateResourceField, useApi, deleteScenario } from "../lib/api"
@@ -103,6 +103,8 @@ export default function Scenario() {
 
         try {
             await updateResourceField(token, `/projects/${projectId}/scenarios/${scenarioId}`, "name", scenarioName, { trim: true })
+            toast.success("Project name updated", { position: "top-center" })
+
         } catch (error) {
             console.error("Error updating scenario name:", error)
         }
@@ -136,6 +138,7 @@ export default function Scenario() {
                 ...(module ? { module_id: module.id } : {}),
             })
             await calculateScenario(token, projectId, scenarioId)
+            toast.success("Scenario updated", { position: "top-center" })
             navigate(`/projects/${projectId}`)
         } catch (error) {
             console.error("Error saving scenario:", error)

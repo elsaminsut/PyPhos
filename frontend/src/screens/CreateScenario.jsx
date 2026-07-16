@@ -35,6 +35,7 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table"
+import { toast } from "sonner"
 
 import { AuthContext } from "../lib/AuthContext"
 import { calculateScenario, createScenario, useApi } from "../lib/api"
@@ -99,6 +100,7 @@ export default function CreateScenario() {
                 "nominalPower": selectedModule.nominal_power
             })
             await calculateScenario(token, projectId, scenario.id)
+            toast.success("Scenario created", { position: "top-center" })
             navigate(`/projects/${projectId}`)
         } catch (error) {
             console.error("Error creating scenario:", error)
