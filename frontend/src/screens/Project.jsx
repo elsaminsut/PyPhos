@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card"
 import { ChartBarInteractive } from "../components/BarChart";
 import EditProjectDialog from "../components/EditProjectDialog"
+import Footer from "../components/Footer"
 import Header from "../components/Header";
 import Map from "../components/Map";
 import { Pencil, Plus } from "lucide-react"
@@ -241,6 +242,7 @@ const Project = () => {
                     : <p className="text-center">No scenarios yet</p>}
             </div>
         </main>
+        <Footer />
     </>
     )
 }

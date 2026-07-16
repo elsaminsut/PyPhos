@@ -1,0 +1,17 @@
+export default function Footer () {
+    return (
+        <footer className="max-w-[1000px] mx-auto px-8
+        flex justify-between py-4 text-xs bottom-0">
+            <div className="flex gap-2">
+                <div>PyPhos</div>
+                ·
+                <div>2026</div>
+            </div>
+            <div className="flex gap-2">
+                <a href="https://elsaminsut.com">Elsa Minsut</a>
+                ·
+                <a href="https://github.com/elsaminsut/PyPhos">GitHub</a>
+            </div>
+        </footer>
+    )
+}
