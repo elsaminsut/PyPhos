@@ -36,6 +36,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import Footer from "../components/Footer"
 import Header from "../components/Header";
 import { Input } from "@/components/ui/input"
 import {
@@ -360,6 +361,7 @@ export default function Scenario() {
                 </div>
             </div>
         </main>
+        <Footer />
     </>
    )
 }

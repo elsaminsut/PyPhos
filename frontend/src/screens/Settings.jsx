@@ -28,6 +28,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import Footer from "../components/Footer"
 import Header from "../components/Header"
 import { Input } from "@/components/ui/input"
 import { Trash2 } from "lucide-react"
@@ -213,6 +214,7 @@ export default function Settings() {
                     </div>
                 </div>
             </main>
+            <Footer />
         </>
     )
 }
