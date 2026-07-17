@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 from fastapi import HTTPException
-import os
 from pvgis_api import PVGISClient
 import requests
 import time
@@ -8,11 +7,10 @@ import time
 client = PVGISClient()
 
 load_dotenv()
-API_URL = "https://api.api-ninjas.com/v1/geocoding?city=CITY"
-LOCATION_API_KEY = os.getenv("API_KEY")
+API_URL = "https://geocoding-api.open-meteo.com/v1/search?name=CITY&count=1&language=en&format=json"
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-# calculation 
+# calculation
 def get_location_data(city_name: str) -> dict:
     """
     Get location data (latitude, longitude) from geocoding API.
@@ -23,16 +21,16 @@ def get_location_data(city_name: str) -> dict:
         try:
             location_response = requests.get(
                 API_URL.replace("CITY", city_name),
-                headers={"X-Api-Key": LOCATION_API_KEY},
                 timeout=5
             )
             location_response.raise_for_status()
-            
+
             data = location_response.json()
-            if not data or len(data) == 0:
+            results = data.get("results") or []
+            if not results:
                 raise ValueError(f"No location found for city: {city_name}")
-            
-            location_data = data[0]
+
+            location_data = results[0]
             return {
                 "name": location_data.get("name", city_name),
                 "latitude": location_data.get("latitude"),
