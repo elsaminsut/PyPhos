@@ -86,4 +86,3 @@ Interactive docs at `http://localhost:8000/docs`
 | `SECRET_KEY` | JWT signing secret |
 | `ALGORITHM` | JWT algorithm (e.g. `HS256`) |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | Token expiry time |
-| `API_KEY` | Ninja geocoding API key |
