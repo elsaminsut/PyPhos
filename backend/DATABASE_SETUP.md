@@ -1,5 +1,9 @@
 # Database Setup & Seeding Guide
 
+All commands below are run from the **repo root** (not from inside `backend/`) — the codebase's
+`backend.xxx` absolute imports only resolve when `backend` is importable as a package, which
+requires the repo root to be the current working directory.
+
 After pulling changes or setting up a fresh database, follow these steps:
 
 ## 1. Apply Migrations
@@ -7,7 +11,7 @@ After pulling changes or setting up a fresh database, follow these steps:
 Run all pending alembic migrations:
 
 ```powershell
-alembic upgrade head
+alembic -c backend/alembic.ini upgrade head
 ```
 
 This will:
@@ -20,7 +24,7 @@ This will:
 After migrations, seed the database with default PV modules:
 
 ```powershell
-python seed_modules.py
+python -m backend.seed_modules
 ```
 
 This will insert 3 standard modules:
@@ -47,9 +51,9 @@ SELECT * FROM modules;
 After making model changes:
 
 ```powershell
-alembic revision --autogenerate -m "description of changes"
-alembic upgrade head
-python seed_modules.py  # Re-seed if needed
+alembic -c backend/alembic.ini revision --autogenerate -m "description of changes"
+alembic -c backend/alembic.ini upgrade head
+python -m backend.seed_modules  # Re-seed if needed
 ```
 
 ## Troubleshooting
@@ -57,19 +61,25 @@ python seed_modules.py  # Re-seed if needed
 ### "ENUM already exists" error
 Run the fix migration:
 ```powershell
-alembic upgrade head
+alembic -c backend/alembic.ini upgrade head
 ```
 
 ### Modules not found
 Make sure you ran the seed script:
 ```powershell
-python seed_modules.py
+python -m backend.seed_modules
 ```
 
 ### Database out of sync
 Downgrade and upgrade:
 ```powershell
-alembic downgrade base
-alembic upgrade head
-python seed_modules.py
+alembic -c backend/alembic.ini downgrade base
+alembic -c backend/alembic.ini upgrade head
+python -m backend.seed_modules
 ```
+
+### `ModuleNotFoundError: No module named 'backend'`
+You ran a command with `backend/` as the working directory (e.g. `cd backend` first, or a Render
+"Root Directory" set to `backend`). Every import in this codebase is the absolute form
+`backend.xxx`, so it only resolves with the **repo root** as cwd. Re-run from the repo root using
+the `-c backend/alembic.ini` / `python -m backend.xxx` forms shown above instead of `cd`-ing in.
