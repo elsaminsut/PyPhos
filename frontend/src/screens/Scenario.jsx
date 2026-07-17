@@ -198,7 +198,7 @@ export default function Scenario() {
                 </div>
             </header>
             <div className="main-content">
-                <div className="flex flex-col gap-12 mx-auto">
+                <div className="flex flex-col gap-12">
                     <FieldGroup id="system">
                         <h3 className="font-semibold">System configuration</h3>
                         <Field data-invalid={touched.moduleAmount && !moduleAmountCheck.valid}>
@@ -303,7 +303,6 @@ export default function Scenario() {
                                     <TableCell className="font-semibold">Temperature coefficient</TableCell>
                                     <TableCell>-0.48%/°C</TableCell>
                                 </TableRow>
-
                             </TableBody>
                         </Table>
                     </FieldGroup>
