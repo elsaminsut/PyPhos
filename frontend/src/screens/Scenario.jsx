@@ -111,14 +111,6 @@ export default function Scenario() {
         console.log("Scenario name updated:", scenarioName)
     }
 
-    async function handleScenarioFieldUpdate(field, value, options = {}) {
-        try {
-            await updateResourceField(token, `/projects/${projectId}/scenarios/${scenarioId}`, field, value, options)
-        } catch (error) {
-            console.error(`Error updating scenario ${field}:`, error)
-        }
-    }
-
     async function handleSubmit(e) {
         e?.preventDefault?.()
 
@@ -212,12 +204,6 @@ export default function Scenario() {
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
                             <Input id="amount" type="number" value={moduleAmount}
                             aria-invalid={touched.moduleAmount && !moduleAmountCheck.valid}
-                            onBlur={() => {
-                                markTouched("moduleAmount")
-                                if (validateModuleAmount(moduleAmount).valid) {
-                                    handleScenarioFieldUpdate("module_amount", Number(moduleAmount))
-                                }
-                            }}
                             onChange={(e) => setModuleAmount(e.target.value)}
                             placeholder="e.g. 100"/>
                             {touched.moduleAmount && !moduleAmountCheck.valid ? (
@@ -235,7 +221,6 @@ export default function Scenario() {
                                 max={90}
                                 value={Number(tilt) || 0}
                                 onValueChange={(v) => setTilt(v)}
-                                onValueCommitted={(v) => handleScenarioFieldUpdate("tilt", v)}
                             />
                             <FieldDescription>
                                 The angle towards the Sun, in degrees (between 0° and 90°)
@@ -248,7 +233,6 @@ export default function Scenario() {
                                 max={180}
                                 value={Number(azimuth) || 0}
                                 onValueChange={(v) => setAzimuth(v)}
-                                onValueCommitted={(v) => handleScenarioFieldUpdate("azimuth", v)}
                             />
                             <FieldDescription>
                                 Orientation relative to the South, in degrees (between -180° and 180°). South is 0°, West is positive, East is negative
@@ -284,10 +268,6 @@ export default function Scenario() {
                             <FieldLabel htmlFor="model">Model</FieldLabel>
                             <Combobox items={modules} onValueChange={(value) => {
                                 setSelectedModel(value)
-                                const module = modules.find(m => m.model === value)
-                                if (module) {
-                                    handleScenarioFieldUpdate("module_id", module.id)
-                                }
                             }}>
                                 <ComboboxInput placeholder="Select a model" value={selectedModel} />
                                 <ComboboxContent>
