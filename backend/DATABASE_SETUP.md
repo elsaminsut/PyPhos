@@ -21,16 +21,11 @@ This will:
 
 ## 2. Seed Default Modules
 
-After migrations, seed the database with default PV modules:
+After migrations, seed the database with the CEC PV modules database:
 
 ```powershell
-python -m backend.seed_modules
+python -m backend.utils.seed_modules
 ```
-
-This will insert 3 standard modules:
-- SunPower SPR-MAX3-400 (Mono-c-Si)
-- Canadian Solar CS6R-370MS (Mono-c-Si)
-- First Solar FS-6420A (Thin Film)
 
 The script checks for duplicates and won't re-insert if they already exist.
 
@@ -53,7 +48,7 @@ After making model changes:
 ```powershell
 alembic -c backend/alembic.ini revision --autogenerate -m "description of changes"
 alembic -c backend/alembic.ini upgrade head
-python -m backend.seed_modules  # Re-seed if needed
+python -m backend.utils.seed_modules  # Re-seed if needed
 ```
 
 ## Troubleshooting
@@ -67,7 +62,7 @@ alembic -c backend/alembic.ini upgrade head
 ### Modules not found
 Make sure you ran the seed script:
 ```powershell
-python -m backend.seed_modules
+python -m backend.utils.seed_modules
 ```
 
 ### Database out of sync
@@ -75,7 +70,7 @@ Downgrade and upgrade:
 ```powershell
 alembic -c backend/alembic.ini downgrade base
 alembic -c backend/alembic.ini upgrade head
-python -m backend.seed_modules
+python -m backend.utils.seed_modules
 ```
 
 ### `ModuleNotFoundError: No module named 'backend'`
