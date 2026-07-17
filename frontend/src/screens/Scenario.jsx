@@ -178,6 +178,7 @@ export default function Scenario() {
                     <form onSubmit={handleNameSubmit} className="w-full max-w-xs">
                         <Field data-invalid={touched.name && !nameCheck.valid}>
                             <Input id="scenarioName"
+                                className="text-xl md:text-xl font-semibold border-none px-0"
                                 value={scenarioName}
                                 aria-invalid={touched.name && !nameCheck.valid}
                                 onBlur={() => handleNameSubmit()}
@@ -197,9 +198,9 @@ export default function Scenario() {
                 </div>
             </header>
             <div className="main-content">
-                <div className="flex flex-col gap-4 mx-auto my-8">
-                    <FieldGroup>
-                        <h3>System configuration</h3>
+                <div className="flex flex-col gap-12 mx-auto">
+                    <FieldGroup id="system">
+                        <h3 className="font-semibold">System configuration</h3>
                         <Field data-invalid={touched.moduleAmount && !moduleAmountCheck.valid}>
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
                             <Input id="amount" type="number" value={moduleAmount}
@@ -239,9 +240,8 @@ export default function Scenario() {
                             </FieldDescription>
                         </Field>
                     </FieldGroup>
-                    <div className="module">
-                        <FieldGroup>
-                        <h3>Solar module</h3>
+                    <FieldGroup id="module">
+                        <h3 className="font-semibold">Solar module</h3>
                         <Field>
                             <FieldLabel htmlFor="manufacturer">Manufacturer</FieldLabel>
                             <Combobox items={manufacturers} onValueChange={(value) => {
@@ -286,7 +286,6 @@ export default function Scenario() {
                             </FieldDescription>
                         </Field>
                         <Table>
-                            <TableCaption>Selected solar module</TableCaption>
                             <TableBody>
                                 <TableRow key="0">
                                     <TableCell className="font-semibold">Technology</TableCell>
@@ -307,40 +306,39 @@ export default function Scenario() {
 
                             </TableBody>
                         </Table>
-                        </FieldGroup>
+                    </FieldGroup>
+                    <div className="flex items-center justify-between gap-4 rounded-lg border border-destructive/40 p-4">
+                        <div className="flex flex-col gap-0.5">
+                            <p className="text-sm font-medium">Delete this scenario</p>
+                            <p className="text-sm text-muted-foreground">
+                                This will permanently delete this scenario along with all of its reports.
+                            </p>
                         </div>
-                        <div className="flex items-center justify-between gap-4 rounded-lg border border-destructive/40 p-4">
-                            <div className="flex flex-col gap-0.5">
-                                <p className="text-sm font-medium">Delete this scenario</p>
-                                <p className="text-sm text-muted-foreground">
-                                    This will permanently delete this scenario along with all of its reports.
-                                </p>
-                            </div>
-                            <AlertDialog>
-                                <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
-                                    <Trash2 />
-                                    Delete
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Delete "{scenarioName}"?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This will permanently delete this scenario along with all of its reports. This action cannot be undone.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction
-                                            variant="destructive"
-                                            onClick={handleDelete}
-                                            disabled={deleting}
-                                        >
-                                            {deleting ? "Deleting..." : "Delete"}
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                        <AlertDialog>
+                            <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
+                                <Trash2 />
+                                Delete
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete "{scenarioName}"?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This will permanently delete this scenario along with all of its reports. This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        variant="destructive"
+                                        onClick={handleDelete}
+                                        disabled={deleting}
+                                    >
+                                        {deleting ? "Deleting..." : "Delete"}
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </div>
             </div>
