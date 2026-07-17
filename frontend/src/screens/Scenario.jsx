@@ -108,7 +108,6 @@ export default function Scenario() {
         } catch (error) {
             console.error("Error updating scenario name:", error)
         }
-        console.log("Scenario name updated:", scenarioName)
     }
 
     async function handleSubmit(e) {

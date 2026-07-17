@@ -85,10 +85,6 @@ const Project = () => {
         fetchReport()
     }, [selectedScenario])
 
-    console.log("Selected scenario:", selectedScenario)
-    console.log("Report: ", report)
-
-
     if (projLoading || scenLoading) return <p className="grid h-screen place-items-center">Loading...</p>
     if (projError || scenError) return <div className="grid h-screen place-items-center"><p>Something went wrong.</p></div>
 
