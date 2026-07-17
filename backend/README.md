@@ -54,18 +54,22 @@ git clone https://github.com/elsaminsut/pyphos.git
 cd pyphos
 python -m venv venv
 venv\Scripts\activate  # Windows
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 
 # configure environment
-cp .env.example .env
-# edit .env with your database credentials and secret key
+cp backend/.env.example backend/.env
+# edit backend/.env with your database credentials and secret key
 
-# run migrations
-alembic upgrade head
+# run migrations (always from the repo root — see DATABASE_SETUP.md)
+alembic -c backend/alembic.ini upgrade head
 
 # start the server
-fastapi dev app/app.py
+python -m uvicorn backend.app:app --reload
 ```
+
+All commands run from the repo root, not from inside `backend/` — every import in this codebase
+is the absolute form `backend.xxx`, which only resolves when `backend` is importable as a package
+(i.e. the repo root is the current working directory).
 
 The API will be available at `http://localhost:8000`
 Interactive docs at `http://localhost:8000/docs`
