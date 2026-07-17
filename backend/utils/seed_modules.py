@@ -2,12 +2,15 @@
 Seed script to import PV modules from CEC module database.
 Run after alembic migrations: python seed_modules.py
 """
+from pathlib import Path
+
 from backend.utils.database import engine
 from backend.models.modules import Module, PVTech
 import pandas as pd
 from sqlmodel import Session, select
 
-df = pd.read_csv("utils/modules/CEC_modules.csv", skiprows=[1, 2]) # skip units and mapping rows, keep header at [0]
+CSV_PATH = Path(__file__).parent / "modules" / "CEC_Modules.csv"
+df = pd.read_csv(CSV_PATH, skiprows=[1, 2]) # skip units and mapping rows, keep header at [0]
 tech_lookup = {t.value: t for t in PVTech}
 
 def seed_modules():
