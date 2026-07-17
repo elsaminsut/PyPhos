@@ -60,16 +60,19 @@ pip install -r backend/requirements.txt
 cp backend/.env.example backend/.env
 # edit backend/.env with your database credentials and secret key
 
-# run migrations (always from the repo root — see DATABASE_SETUP.md)
+# run migrations (always from the repo root, see DATABASE_SETUP.md)
 alembic -c backend/alembic.ini upgrade head
+
+# seed the module database (required - scenarios need modules to reference)
+python -m backend.utils.seed_modules
 
 # start the server
 python -m uvicorn backend.app:app --reload
 ```
 
-All commands run from the repo root, not from inside `backend/` — every import in this codebase
+All commands run from the repo root, not from inside `backend/`. Every import in this codebase
 is the absolute form `backend.xxx`, which only resolves when `backend` is importable as a package
-(i.e. the repo root is the current working directory).
+(so the repo root is the current working directory).
 
 The API will be available at `http://localhost:8000`
 Interactive docs at `http://localhost:8000/docs`
