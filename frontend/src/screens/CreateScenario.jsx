@@ -136,6 +136,7 @@ export default function CreateScenario() {
                     <form className="w-full max-w-xs">
                         <Field data-invalid={touched.name && !nameCheck.valid}>
                             <Input id="scenarioName"
+                                className="text-xl md:text-xl font-semibold border-none px-0"
                                 value={scenarioName}
                                 aria-invalid={touched.name && !nameCheck.valid}
                                 onBlur={() => markTouched("name")}
@@ -146,15 +147,13 @@ export default function CreateScenario() {
                             )}
                         </Field>
                     </form>
-                    <div className="flex flex-col items-end gap-1">
-                        <Button onClick={handleSubmit} disabled={!isFormValid}>Create Scenario</Button>
-                    </div>
+                    <Button onClick={handleSubmit} disabled={!isFormValid}>Create Scenario</Button>
                 </div>
             </header>
             <div className="main-content">
-                <div className="flex gap-4">
-                    <FieldGroup>
-                        <h3>System configuration</h3>
+                <div className="flex flex-col gap-12">
+                    <FieldGroup id="system">
+                        <h3 className="font-semibold">System configuration</h3>
                         <Field data-invalid={touched.moduleAmount && !moduleAmountCheck.valid}>
                             <FieldLabel htmlFor="amount">Module amount</FieldLabel>
                             <Input id="amount"
@@ -199,9 +198,8 @@ export default function CreateScenario() {
                                 </FieldDescription>
                         </Field>
                     </FieldGroup>
-                    <div className="module w-full">
-                        <FieldGroup>
-                        <h3>Solar module</h3>
+                    <FieldGroup id="module">
+                        <h3 className="font-semibold">Solar module</h3>
                         <Field>
                             <FieldLabel htmlFor="manufacturer">Manufacturer</FieldLabel>
                             <Combobox items={manufacturers} onValueChange={setSelectedManufacturer}>
@@ -241,7 +239,6 @@ export default function CreateScenario() {
                             </FieldDescription>
                         </Field>
                         <Table>
-                            <TableCaption>Selected solar module</TableCaption>
                             <TableBody>
                                 <TableRow key="0">
                                     <TableCell className="font-semibold">Technology</TableCell>
@@ -261,8 +258,7 @@ export default function CreateScenario() {
                                 </TableRow>
                             </TableBody>
                         </Table>
-                        </FieldGroup>
-                    </div>
+                    </FieldGroup>
                 </div>
             </div>
         </main>
