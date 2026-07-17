@@ -34,10 +34,10 @@ const AllProjects = () => {
                 </div>
             </header>
             <div className="main-content">
-                <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-3 gap-4">
                     {
                         projects.map(project => (
-                            <Link className="w-full" key={project.id} to={`/projects/${project.id}`}>
+                            <Link key={project.id} to={`/projects/${project.id}`}>
                                 <ProjectCard
                                     key={project.id}
                                     name={project.name}

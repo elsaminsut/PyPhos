@@ -115,7 +115,7 @@ const Project = () => {
                     </BreadcrumbList>
                 </Breadcrumb>
                 <div className="flex justify-between items-center">
-                    <h1>{projectName}</h1>
+                    <h1 className="text-xl font-semibold">{projectName}</h1>
                     <EditProjectDialog onSaved={handleProjectSaved} />
                 </div>
             </header>
@@ -140,7 +140,7 @@ const Project = () => {
                                         ))}
                                     </TabsList>
                                 </Tabs>
-                                <div className="flex flex-nowrap">
+                                <div className="flex flex-nowrap gap-2">
                                     <Tooltip>
                                         <TooltipTrigger render={
                                             <Link to={`/projects/${project.id}/scenarios/create`}>

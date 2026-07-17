@@ -110,12 +110,7 @@ export default function EditProjectDialog({ onSaved }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger render={
-                <Tooltip>
-                    <TooltipTrigger render={<Button size="icon" variant="outline" aria-label="Edit project"><Pencil/></Button>} />
-                    <TooltipContent>
-                        <p>Edit project</p>
-                    </TooltipContent>
-                </Tooltip>
+                <Button variant="outline" aria-label="Edit project">Edit project</Button>
                 }>
             </DialogTrigger>
             <DialogContent>

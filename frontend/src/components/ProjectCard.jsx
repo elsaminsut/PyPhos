@@ -14,7 +14,7 @@ function scenarioCountLabel(count) {
 
 export default function ProjectCard(props) {
     return (
-        <Card className="w-full">
+        <Card className="hover:bg-muted">
             <CardHeader>
                 <CardTitle>{props.name}</CardTitle>
                 <CardDescription>{props.location}</CardDescription>
