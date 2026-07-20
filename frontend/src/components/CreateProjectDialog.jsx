@@ -17,6 +17,7 @@ import { toast } from "sonner"
 import { AuthContext } from "../lib/AuthContext"
 import { createProject } from "../lib/api"
 import { validateName } from "../lib/validators"
+import LocationCombobox from "./LocationCombobox"
 
 export default function CreateProjectDialog() {
     const { token } = useContext(AuthContext)
@@ -24,13 +25,13 @@ export default function CreateProjectDialog() {
 
     const [open, setOpen] = useState(false)
     const [name, setName] = useState("")
-    const [cityInput, setCityInput] = useState("")
+    const [location, setLocation] = useState(null)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState(null)
     const [touched, setTouched] = useState({})
 
     const nameCheck = validateName(name, "Project name")
-    const cityCheck = validateName(cityInput, "Location")
+    const cityCheck = { valid: location !== null, message: "Please select a city from the list" }
     const isFormValid = nameCheck.valid && cityCheck.valid
 
     function markTouched(field) {
@@ -49,7 +50,14 @@ export default function CreateProjectDialog() {
         setSubmitting(true)
 
         try {
-            const project = await createProject(token, { name, city_input: cityInput })
+            const project = await createProject(token, {
+                name,
+                city_input: location.name,
+                location: location.name,
+                country_code: location.country_code,
+                lat: location.lat,
+                lon: location.lon,
+            })
             setOpen(false)
             toast.success("Project created", { position: "top-center" })
             navigate(`/projects/${project.id}`)
@@ -87,14 +95,12 @@ export default function CreateProjectDialog() {
                     </Field>
                     <Field data-invalid={touched.city && !cityCheck.valid}>
                         <FieldLabel htmlFor="city">Location</FieldLabel>
-                        <Input
+                        <LocationCombobox
                             id="city"
-                            placeholder="City"
-                            value={cityInput}
-                            aria-invalid={touched.city && !cityCheck.valid}
+                            value={location}
+                            onSelect={setLocation}
+                            ariaInvalid={touched.city && !cityCheck.valid}
                             onBlur={() => markTouched("city")}
-                            onChange={(e) => setCityInput(e.target.value)}
-                            required
                         />
                         {touched.city && !cityCheck.valid && (
                             <FieldError>{cityCheck.message}</FieldError>
