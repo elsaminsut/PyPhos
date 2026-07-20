@@ -42,6 +42,7 @@ const AllProjects = () => {
                                     key={project.id}
                                     name={project.name}
                                     location={project.location}
+                                    countryCode={project.country_code}
                                     scenarioCount={project.scenario_count} />
                             </Link>
                         ))

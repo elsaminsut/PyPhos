@@ -51,6 +51,7 @@ const Project = () => {
     
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")
+    const [projectCountryCode, setProjectCountryCode] = useState("")
     const [projectCoords, setProjectCoords] = useState({ lat: null, lon: null })
 
     const [selectedScenario, setSelectedScenario] = useState(null)
@@ -60,6 +61,7 @@ const Project = () => {
         if (project) {
             setProjectName(project.name ?? "")
             setProjectLocation(project.location ?? "")
+            setProjectCountryCode(project.country_code ?? "")
             setProjectCoords({ lat: project.lat ?? null, lon: project.lon ?? null })
         }
     }, [project])
@@ -91,6 +93,7 @@ const Project = () => {
     function handleProjectSaved(updated) {
         setProjectName(updated.name ?? "")
         setProjectLocation(updated.location ?? "")
+        setProjectCountryCode(updated.country_code ?? "")
         setProjectCoords({ lat: updated.lat ?? null, lon: updated.lon ?? null })
     }
 
@@ -117,7 +120,7 @@ const Project = () => {
             </header>
             <div className="main-content flex-1 flex flex-col">
                 <div className="flex flex-col gap-4 my-4">
-                    <h3>{projectLocation}</h3>
+                    <h3>{projectCountryCode ? `${projectLocation}, ${projectCountryCode}` : projectLocation}</h3>
                     <div className="isolate">
                         <Map lat={projectCoords.lat} lon={projectCoords.lon} className="h-40 w-full rounded-lg border border-border" />
                     </div>

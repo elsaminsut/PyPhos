@@ -17,7 +17,9 @@ export default function ProjectCard(props) {
         <Card className="hover:bg-muted">
             <CardHeader>
                 <CardTitle>{props.name}</CardTitle>
-                <CardDescription>{props.location}</CardDescription>
+                <CardDescription>
+                    {props.countryCode ? `${props.location}, ${props.countryCode}` : props.location}
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <p>{scenarioCountLabel(props.scenarioCount)}</p>
