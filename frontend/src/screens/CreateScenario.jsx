@@ -191,6 +191,7 @@ export default function CreateScenario() {
                                 value={Number(azimuth) || 0}
                                 onValueChange={(v) => setAzimuth(v)}
                                 onValueCommitted={(v) => setAzimuth(v)}
+                                tag
                                 />
                                 <FieldDescription>
                                     Orientation relative to the South, in degrees (between -180° and 180°). South is 0°, West is positive, East is negative
