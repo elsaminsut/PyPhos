@@ -24,12 +24,17 @@ function isSameLocation(a, b) {
 }
 
 // value: { name, country_code, admin1, lat, lon } | null
-export default function LocationCombobox({ id, value, onSelect, ariaInvalid, onBlur }) {
+export default function LocationCombobox({ id, value, onSelect, ariaInvalid, onBlur, onInputChange }) {
     const { token } = useContext(AuthContext)
 
-    const [query, setQuery] = useState(() => formatLocation(value))
+    const [query, setQueryState] = useState(() => formatLocation(value))
     const [results, setResults] = useState([])
     const [loading, setLoading] = useState(false)
+
+    function setQuery(next) {
+        setQueryState(next)
+        onInputChange?.(next)
+    }
 
     useEffect(() => {
         setQuery(formatLocation(value))
