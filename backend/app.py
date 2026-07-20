@@ -1,6 +1,7 @@
 import backend.models
 import backend.utils.docs_metadata as docs_metadata
 from backend.routers import auth
+from backend.routers import locations
 from backend.routers import projects
 from backend.routers import users
 from backend.routers import scenarios
@@ -36,6 +37,7 @@ app.add_middleware(
 )
 app.include_router(users.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
+app.include_router(locations.router, prefix="/api")
 app.include_router(projects.router, prefix="/api")
 app.include_router(scenarios.router, prefix="/api")
 app.include_router(reports.router, prefix="/api")
