@@ -66,6 +66,16 @@ export default function CreateScenario() {
     const moduleAmountCheck = validateModuleAmount(moduleAmount)
     const isFormValid = nameCheck.valid && moduleAmountCheck.valid && !!selectedModule
 
+    useEffect(() => {
+        if (!modules || modules.length === 0) return
+
+        const stillValid = modules.some((m) => m.model === selectedModel)
+        if (!stillValid) {
+            setSelectedModel(modules[0].model)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [modules])
+
     function markTouched(field) {
         setTouched((t) => ({ ...t, [field]: true }))
     }
