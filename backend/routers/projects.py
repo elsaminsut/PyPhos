@@ -4,7 +4,6 @@ from backend.utils.utils import validate_user_owns_project
 from backend.models.projects import Project, ProjectListItem, ProjectPublic, ProjectCreate, ProjectUpdate
 from backend.models.scenarios import Scenario
 from backend.models.users import User
-from backend.utils.pv_calcs import get_location_data
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import func, select
@@ -21,27 +20,17 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 def create_project(current_user: CurrentUser, project: ProjectCreate, session: SessionDep):
     """
     Create a new project for the current user.
-    Takes a project name and a city where the project is located.
-    Uses the city input to get location data (lat, lon) from the geocoding API and stores it in the database.
+    Takes a project name and a location the user picked from /locations/search results
+    (city name, country code, and coordinates) and stores it directly.
     """
-    try:
-        location_data = get_location_data(project.city_input)
-    except HTTPException:
-        # Re-raise HTTP exceptions from get_location_data
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error retrieving location data"
-        )
-    
     try:
         db_project = Project(
             name=project.name,
             city_input=project.city_input,
-            location=location_data["name"],
-            lat=location_data["latitude"],
-            lon=location_data["longitude"],
+            location=project.location,
+            country_code=project.country_code,
+            lat=project.lat,
+            lon=project.lon,
             user_id=current_user.id
         )
         session.add(db_project)
@@ -95,27 +84,10 @@ def read_project(current_user: CurrentUser, project_id: int, session: SessionDep
 def update_project(current_user: CurrentUser, project_id: int, project: ProjectUpdate, session: SessionDep):
     """Update a project by ID, only if it exists and belongs to the current user. Updates the updated_at timestamp to the current time."""
     project_db = validate_user_owns_project(project_id, current_user, session)
-    
-    # If city_input is being updated, fetch new location data
-    if project.city_input is not None:
-        try:
-            location_data = get_location_data(project.city_input)
-            project.city_input = project.city_input  # Keep the city_input as is
-            # Add location fields to update
-            project_dict = project.model_dump(exclude_unset=True)
-            project_dict["location"] = location_data["name"]
-            project_dict["lat"] = location_data["latitude"]
-            project_dict["lon"] = location_data["longitude"]
-        except HTTPException:
-            raise
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error retrieving location data"
-            )
-    else:
-        project_dict = project.model_dump(exclude_unset=True)
-    
+
+    # location, country_code, lat and lon arrive together (enforced by ProjectUpdate),
+    # already resolved from a /locations/search pick, so no re-geocoding is needed here.
+    project_dict = project.model_dump(exclude_unset=True)
     project_dict["updated_at"] = datetime.now()
     project_db.sqlmodel_update(project_dict)
     
