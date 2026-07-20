@@ -23,7 +23,7 @@ import { toast } from "sonner"
 
 import { AuthContext } from "../lib/AuthContext"
 import { deleteProject, updateProject, useApi } from "../lib/api"
-import { validateName } from "../lib/validators"
+import { validateName, validateRequired } from "../lib/validators"
 import LocationCombobox from "./LocationCombobox"
 
 export default function EditProjectDialog({ onSaved }) {
@@ -36,6 +36,7 @@ export default function EditProjectDialog({ onSaved }) {
     const [open, setOpen] = useState(false)
     const [projectName, setProjectName] = useState("")
     const [location, setLocation] = useState(null)
+    const [locationQuery, setLocationQuery] = useState("")
     const [locationChanged, setLocationChanged] = useState(false)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState(null)
@@ -44,7 +45,8 @@ export default function EditProjectDialog({ onSaved }) {
     const [deleteError, setDeleteError] = useState(null)
 
     const nameCheck = validateName(projectName, "Project name")
-    const isFormValid = nameCheck.valid
+    const locationCheck = validateRequired(locationQuery, "Location")
+    const isFormValid = nameCheck.valid && locationCheck.valid
 
     useEffect(() => {
         if (project) {
@@ -56,6 +58,7 @@ export default function EditProjectDialog({ onSaved }) {
                 lat: project.lat,
                 lon: project.lon,
             })
+            setLocationQuery(project.location ?? "")
             setLocationChanged(false)
         }
     }, [project])
@@ -149,19 +152,25 @@ export default function EditProjectDialog({ onSaved }) {
                             <FieldError>{nameCheck.message}</FieldError>
                         )}
                     </Field>
-                    <Field>
+                    <Field data-invalid={touched.city && !locationCheck.valid}>
                         <FieldLabel htmlFor="city">Location</FieldLabel>
                         <LocationCombobox
                             id="city"
                             value={location}
                             onSelect={handleLocationSelect}
+                            onInputChange={setLocationQuery}
+                            ariaInvalid={touched.city && !locationCheck.valid}
+                            onBlur={() => markTouched("city")}
                         />
+                        {touched.city && !locationCheck.valid && (
+                            <FieldError>{locationCheck.message}</FieldError>
+                        )}
                     </Field>
                     {error && <p className="text-sm text-red-500">{error}</p>}
                     {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
                     <Accordion className="rounded-lg border border-destructive/40 p-4">
                         <AccordionItem value="delete">
-                            <AccordionTrigger>Delete this project</AccordionTrigger>
+                            <AccordionTrigger className="hover:no-underline">Delete this project</AccordionTrigger>
                             <AccordionContent className="flex items-center justify-between gap-4">
                                 <p className="text-sm text-muted-foreground">
                                     This will permanently delete this project along with all of its scenarios and reports. This action cannot be undone.

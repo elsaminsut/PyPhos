@@ -9,6 +9,14 @@ export function validateName(value, label = "Name") {
     return { valid: true, message: null }
 }
 
+export function validateRequired(value, label = "Field") {
+    const length = (value ?? "").trim().length
+    if (length < 1) {
+        return { valid: false, message: `${label} is required` }
+    }
+    return { valid: true, message: null }
+}
+
 export function validateModuleAmount(value) {
     if (value === "" || value === null || value === undefined || !Number.isInteger(Number(value))) {
         return { valid: false, message: "Module amount must be a valid integer" }
