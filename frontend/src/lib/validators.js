@@ -29,6 +29,14 @@ export function validateEmail(value) {
     return { valid: true, message: null }
 }
 
+export function validateLoginPassword(value) {
+    const password = value ?? ""
+    if (password.length < 1) {
+        return { valid: false, message: "Password is required" }
+    }
+    return { valid: true, message: null }
+}
+
 export function validatePassword(value) {
     const password = value ?? ""
     if (password.length < 8 || password.length > 16) {
