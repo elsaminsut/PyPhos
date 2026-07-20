@@ -12,6 +12,10 @@ tags_metadata = [
         "description": "Manage user accounts."
     },
     {
+        "name": "Locations",
+        "description": "Search for cities to resolve a project's location (coordinates and country)."
+    },
+    {
         "name": "Projects",
         "description": "Create and manage projects. Each project has a location and belongs to a user."
     },
