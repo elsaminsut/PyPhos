@@ -2,16 +2,11 @@ import { useEffect, useState, useContext } from "react"
 import { useNavigate, useParams } from "react-router"
 
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import {
     Dialog,
     DialogContent,
@@ -23,13 +18,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Pencil, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 import { AuthContext } from "../lib/AuthContext"
 import { deleteProject, updateProject, useApi } from "../lib/api"
@@ -168,39 +158,26 @@ export default function EditProjectDialog({ onSaved }) {
                         />
                     </Field>
                     {error && <p className="text-sm text-red-500">{error}</p>}
-                    <div className="flex items-center justify-between gap-4 rounded-lg border border-destructive/40 p-4">
-                        <div className="flex flex-col gap-0.5">
-                            <p className="text-sm font-medium">Delete this project</p>
-                            <p className="text-sm text-muted-foreground">
-                                This will permanently delete this project along with all of its scenarios and reports.
-                            </p>
-                        </div>
-                        <AlertDialog>
-                            <AlertDialogTrigger render={<Button type="button" variant="destructive" />}>
-                                <Trash2 />
-                                Delete
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete "{projectName}"?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This will permanently delete this project along with all of its scenarios and reports. This action cannot be undone.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                        variant="destructive"
-                                        onClick={handleDelete}
-                                        disabled={deleting}
-                                    >
-                                        {deleting ? "Deleting..." : "Delete"}
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    </div>
+                    {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+                    <Accordion className="rounded-lg border border-destructive/40 p-4">
+                        <AccordionItem value="delete">
+                            <AccordionTrigger>Delete this project</AccordionTrigger>
+                            <AccordionContent className="flex items-center justify-between gap-4">
+                                <p className="text-sm text-muted-foreground">
+                                    This will permanently delete this project along with all of its scenarios and reports. This action cannot be undone.
+                                </p>
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={handleDelete}
+                                    disabled={deleting}
+                                >
+                                    <Trash2 />
+                                    {deleting ? "Deleting..." : "Delete"}
+                                </Button>
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                     <DialogFooter>
                         <Button type="submit" disabled={submitting || !isFormValid}>
                             {submitting ? "Saving..." : "Save"}
