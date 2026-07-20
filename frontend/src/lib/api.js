@@ -64,14 +64,23 @@ async function request(endpoint, token, options = {}) {
     return response.json()
 }
 
-export function createProject(token, { name, city_input }) {
-    if (!name.trim() || !city_input.trim()) {
+export function searchLocations(token, query) {
+    if (!query.trim()) {
+        return Promise.resolve([])
+    }
+    return request(`/locations/search?q=${encodeURIComponent(query)}`, token, {
+        method: "GET"
+    })
+}
+
+export function createProject(token, { name, city_input, location, country_code, lat, lon }) {
+    if (!name.trim() || !city_input.trim() || !location || !country_code) {
         console.error("Field cannot be empty")
         return
     }
     return request("/projects", token, {
         method: "POST",
-        body: JSON.stringify({ name, city_input })
+        body: JSON.stringify({ name, city_input, location, country_code, lat, lon })
     })
 }
 
