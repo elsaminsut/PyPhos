@@ -12,7 +12,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { validateEmail, validatePassword } from "@/lib/validators"
+import { validateEmail, validateLoginPassword } from "@/lib/validators"
 
 import FacadeImg from "../assets/martin-woortman-NzW5ytrqi34-unsplash.jpg"
 import '../index.css'
@@ -26,7 +26,7 @@ const LoginPage = () => {
   const navigate = useNavigate()
 
   const emailCheck = validateEmail(email)
-  const passwordCheck = validatePassword(password)
+  const passwordCheck = validateLoginPassword(password)
   const isFormValid = emailCheck.valid && passwordCheck.valid
 
   function markTouched(field) {
@@ -72,7 +72,7 @@ const LoginPage = () => {
                   <form onSubmit={handleSubmit} className="p-6 md:p-8">
                     <FieldGroup>
                       <div className="flex flex-col items-center gap-2 text-center">
-                        <h1 className="text-2xl font-bold">Welcome back</h1>
+                        <h1 className="text-2xl font-bold">Welcome back!</h1>
                         <p className="text-balance text-muted-foreground">
                           Login to your PyPhos account
                         </p>
@@ -82,7 +82,7 @@ const LoginPage = () => {
                         <Input
                           id="email"
                           type="email"
-                          placeholder="m@example.com"
+                          placeholder="me@example.com"
                           autoComplete="email"
                           value={email}
                           aria-invalid={touched.email && !emailCheck.valid}
@@ -97,12 +97,6 @@ const LoginPage = () => {
                       <Field data-invalid={touched.password && !passwordCheck.valid}>
                         <div className="flex items-center">
                           <FieldLabel htmlFor="password">Password</FieldLabel>
-                          {/* <a
-                            href="#"
-                            className="ml-auto text-sm underline-offset-2 hover:underline"
-                          >
-                            Forgot your password?
-                          </a> */}
                         </div>
                         <Input
                           id="password"

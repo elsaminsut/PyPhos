@@ -112,12 +112,7 @@ export default function SignupPage() {
                         />
                         {touched.email && !emailCheck.valid ? (
                         <FieldError>{emailCheck.message}</FieldError>
-                        ) : (
-                        <FieldDescription>
-                        We&apos;ll use this to contact you. We will not share your
-                        email with anyone else.
-                        </FieldDescription>
-                        )}
+                        ) : "" }
                     </Field>
                     <Field>
                         <Field className="grid grid-cols-2 gap-4">
