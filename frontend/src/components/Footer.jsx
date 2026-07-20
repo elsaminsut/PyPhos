@@ -8,9 +8,9 @@ export default function Footer () {
                 <div>2026</div>
             </div>
             <div className="flex gap-2">
-                <a href="https://elsaminsut.com">Elsa Minsut</a>
+                <a href="https://elsaminsut.com" target="_blank">Elsa Minsut</a>
                 ·
-                <a href="https://github.com/elsaminsut/PyPhos">GitHub</a>
+                <a href="https://github.com/elsaminsut/PyPhos" target="_blank">GitHub</a>
             </div>
         </footer>
     )
