@@ -34,6 +34,7 @@ import {
 import { AuthContext } from "../lib/AuthContext"
 import { deleteProject, updateProject, useApi } from "../lib/api"
 import { validateName } from "../lib/validators"
+import LocationCombobox from "./LocationCombobox"
 
 export default function EditProjectDialog({ onSaved }) {
     const { token } = useContext(AuthContext)
@@ -44,8 +45,8 @@ export default function EditProjectDialog({ onSaved }) {
 
     const [open, setOpen] = useState(false)
     const [projectName, setProjectName] = useState("")
-    const [projectLocation, setProjectLocation] = useState("")
-    const [projectCoords, setProjectCoords] = useState({ lat: null, lon: null })
+    const [location, setLocation] = useState(null)
+    const [locationChanged, setLocationChanged] = useState(false)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState(null)
     const [touched, setTouched] = useState({})
@@ -53,19 +54,29 @@ export default function EditProjectDialog({ onSaved }) {
     const [deleteError, setDeleteError] = useState(null)
 
     const nameCheck = validateName(projectName, "Project name")
-    const cityCheck = validateName(projectLocation, "Location")
-    const isFormValid = nameCheck.valid && cityCheck.valid
+    const isFormValid = nameCheck.valid
 
     useEffect(() => {
         if (project) {
             setProjectName(project.name ?? "")
-            setProjectLocation(project.location ?? "")
-            setProjectCoords({ lat: project.lat ?? null, lon: project.lon ?? null })
+            setLocation({
+                name: project.location,
+                country_code: project.country_code,
+                admin1: null,
+                lat: project.lat,
+                lon: project.lon,
+            })
+            setLocationChanged(false)
         }
     }, [project])
 
     function markTouched(field) {
         setTouched((t) => ({ ...t, [field]: true }))
+    }
+
+    function handleLocationSelect(candidate) {
+        setLocation(candidate)
+        setLocationChanged(true)
     }
 
     async function handleSubmit(e) {
@@ -80,9 +91,24 @@ export default function EditProjectDialog({ onSaved }) {
         setSubmitting(true)
 
         try {
-            const updated = await updateProject(token, projectId, { name: projectName.trim(), city_input: projectLocation.trim() })
-            setProjectLocation(updated.location ?? "")
-            setProjectCoords({ lat: updated.lat ?? null, lon: updated.lon ?? null })
+            const updates = { name: projectName.trim() }
+            if (locationChanged) {
+                updates.city_input = location.name
+                updates.location = location.name
+                updates.country_code = location.country_code
+                updates.lat = location.lat
+                updates.lon = location.lon
+            }
+
+            const updated = await updateProject(token, projectId, updates)
+            setLocation({
+                name: updated.location,
+                country_code: updated.country_code,
+                admin1: null,
+                lat: updated.lat,
+                lon: updated.lon,
+            })
+            setLocationChanged(false)
             onSaved?.(updated)
             setOpen(false)
             toast.success("Project updated", { position: "top-center" })
@@ -133,20 +159,13 @@ export default function EditProjectDialog({ onSaved }) {
                             <FieldError>{nameCheck.message}</FieldError>
                         )}
                     </Field>
-                    <Field data-invalid={touched.city && !cityCheck.valid}>
+                    <Field>
                         <FieldLabel htmlFor="city">Location</FieldLabel>
-                        <Input
+                        <LocationCombobox
                             id="city"
-                            placeholder="City"
-                            value={projectLocation}
-                            aria-invalid={touched.city && !cityCheck.valid}
-                            onBlur={() => markTouched("city")}
-                            onChange={(e) => setProjectLocation(e.target.value)}
-                            required
+                            value={location}
+                            onSelect={handleLocationSelect}
                         />
-                        {touched.city && !cityCheck.valid && (
-                            <FieldError>{cityCheck.message}</FieldError>
-                        )}
                     </Field>
                     {error && <p className="text-sm text-red-500">{error}</p>}
                     <div className="flex items-center justify-between gap-4 rounded-lg border border-destructive/40 p-4">
