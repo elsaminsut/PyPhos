@@ -7,20 +7,24 @@ import time
 client = PVGISClient()
 
 load_dotenv()
-API_URL = "https://geocoding-api.open-meteo.com/v1/search?name=CITY&count=1&language=en&format=json"
+SEARCH_API_URL = "https://geocoding-api.open-meteo.com/v1/search"
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 # calculation
-def get_location_data(city_name: str) -> dict:
+def search_locations(query: str, count: int = 5) -> list[dict]:
     """
-    Get location data (latitude, longitude) from geocoding API.
+    Search for cities matching `query` via the geocoding API.
+    Returns up to `count` candidates, each with a name, ISO-2 country code,
+    region (admin1) and coordinates, so the caller can disambiguate
+    same-named cities.
     Retries up to 3 times with exponential backoff on failure.
     """
     max_retries = 3
     for attempt in range(max_retries):
         try:
             location_response = requests.get(
-                API_URL.replace("CITY", city_name),
+                SEARCH_API_URL,
+                params={"name": query, "count": count, "language": "en", "format": "json"},
                 timeout=5
             )
             location_response.raise_for_status()
@@ -28,14 +32,18 @@ def get_location_data(city_name: str) -> dict:
             data = location_response.json()
             results = data.get("results") or []
             if not results:
-                raise ValueError(f"No location found for city: {city_name}")
+                raise ValueError(f"No location found for city: {query}")
 
-            location_data = results[0]
-            return {
-                "name": location_data.get("name", city_name),
-                "latitude": location_data.get("latitude"),
-                "longitude": location_data.get("longitude")
-            }
+            return [
+                {
+                    "name": result.get("name", query),
+                    "country_code": result.get("country_code"),
+                    "admin1": result.get("admin1"),
+                    "latitude": result.get("latitude"),
+                    "longitude": result.get("longitude")
+                }
+                for result in results
+            ]
         except requests.exceptions.Timeout:
             if attempt == max_retries - 1:
                 raise HTTPException(
@@ -53,7 +61,7 @@ def get_location_data(city_name: str) -> dict:
         except (ValueError, KeyError) as e:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid location: {city_name}. Please check the spelling."
+                detail=f"Invalid location: {query}. Please check the spelling."
             )
         except Exception as e:
             raise HTTPException(
@@ -96,7 +104,7 @@ def pv_calculation(latitude: float, longitude: float, installed_power: float, ti
             for i in range(len(monthly_results))
         ]
 
-    return {"radiation": radiation, "monthly_radiation": monthly_radiation, "energy_yield": energy_yield, 
+    return {"radiation": radiation, "monthly_radiation": monthly_radiation, "energy_yield": energy_yield,
             "monthly_energy_yield": monthly_energy_yield, "spec_yield": spec_yield, "perf_ratio": perf_ratio, "chart_data": chart_data}
 
 # print(pv_calculation(get_location_data("Berlin")["latitude"], get_location_data("Berlin")["longitude"], 1000, 90, 0, 0.13))
