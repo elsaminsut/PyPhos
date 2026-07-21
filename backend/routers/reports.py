@@ -1,4 +1,4 @@
-from backend.utils.auth import get_current_user
+from backend.utils.auth import get_current_user, oauth2_scheme
 from backend.utils.database import SessionDep
 from backend.utils.pv_calcs import pv_calculation
 from backend.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project
@@ -6,16 +6,23 @@ from backend.models.scenarios import Scenario
 from backend.models.reports import Report, ReportPublic
 from backend.models.users import User
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from playwright.sync_api import sync_playwright
 from sqlmodel import select
+from starlette.concurrency import run_in_threadpool
 from typing import Annotated
 import json
+import logging
+import os
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     tags=["Reports"]
 )
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 @router.post("/projects/{project_id}/scenarios/{scenario_id}/calculate", response_model=ReportPublic)
 def calculate_results(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
@@ -118,3 +125,51 @@ def get_report_by_scenario(current_user: CurrentUser, project_id: int, scenario_
             detail="Error retrieving report"
         )
     
+
+def _render_report_pdf(url: str, token: str) -> bytes:
+    """
+    Runs on a worker thread via run_in_threadpool.
+
+    Windows note: uvicorn's --reload / multi-worker supervisor forces a
+    SelectorEventLoop on the request-handling loop, which can't spawn
+    subprocesses (Chromium) on Windows. The sync API runs in this plain
+    thread instead, which is unaffected by that loop's policy.
+    """
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        context = browser.new_context()
+        # Seed localStorage before any page script runs, so the frontend's
+        # AuthContext picks up the token on its very first render.
+        context.add_init_script(
+            f"window.localStorage.setItem('token', {json.dumps(token)});"
+        )
+        page = context.new_page()
+        page.goto(url)
+        page.wait_for_load_state("networkidle")
+        pdf = page.pdf(format="A4")
+        browser.close()
+        return pdf
+
+
+@router.get("/projects/{project_id}/scenarios/{scenario_id}/report/pdf")
+async def export_pdf(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep,
+                     token: Annotated[str, Depends(oauth2_scheme)]):
+    """Export the report for a specific scenario as a PDF."""
+    try:
+        validate_user_owns_project(project_id, current_user, session)
+        validate_scenario_belongs_to_project(scenario_id, project_id, session)
+
+        pdf = await run_in_threadpool(
+            _render_report_pdf, f"{FRONTEND_URL}/projects/{project_id}/", token
+        )
+
+        return Response(content=pdf, media_type="application/pdf",
+                        headers={"Content-Disposition": f"attachment; filename=report.pdf"})
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Failed to generate PDF report for scenario %s", scenario_id)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error generating PDF report"
+        )
