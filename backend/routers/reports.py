@@ -160,7 +160,7 @@ async def export_pdf(current_user: CurrentUser, project_id: int, scenario_id: in
         validate_scenario_belongs_to_project(scenario_id, project_id, session)
 
         pdf = await run_in_threadpool(
-            _render_report_pdf, f"{FRONTEND_URL}/projects/{project_id}/", token
+            _render_report_pdf, f"{FRONTEND_URL}/projects/{project_id}/scenarios/{scenario_id}/report", token
         )
 
         return Response(content=pdf, media_type="application/pdf",

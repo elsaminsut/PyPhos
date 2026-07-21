@@ -9,6 +9,7 @@ import Signup from './screens/Signup'
 import AllProjects from './screens/AllProjects'
 import Project from './screens/Project'
 import CreateScenario from './screens/CreateScenario'
+import Report from './screens/Report'
 import Scenario from './screens/Scenario'
 import Settings from './screens/Settings'
 
@@ -27,6 +28,7 @@ export default function App() {
                     <Route path="/projects/:projectId" element={<PrivateRoute><Project /></PrivateRoute>} />
                     <Route path="/projects/:projectId/scenarios/create" element={<PrivateRoute><CreateScenario /></PrivateRoute>} />
                     <Route path="/projects/:projectId/scenarios/:scenarioId" element={<PrivateRoute><Scenario /></PrivateRoute>} />
+                    <Route path="/projects/:projectId/scenarios/:scenarioId/report" element={<PrivateRoute><Report /></PrivateRoute>} />
                 </Routes>
             </Router>
             <Toaster />
