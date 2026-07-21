@@ -68,10 +68,13 @@ export default function Scenario() {
     const [azimuth, setAzimuth] = useState("")
     const [selectedManufacturer, setSelectedManufacturer] = useState("")
     const [selectedModel, setSelectedModel] = useState("")
+    const [selectedModule, setSelectedModule] = useState("")
     const [touched, setTouched] = useState({})
 
     const { data: modules } = useApi(
         selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
+
+    const selectedModule = modules?.find((module) => module.model === selectedModel)
 
     const nameCheck = validateName(scenarioName, "Scenario name")
     const moduleAmountCheck = validateModuleAmount(moduleAmount)
@@ -299,19 +302,19 @@ export default function Scenario() {
                             <TableBody>
                                 <TableRow key="0">
                                     <TableCell className="font-semibold">Technology</TableCell>
-                                    <TableCell>Mono c-Si</TableCell>
+                                    <TableCell>{selectedModule ? selectedModule.technology : "—"}</TableCell>
                                 </TableRow>
                                 <TableRow key="1">
                                     <TableCell className="font-semibold">Nominal power</TableCell>
-                                    <TableCell>400 Wp</TableCell>
+                                    <TableCell>{selectedModule ? `${selectedModule.nominal_power} Wp` : "—"}</TableCell>
                                 </TableRow>
                                 <TableRow key="2">
                                     <TableCell className="font-semibold">Area</TableCell>
-                                    <TableCell>1.6 m²</TableCell>
+                                    <TableCell>{selectedModule ? `${selectedModule.area} m²` : "—"}</TableCell>
                                 </TableRow>
                                 <TableRow key="3">
                                     <TableCell className="font-semibold">Temperature coefficient</TableCell>
-                                    <TableCell>-0.48%/°C</TableCell>
+                                    <TableCell>{selectedModule ? `${selectedModule.temp_coeff_pmax}%/°C` : "—"}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
