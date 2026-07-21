@@ -241,7 +241,7 @@ const Project = () => {
                                 { report &&
                                 <div id="output" className="flex flex-col gap-4">
                                     <div>
-                                        <ChartBarInteractive data={report.chart_data} />
+                                        <ChartBarInteractive height={250} data={report.chart_data} />
                                     </div>
                                     <div>
                                         <div>

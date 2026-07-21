@@ -29,7 +29,7 @@ const chartConfig = {
   },
 }
 
-export function ChartBarInteractive({ data }) {
+export function ChartBarInteractive({ data, height }) {
   const [activeChart, setActiveChart] = React.useState("yield")
 
   const totals = React.useMemo(
@@ -79,7 +79,7 @@ export function ChartBarInteractive({ data }) {
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
+          className={`aspect-auto h-[${height}px] w-full`}
         >
           <BarChart
             accessibilityLayer
