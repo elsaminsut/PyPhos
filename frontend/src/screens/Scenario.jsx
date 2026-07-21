@@ -68,7 +68,6 @@ export default function Scenario() {
     const [azimuth, setAzimuth] = useState("")
     const [selectedManufacturer, setSelectedManufacturer] = useState("")
     const [selectedModel, setSelectedModel] = useState("")
-    const [selectedModule, setSelectedModule] = useState("")
     const [touched, setTouched] = useState({})
 
     const { data: modules } = useApi(
