@@ -21,7 +21,7 @@ import EditProjectDialog from "../components/EditProjectDialog"
 import Footer from "../components/Footer"
 import Header from "../components/Header";
 import Map from "../components/Map";
-import { Pencil, Plus } from "lucide-react"
+import { Download, Pencil, Plus } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import {
     Table,
@@ -38,8 +38,10 @@ import {
 } from "@/components/ui/tooltip"
 
 
+import { toast } from "sonner"
+
 import { AuthContext } from "../lib/AuthContext"
-import { useApi, getReport } from "../lib/api"
+import { useApi, getReport, downloadReport } from "../lib/api"
 
 
 
@@ -95,6 +97,26 @@ const Project = () => {
         setProjectLocation(updated.location ?? "")
         setProjectCountryCode(updated.country_code ?? "")
         setProjectCoords({ lat: updated.lat ?? null, lon: updated.lon ?? null })
+    }
+
+    async function pdfDownload() {
+        if (!selectedScenario) return
+
+        try {
+            const blob = await downloadReport(token, projectId, selectedScenario.id)
+            const url = URL.createObjectURL(blob)
+
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `${projectName || "report"}.pdf`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+
+            URL.revokeObjectURL(url)
+        } catch (error) {
+            toast.error("Failed to download report", { position: "top-center" })
+        }
     }
 
     return (
@@ -158,6 +180,14 @@ const Project = () => {
                                         } />
                                         <TooltipContent>
                                             <p>Edit scenario</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <Tooltip>
+                                        <TooltipTrigger render={
+                                            <Button size="icon" variant="outline" onClick={pdfDownload}><Download/></Button>
+                                        } />
+                                        <TooltipContent>
+                                            <p>Export report</p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </div>

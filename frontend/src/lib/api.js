@@ -156,3 +156,17 @@ export function getReport(token, projectId, scenarioId) {
         method: "GET"
     })
 }
+
+export async function downloadReport(token, projectId, scenarioId) {
+    const response = await fetch(`${BASE_URL}/projects/${projectId}/scenarios/${scenarioId}/report/pdf`, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+
+    if (!response.ok) {
+        const error = new Error("Failed to download report")
+        error.status = response.status
+        throw error
+    }
+
+    return response.blob()
+}
