@@ -24,10 +24,10 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
-                    <Route path="/projects" element={<PrivateRoute><AllProjects /></PrivateRoute>} />
-                    <Route path="/projects/:projectId" element={<PrivateRoute><Project /></PrivateRoute>} />
-                    <Route path="/projects/:projectId/scenarios/create" element={<PrivateRoute><CreateScenario /></PrivateRoute>} />
-                    <Route path="/projects/:projectId/scenarios/:scenarioId" element={<PrivateRoute><Scenario /></PrivateRoute>} />
+                    <Route path="/projects" element={<GuestOrPrivateRoute><AllProjects /></GuestOrPrivateRoute>} />
+                    <Route path="/projects/:projectId" element={<GuestOrPrivateRoute><Project /></GuestOrPrivateRoute>} />
+                    <Route path="/projects/:projectId/scenarios/create" element={<GuestOrPrivateRoute><CreateScenario /></GuestOrPrivateRoute>} />
+                    <Route path="/projects/:projectId/scenarios/:scenarioId" element={<GuestOrPrivateRoute><Scenario /></GuestOrPrivateRoute>} />
                     <Route path="/projects/:projectId/scenarios/:scenarioId/report" element={<PrivateRoute><Report /></PrivateRoute>} />
                 </Routes>
             </Router>
@@ -35,6 +35,11 @@ export default function App() {
         </AuthProvider>
     )
 }
+
+const GuestOrPrivateRoute = ({ children }) => {
+  const { isGuest, token } = useContext(AuthContext);
+  return isGuest || isTokenValid(token) ? children : <Navigate to="/login" />
+};
 
 const PrivateRoute = ({ children }) => {
   const { token } = useContext(AuthContext);
