@@ -12,9 +12,12 @@ async function fetchCurrentUser(token) {
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
+  const [isGuest, setIsGuest] = useState(() => localStorage.getItem('guest') === 'true');
   const [user, setUser] = useState(null);
 
   const login = (newToken) => {
+    setIsGuest(false);
+    localStorage.removeItem('guest');
     setToken(newToken);
     localStorage.setItem('token', newToken);
   };
@@ -23,6 +26,16 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
+    setIsGuest(false);
+    localStorage.removeItem('guest');
+  };
+
+  const continueAsGuest = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('token');
+    setIsGuest(true);
+    localStorage.setItem('guest', 'true');
   };
 
   useEffect(() => {
@@ -41,7 +54,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ token, user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ token, user, isGuest, setUser, login, logout, continueAsGuest }}>
       {children}
     </AuthContext.Provider>
   );
