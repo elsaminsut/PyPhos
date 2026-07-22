@@ -61,7 +61,7 @@ export default function Report() {
             <header className="flex justify-end items-center px-8 py-4">
                 <img src={Logo} alt="PyPhos Logo" className="h-8 w-auto"/>
             </header>
-            <main className="max-w-[754px] mx-auto px-8 flex-1 flex flex-col w-full">
+            <main className="px-8 flex-1 flex flex-col w-full">
             <header className="flex-col">
                 <div className="flex justify-between items-center">
                     <h1 className="text-xl font-semibold">{projectName}</h1>
