@@ -54,6 +54,10 @@ const Project = () => {
     const [projectCountryCode, setProjectCountryCode] = useState("")
     const [projectCoords, setProjectCoords] = useState({ lat: null, lon: null })
 
+    useEffect(() => {
+        document.title = `Pyphos - ${projectName || "Project"}`
+    }, [projectName])
+
     const [selectedScenario, setSelectedScenario] = useState(null)
     const [report, setReport] = useState("")
 

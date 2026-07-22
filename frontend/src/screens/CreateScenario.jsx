@@ -57,6 +57,10 @@ export default function CreateScenario() {
     const [selectedModel, setSelectedModel] = useState(null)
     const [touched, setTouched] = useState({})
 
+    useEffect(() => {
+        document.title = `Pyphos - Create scenario`
+    }, [scenarioName])
+
     const { data: modules } = useApi(
     selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
 
