@@ -56,6 +56,9 @@ python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r backend/requirements.txt
 
+# download the Chromium build Playwright uses for PDF export (one-time, not a pip package)
+python -m playwright install chromium
+
 # configure environment
 cp backend/.env.example backend/.env
 # edit backend/.env with your database credentials and secret key
