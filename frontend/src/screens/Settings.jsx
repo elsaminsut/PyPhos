@@ -50,6 +50,10 @@ export default function Settings() {
     const [deleting, setDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState(null)
 
+    useEffect(() => {
+        document.title = `Pyphos - Settings`
+    }, [])
+
     const emailCheck = validateEmail(email)
     const passwordCheck = password === "" ? { valid: true, message: null } : validatePassword(password)
     const isFormValid = emailCheck.valid && passwordCheck.valid

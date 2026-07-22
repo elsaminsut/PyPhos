@@ -70,6 +70,10 @@ export default function Scenario() {
     const [selectedModel, setSelectedModel] = useState("")
     const [touched, setTouched] = useState({})
 
+    useEffect(() => {
+        document.title = `Pyphos - Edit scenario: ${scenarioName || "Scenario"}`
+    }, [scenarioName])
+
     const { data: modules } = useApi(
         selectedManufacturer ? `/api/modules?manufacturer=${selectedManufacturer}` : null)
 

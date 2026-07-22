@@ -26,6 +26,10 @@ export default function SignupPage() {
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    document.title = `Welcome to Pyphos! - Sign up`
+  }, [])
+
   const emailCheck = validateEmail(email)
   const passwordCheck = validatePassword(password)
   const confirmCheck = confirmPassword !== password

@@ -25,6 +25,10 @@ const LoginPage = () => {
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    document.title = `Welcome to Pyphos! - Log in`
+  }, [])
+
   const emailCheck = validateEmail(email)
   const passwordCheck = validateLoginPassword(password)
   const isFormValid = emailCheck.valid && passwordCheck.valid

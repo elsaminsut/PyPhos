@@ -1,4 +1,5 @@
 import { Link } from "react-router"
+import { useEffect } from "react"
 
 import {
     Breadcrumb,
@@ -19,6 +20,10 @@ import { useApi } from "../lib/api"
 
 const AllProjects = () => {
     const { data: projects, loading, error } = useApi("/api/projects")
+
+    useEffect(() => {
+        document.title = "Pyphos - Your Projects"
+    }, [])
 
     if (loading) return <p className="grid h-screen place-items-center">Loading...</p>
     if (error) return <div className="grid h-screen place-items-center"><p>Something went wrong.</p></div>
