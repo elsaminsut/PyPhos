@@ -84,7 +84,7 @@ export function createProject(token, { name, city_input, location, country_code,
     })
 }
 
-export function createScenario(token, { name, projectId, moduleId, moduleAmount, tilt, azimuth, nominalPower }) {
+export function createScenarioApi(token, { name, projectId, moduleId, moduleAmount, tilt, azimuth, nominalPower }) {
     return request(`/projects/${projectId}/scenarios`, token, {
         method: "POST",
         body: JSON.stringify({ name, project_id: projectId, module_id: moduleId, module_amount: parseInt(moduleAmount), tilt: parseFloat(tilt), azimuth: parseFloat(azimuth), nominal_power: nominalPower })
@@ -119,11 +119,11 @@ export function updateResourceField(token, endpoint, field, value, options = {})
     return updateResource(token, endpoint, { [field]: normalizedValue })
 }
 
-export function updateProject(token, projectId, updates) {
+export function updateProjectApi(token, projectId, updates) {
     return updateResource(token, `/projects/${projectId}`, updates)
 }
 
-export function deleteProject(token, projectId) {
+export function deleteProjectApi(token, projectId) {
     return request(`/projects/${projectId}`, token, {
         method: "DELETE"
     })
@@ -139,19 +139,19 @@ export function deleteUser(token, userId) {
     })
 }
 
-export function deleteScenario(token, projectId, scenarioId) {
+export function deleteScenarioApi(token, projectId, scenarioId) {
     return request(`/projects/${projectId}/scenarios/${scenarioId}`, token, {
         method: "DELETE"
     })
 }
 
-export function calculateScenario(token, projectId, scenarioId) {
+export function calculateScenarioApi(token, projectId, scenarioId) {
     return request(`/projects/${projectId}/scenarios/${scenarioId}/calculate`, token, {
         method: "POST"
     })
 }
 
-export function getReport(token, projectId, scenarioId) {
+export function getReportApi(token, projectId, scenarioId) {
     return request(`/projects/${projectId}/scenarios/${scenarioId}/report`, token, {
         method: "GET"
     })
