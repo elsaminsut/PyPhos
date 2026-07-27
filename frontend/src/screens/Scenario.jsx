@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router"
 
 import {
@@ -49,18 +49,20 @@ import {
 import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
-import { AuthContext } from "../lib/AuthContext"
-import { calculateScenario, updateResource, updateResourceField, useApi, deleteScenario } from "../lib/api"
+import { useApi } from "../lib/api"
+import { useCalculateReport, useDeleteScenario, useUpdateScenario, useProject, useScenario } from "../lib/useData"
 import { validateModuleAmount, validateName } from "../lib/validators"
 import { AngleSlider } from "../components/AngleSlider";
 
 export default function Scenario() {
     const { projectId, scenarioId } = useParams();
-    const { token } = useContext(AuthContext)
     const navigate = useNavigate()
-    const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
-    const { data: scenario, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios/${scenarioId}`)
+    const { data: project, loading: projLoading, error: projError } = useProject(projectId)
+    const { data: scenario, loading: scenLoading, error: scenError } = useScenario(projectId, scenarioId)
     const { data: manufacturers } = useApi("/api/modules/manufacturers")
+    const updateScenario = useUpdateScenario()
+    const deleteScenario = useDeleteScenario()
+    const calculateReport = useCalculateReport()
     
     const [scenarioName, setScenarioName] = useState("")
     const [moduleAmount, setModuleAmount] = useState("")
@@ -118,7 +120,7 @@ export default function Scenario() {
         if (!validateName(scenarioName, "Scenario name").valid) return
 
         try {
-            await updateResourceField(token, `/projects/${projectId}/scenarios/${scenarioId}`, "name", scenarioName, { trim: true })
+            await updateScenario(projectId, scenarioId, { name: scenarioName.trim() })
             toast.success("Project name updated", { position: "top-center" })
 
         } catch (error) {
@@ -137,14 +139,14 @@ export default function Scenario() {
         try {
             const module = modules?.find((m) => m.model === selectedModel)
 
-            await updateResource(token, `/projects/${projectId}/scenarios/${scenarioId}`, {
+            await updateScenario(projectId, scenario.id, {
                 name: scenarioName.trim(),
                 module_amount: Number(moduleAmount),
                 tilt: Number(tilt),
                 azimuth: Number(azimuth),
                 ...(module ? { module_id: module.id } : {}),
             })
-            await calculateScenario(token, projectId, scenarioId)
+            await calculateReport(projectId, scenario.id)
             toast.success("Scenario updated", { position: "top-center" })
             navigate(`/projects/${projectId}`)
         } catch (error) {
@@ -157,7 +159,7 @@ export default function Scenario() {
         setDeleting(true)
 
         try {
-            await deleteScenario(token, projectId, scenarioId)
+            await deleteScenario(projectId, scenarioId)
             toast.info("Scenario deleted", { position: "top-center" })
             navigate(`/projects/${projectId}`)
         } catch (err) {

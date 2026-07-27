@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router"
 
 import {
@@ -37,17 +37,18 @@ import {
 } from "@/components/ui/table"
 import { toast } from "sonner"
 
-import { AuthContext } from "../lib/AuthContext"
-import { calculateScenario, createScenario, useApi } from "../lib/api"
+import { useApi } from "../lib/api"
+import { useCalculateReport, useCreateScenario, useProject } from "../lib/useData"
 import { validateModuleAmount, validateName } from "../lib/validators"
 import { AngleSlider } from "../components/AngleSlider";
 
 export default function CreateScenario() {
-    const { projectId, scenarioId } = useParams();  
-    const { token } = useContext(AuthContext)
+    const { projectId } = useParams();
     const navigate = useNavigate()
-    const { data: project, loading: loading, error: error } = useApi(`/api/projects/${projectId}`)
+    const { data: project, loading: loading, error: error } = useProject(projectId)
     const { data: manufacturers } = useApi("/api/modules/manufacturers")
+    const createScenario = useCreateScenario()
+    const calculateReport = useCalculateReport()
 
     const [scenarioName, setScenarioName] = useState("Scenario Name")
     const [moduleAmount, setModuleAmount] = useState("")
@@ -84,16 +85,6 @@ export default function CreateScenario() {
         setTouched((t) => ({ ...t, [field]: true }))
     }
 
-    async function handleNameSubmit(e) {
-        e?.preventDefault?.()
-
-        try {
-            await updateResourceField(token, `/projects/${projectId}/scenarios/${scenarioId}`, "name", scenarioName, { trim: true })
-        } catch (error) {
-            console.error("Error updating scenario name:", error)
-        }
-    }
-
     async function handleSubmit(e) {
         e?.preventDefault?.()
 
@@ -103,16 +94,15 @@ export default function CreateScenario() {
         }
 
         try {
-            const scenario = await createScenario(token, {
-                "name": scenarioName,
-                "projectId": projectId,
-                "moduleId": selectedModule.id,
-                "moduleAmount": moduleAmount,
-                "tilt": tilt,
-                "azimuth": azimuth,
-                "nominalPower": selectedModule.nominal_power
+            const scenario = await createScenario({
+                name: scenarioName,
+                projectId,
+                module: selectedModule,
+                moduleAmount,
+                tilt,
+                azimuth,
             })
-            await calculateScenario(token, projectId, scenario.id)
+            await calculateReport(projectId, scenario.id)
             toast.success("Scenario created", { position: "top-center" })
             navigate(`/projects/${projectId}`)
         } catch (error) {
