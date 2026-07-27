@@ -39,15 +39,17 @@ import {
 import { toast } from "sonner"
 
 import { AuthContext } from "../lib/AuthContext"
-import { useApi, getReport, downloadReport } from "../lib/api"
+import { downloadReport } from "../lib/api"
+import { useProject, useReport, useScenarios } from "../lib/useData"
 
 
 
 const Project = () => {
     const { projectId } = useParams();
     const { token } = useContext(AuthContext)
-    const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
-    const { data: scenarios, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios`)
+    const { data: project, loading: projLoading, error: projError } = useProject(projectId)
+    const { data: scenarios, loading: scenLoading, error: scenError } = useScenarios(projectId)
+    const useReport = useReport()
     
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")
@@ -81,7 +83,7 @@ const Project = () => {
 
         const fetchReport = async () => {
             try {
-                const data = await getReport(token, projectId, selectedScenario.id)
+                const data = await useReport(projectId, selectedScenario.id)
                 setReport(data)
             } catch (error) {
                 setReport(null)
