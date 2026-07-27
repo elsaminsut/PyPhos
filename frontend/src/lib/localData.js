@@ -64,6 +64,17 @@ export function createLocalProject(projectData) {
     return project
 }
 
+export function getLocalProjects() {
+    const projects = []
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key.startsWith("project_") && !key.endsWith("_scenario_ids")) {
+            projects.push(JSON.parse(localStorage.getItem(key)))
+        }
+    }
+    return projects
+}
+
 export function getLocalProject(projectId) {
     return JSON.parse(localStorage.getItem(`project_${projectId}`))
 }
@@ -116,6 +127,10 @@ export function getLocalScenarios(projectId) {
     return scenarioIds
         .map((scenarioId) => JSON.parse(localStorage.getItem(`scenario_${scenarioId}`)))
         .filter(Boolean)
+}
+
+export function getLocalScenario(scenarioId) {
+    return JSON.parse(localStorage.getItem(`scenario_${scenarioId}`))
 }
 
 export function updateLocalScenario(scenarioId, updates) {
