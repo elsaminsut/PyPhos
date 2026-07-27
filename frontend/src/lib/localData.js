@@ -26,6 +26,7 @@
 //       azimuth: 0,
 //       installed_power: 39270,
 //       losses: 0.13,
+//       report: {report object}
 //     }
 //   ]
 // }
@@ -78,7 +79,7 @@ export function updateLocalProject(projectId, updates) {
 
 export function deleteLocalProject(projectId) {
     const scenarioIds = JSON.parse(localStorage.getItem(scenarioIdsKey(projectId))) || []
-    scenarioIds.forEach((scenarioId) => localStorage.removeItem(`scenario_${scenarioId}`))
+    scenarioIds.forEach((scenarioId) => deleteLocalScenario(scenarioId))
 
     localStorage.removeItem(`project_${projectId}`)
     localStorage.removeItem(scenarioIdsKey(projectId))
@@ -97,7 +98,7 @@ export function createLocalScenario(scenarioData) {
         tilt: parseFloat(tilt),
         azimuth: parseFloat(azimuth),
         installed_power: module ? Math.round(parseInt(moduleAmount) * module.nominal_power * 100) / 100 : null,
-        losses: 0.13,
+        report: null,
     }
 
     localStorage.setItem(`scenario_${scenario.id}`, JSON.stringify(scenario))
@@ -135,4 +136,35 @@ export function deleteLocalScenario(scenarioId) {
     const idsKey = scenarioIdsKey(scenario.project_id)
     const scenarioIds = JSON.parse(localStorage.getItem(idsKey)) || []
     localStorage.setItem(idsKey, JSON.stringify(scenarioIds.filter((id) => id !== scenarioId)))
+}
+
+export async function calculateLocalReport(projectId, scenarioId) {
+    const project = getLocalProject(projectId)
+    const scenario = getLocalScenarios(projectId).find((s) => s.id === scenarioId)
+    if (!project || !scenario) return null
+
+    const calcRequest = {
+        lat: project.lat,
+        lon: project.lon,
+        installed_power: scenario.installed_power,
+        tilt: scenario.tilt,
+        azimuth: scenario.azimuth,
+    }
+
+    const response = await fetch("/api/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(calcRequest)
+    })
+
+    if (!response.ok) {
+        throw new Error("Failed to calculate report")
+    }
+
+    return response.json()
+}
+
+export async function setLocalReport(projectId, scenarioId) {
+    const report = await calculateLocalReport(projectId, scenarioId)
+    return updateLocalScenario(scenarioId, { report })
 }
