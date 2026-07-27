@@ -3,7 +3,7 @@ from backend.utils.database import SessionDep
 from backend.utils.pv_calcs import pv_calculation
 from backend.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project
 from backend.models.scenarios import Scenario
-from backend.models.reports import Report, ReportPublic
+from backend.models.reports import Report, ReportBase, ReportPublic, CalculationRequest
 from backend.models.users import User
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -173,3 +173,29 @@ async def export_pdf(current_user: CurrentUser, project_id: int, scenario_id: in
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error generating PDF report"
         )
+
+@router.post("/calculate", response_model=ReportBase)
+def calculate_results_local(payload: CalculationRequest):
+    """
+    Stateless yield calculation for guest mode: no auth, no project/scenario
+    lookup, nothing persisted. Takes system specs directly and hands back the
+    result for the caller to store wherever it likes (localStorage for guests).
+    """
+    results = pv_calculation(
+        latitude=payload.lat,
+        longitude=payload.lon,
+        installed_power=payload.installed_power,
+        tilt=payload.tilt,
+        azimuth=payload.azimuth,
+        losses=0.13
+    )
+
+    return {
+        "energy_yield": results["energy_yield"],
+        "monthly_yield": results["monthly_energy_yield"],
+        "radiation": results["radiation"],
+        "monthly_radiation": results["monthly_radiation"],
+        "specific_yield": results["spec_yield"],
+        "perf_ratio": results["perf_ratio"],
+        "chart_data": results["chart_data"],
+    }

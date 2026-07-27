@@ -1,7 +1,9 @@
 from backend.models.modules import ModulePublic
 from backend.models.projects import ProjectPublic
 from backend.models.scenarios import ScenarioPublic
+from backend.utils.validators import validate_tilt, validate_azimuth
 from datetime import datetime
+from pydantic import field_validator
 from sqlmodel import Field, SQLModel, Index, Relationship, JSON
 from typing import Optional, TYPE_CHECKING
 
@@ -45,3 +47,43 @@ class ReportDetail(ReportPublic):
     scenario: ScenarioPublic
     project: ProjectPublic
     module: ModulePublic
+
+
+class CalculationRequest(SQLModel):
+    """Raw inputs for a stateless (no DB, no auth) yield calculation, used by guest mode."""
+    lat: float
+    lon: float
+    installed_power: float
+    tilt: float
+    azimuth: float
+
+    @field_validator('lat')
+    @classmethod
+    def check_lat(cls, v: float) -> float:
+        if not -90 <= v <= 90:
+            raise ValueError("Latitude must be between -90 and 90")
+        return v
+
+    @field_validator('lon')
+    @classmethod
+    def check_lon(cls, v: float) -> float:
+        if not -180 <= v <= 180:
+            raise ValueError("Longitude must be between -180 and 180")
+        return v
+
+    @field_validator('installed_power')
+    @classmethod
+    def check_installed_power(cls, v: float) -> float:
+        if v <= 0:
+            raise ValueError("Installed power must be greater than 0")
+        return v
+
+    @field_validator('tilt', mode='before')
+    @classmethod
+    def check_tilt(cls, v) -> float:
+        return validate_tilt(str(v))
+
+    @field_validator('azimuth', mode='before')
+    @classmethod
+    def check_azimuth(cls, v) -> float:
+        return validate_azimuth(str(v))
