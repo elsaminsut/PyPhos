@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 
 import {
@@ -21,17 +21,16 @@ import { Input } from "@/components/ui/input"
 import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
-import { AuthContext } from "../lib/AuthContext"
-import { deleteProject, updateProject, useApi } from "../lib/api"
+import { useProject, useUpdateProject, useDeleteProject } from "../lib/useData"
 import { validateName, validateRequired } from "../lib/validators"
 import LocationCombobox from "./LocationCombobox"
 
 export default function EditProjectDialog({ onSaved }) {
-    const { token } = useContext(AuthContext)
     const { projectId } = useParams();
     const navigate = useNavigate()
-    const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
-
+    const { data: project, loading: projLoading, error: projError } = useProject(projectId)
+    const updateProject = useUpdateProject()
+    const deleteProject = useDeleteProject()
 
     const [open, setOpen] = useState(false)
     const [projectName, setProjectName] = useState("")
@@ -93,7 +92,7 @@ export default function EditProjectDialog({ onSaved }) {
                 updates.lon = location.lon
             }
 
-            const updated = await updateProject(token, projectId, updates)
+            const updated = await updateProject(projectId, updates)
             setLocation({
                 name: updated.location,
                 country_code: updated.country_code,
@@ -117,7 +116,7 @@ export default function EditProjectDialog({ onSaved }) {
         setDeleting(true)
 
         try {
-            await deleteProject(token, projectId)
+            await deleteProject(projectId)
             toast.info("Project deleted", { position: "top-center" })
             navigate("/projects")
         } catch (err) {
