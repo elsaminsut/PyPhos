@@ -48,6 +48,10 @@ function scenarioIdsKey(projectId) {
 }
 
 export function createLocalProject(projectData) {
+    if (getLocalProjects().length >= 1) {
+        throw new Error("Guests are limited to 1 project")
+    }
+
     const project = {
         id: nextLocalId("project"),
         name: projectData.name || "",
@@ -98,6 +102,10 @@ export function deleteLocalProject(projectId) {
 
 export function createLocalScenario(scenarioData) {
     const { name, projectId, module, moduleAmount, tilt, azimuth } = scenarioData
+
+    if (getLocalScenarios(projectId).length >= 3) {
+        throw new Error("Guests are limited to 3 scenarios per project")
+    }
 
     const scenario = {
         id: nextLocalId("scenario"),
