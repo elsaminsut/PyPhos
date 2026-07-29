@@ -22,7 +22,7 @@ class LocationCandidate(BaseModel):
 
 
 @router.get("/search", response_model=list[LocationCandidate])
-def search(current_user: CurrentUser, q: Annotated[str, Query(min_length=1, max_length=20)]):
+def search(q: Annotated[str, Query(min_length=1, max_length=20)]):
     """
     Search for cities matching `q`, for use in a location picker.
     Returns multiple candidates (with country code and region) so same-named
