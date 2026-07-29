@@ -46,12 +46,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (!token) {
+    if (!token || isGuest) {
       setUser(null);
       return;
     }
     fetchCurrentUser(token).then(setUser);
-  }, [token]);
+  }, [token, isGuest]);
 
   return (
     <AuthContext.Provider value={{ token, user, isGuest, setUser, login, logout, continueAsGuest }}>
