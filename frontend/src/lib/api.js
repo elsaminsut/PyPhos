@@ -10,7 +10,7 @@ export function useApi(endpoint) {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        if (!token) return
+        if (!endpoint) return
 
         setLoading(true)
         setData(null)
@@ -19,7 +19,7 @@ export function useApi(endpoint) {
         const fetchContent = async () => {
             try {
                 const response = await fetch(endpoint, {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: token ? { Authorization: `Bearer ${token}` } : {}
                 })
                 if (!response.ok) {
                     setError(response.status)
