@@ -16,10 +16,11 @@ import Header from "../components/Header";
 import ProjectCard from "../components/ProjectCard"
 
 import { useApi } from "../lib/api"
+import { useProjects } from "../lib/useData"
 
 
 const AllProjects = () => {
-    const { data: projects, loading, error } = useApi("/api/projects")
+    const { data: projects, loading, error } = useProjects()
 
     useEffect(() => {
         document.title = "Pyphos - Your Projects"
