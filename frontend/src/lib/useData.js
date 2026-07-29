@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { AuthContext } from './AuthContext'
 import {
     useApi,
@@ -27,7 +27,8 @@ import {
 export function useProjects() {
     const { isGuest } = useContext(AuthContext)
     const apiResult = useApi(isGuest ? null : `/api/projects`)
-    const localResult = getLocalProjects()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const localResult = useMemo(() => getLocalProjects(), [isGuest])
 
     return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
@@ -35,7 +36,10 @@ export function useProjects() {
 export function useProject(projectId) {
     const { isGuest } = useContext(AuthContext)
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}`)
-    const localResult = getLocalProject(isGuest ? projectId : null)
+    const localResult = useMemo(
+        () => (isGuest ? getLocalProject(projectId) : null),
+        [isGuest, projectId]
+    )
 
     return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
@@ -73,7 +77,10 @@ export function useDeleteProject() {
 export function useScenarios(projectId) {
     const { isGuest } = useContext(AuthContext)
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios`)
-    const localResult = getLocalScenarios(isGuest ? projectId : null)
+    const localResult = useMemo(
+        () => (isGuest ? getLocalScenarios(projectId) : null),
+        [isGuest, projectId]
+    )
 
     return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
@@ -81,7 +88,10 @@ export function useScenarios(projectId) {
 export function useScenario(projectId, scenarioId) {
     const { isGuest } = useContext(AuthContext)
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios/${scenarioId}`)
-    const localResult = getLocalScenario(isGuest ? scenarioId : null)
+    const localResult = useMemo(
+        () => (isGuest ? getLocalScenario(scenarioId) : null),
+        [isGuest, scenarioId]
+    )
 
     return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
