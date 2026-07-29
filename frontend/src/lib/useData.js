@@ -29,7 +29,7 @@ export function useProjects() {
     const apiResult = useApi(isGuest ? null : `/api/projects`)
     const localResult = getLocalProjects()
 
-    return isGuest ? localResult : apiResult
+    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
 
 export function useProject(projectId) {
@@ -37,7 +37,7 @@ export function useProject(projectId) {
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}`)
     const localResult = getLocalProject(isGuest ? projectId : null)
 
-    return isGuest ? localResult : apiResult
+    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
 
 export function useCreateProject() {
@@ -75,7 +75,7 @@ export function useScenarios(projectId) {
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios`)
     const localResult = getLocalScenarios(isGuest ? projectId : null)
 
-    return isGuest ? localResult : apiResult
+    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
 
 export function useScenario(projectId, scenarioId) {
@@ -83,7 +83,7 @@ export function useScenario(projectId, scenarioId) {
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios/${scenarioId}`)
     const localResult = getLocalScenario(isGuest ? scenarioId : null)
 
-    return isGuest ? localResult : apiResult
+    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
 
 export function useCreateScenario() {
@@ -128,11 +128,13 @@ export function useDeleteScenario() {
 }
 
 export function useReport(projectId, scenarioId) {
-    const { isGuest } = useContext(AuthContext)
-    const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios/${scenarioId}/report`)
-    const localScenario = getLocalScenario(isGuest ? scenarioId : null)
+    const { isGuest, token } = useContext(AuthContext)
 
-    return isGuest ? (localScenario?.report ?? null) : apiResult
+    return function getReport(projectId, scenarioId) {
+        return isGuest
+            ? getLocalScenario(scenarioId)?.report ?? null
+            : getReportApi(token, projectId, scenarioId)
+    }
 }
 
 export function useCalculateReport() {
