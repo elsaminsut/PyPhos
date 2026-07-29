@@ -1,4 +1,4 @@
-import { useState, useContext } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router"
 
 import {
@@ -14,14 +14,14 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 
-import { AuthContext } from "../lib/AuthContext"
-import { createProject } from "../lib/api"
+import { useCreateProject } from "../lib/useData"
 import { validateName } from "../lib/validators"
 import LocationCombobox from "./LocationCombobox"
 
 export default function CreateProjectDialog() {
-    const { token } = useContext(AuthContext)
     const navigate = useNavigate()
+
+    const createProject = useCreateProject()
 
     const [open, setOpen] = useState(false)
     const [name, setName] = useState("")
@@ -50,7 +50,7 @@ export default function CreateProjectDialog() {
         setSubmitting(true)
 
         try {
-            const project = await createProject(token, {
+            const project = await createProject({
                 name,
                 city_input: location.name,
                 location: location.name,
