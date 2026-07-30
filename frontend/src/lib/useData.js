@@ -8,6 +8,7 @@ import {
     createScenarioApi,
     deleteScenarioApi,
     calculateScenarioApi,
+    getReportApi,
     updateResource,
 } from './api'
 import {
