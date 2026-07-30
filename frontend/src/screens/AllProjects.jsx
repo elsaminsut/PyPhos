@@ -15,7 +15,6 @@ import Footer from "../components/Footer"
 import Header from "../components/Header";
 import ProjectCard from "../components/ProjectCard"
 
-import { useApi } from "../lib/api"
 import { useProjects } from "../lib/useData"
 
 

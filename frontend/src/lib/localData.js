@@ -73,7 +73,8 @@ export function getLocalProjects() {
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
         if (key.startsWith("project_") && !key.endsWith("_scenario_ids")) {
-            projects.push(JSON.parse(localStorage.getItem(key)))
+            const project = JSON.parse(localStorage.getItem(key))
+            projects.push({ ...project, scenario_count: getLocalScenarios(project.id).length })
         }
     }
     return projects
