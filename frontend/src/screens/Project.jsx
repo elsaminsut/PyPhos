@@ -41,6 +41,7 @@ import { toast } from "sonner"
 import { AuthContext } from "../lib/AuthContext"
 import { downloadReport } from "../lib/api"
 import { useProject, useReport, useScenarios } from "../lib/useData"
+import { getCompassDirection } from "../components/AngleSlider"
 
 
 
@@ -218,7 +219,7 @@ const Project = () => {
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell className="font-semibold">Azimuth</TableCell>
-                                                <TableCell>{selectedScenario.azimuth}°</TableCell>
+                                                <TableCell>{selectedScenario.azimuth}°{` · ${getCompassDirection(selectedScenario.azimuth)}`}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>

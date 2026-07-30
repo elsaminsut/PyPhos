@@ -6,7 +6,7 @@ import { Slider } from "@/components/ui/slider"
 // Azimuth convention used across the app: South is 0°, West is positive, East is negative.
 const COMPASS_DIRECTIONS = ["S", "SW", "W", "NW", "N", "NE", "E", "SE"]
 
-function getCompassDirection(azimuth) {
+export function getCompassDirection(azimuth) {
   const normalized = ((azimuth % 360) + 360) % 360
   return COMPASS_DIRECTIONS[Math.round(normalized / 45) % 8]
 }
