@@ -206,7 +206,7 @@ export default function CreateScenario() {
                         <h3 className="font-semibold">Solar module</h3>
                         <Field>
                             <FieldLabel htmlFor="manufacturer">Manufacturer</FieldLabel>
-                            <Combobox items={manufacturers} onValueChange={setSelectedManufacturer}>
+                            <Combobox items={manufacturers} value={selectedManufacturer} onValueChange={setSelectedManufacturer}>
                                 <ComboboxInput placeholder="Select a manufacturer" />
                                 <ComboboxContent>
                                     <ComboboxEmpty>No items found.</ComboboxEmpty>
@@ -225,7 +225,7 @@ export default function CreateScenario() {
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="model">Model</FieldLabel>
-                            <Combobox items={modules} onValueChange={setSelectedModel}>
+                            <Combobox items={modules} value={selectedModel} onValueChange={setSelectedModel}>
                                 <ComboboxInput placeholder="Select a model" />
                                 <ComboboxContent>
                                     <ComboboxEmpty>No items found.</ComboboxEmpty>
