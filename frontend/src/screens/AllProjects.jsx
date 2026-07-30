@@ -35,25 +35,31 @@ const AllProjects = () => {
         <main className="max-w-[1000px] mx-auto px-8 flex-1 flex flex-col w-full">
             <header className="mb-8">
                 <div className="flex justify-between items-center my-4">
-                    <h1>Your Projects</h1>
+                    <h1 className="text-xl font-semibold">Your Projects</h1>
                     <CreateProjectDialog />
                 </div>
             </header>
-            <div className="main-content">
-                <div className="grid grid-cols-3 gap-4">
-                    {
-                        projects.map(project => (
-                            <Link key={project.id} to={`/projects/${project.id}`}>
-                                <ProjectCard
-                                    key={project.id}
-                                    name={project.name}
-                                    location={project.location}
-                                    countryCode={project.country_code}
-                                    scenarioCount={project.scenario_count} />
-                            </Link>
-                        ))
-                    }
+            <div className="main-content flex-1 flex flex-col">
+                { projects.length != 0 ?
+                    <div className="grid grid-cols-3 gap-4">
+                        {
+                            projects.map(project => (
+                                <Link key={project.id} to={`/projects/${project.id}`}>
+                                    <ProjectCard
+                                        key={project.id}
+                                        name={project.name}
+                                        location={project.location}
+                                        countryCode={project.country_code}
+                                        scenarioCount={project.scenario_count} />
+                                </Link>
+                            ))
+                        }
+                    </div>
+                : <div className="flex-1 flex flex-col items-center justify-center gap-4">
+                    <p>No projects yet</p>
+                    <CreateProjectDialog />
                 </div>
+                }
             </div>
         </main>
         <Footer />
