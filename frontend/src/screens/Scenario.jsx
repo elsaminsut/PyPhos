@@ -262,11 +262,11 @@ export default function Scenario() {
                         <h3 className="font-semibold">Solar module</h3>
                         <Field>
                             <FieldLabel htmlFor="manufacturer">Manufacturer</FieldLabel>
-                            <Combobox items={manufacturers} onValueChange={(value) => {
+                            <Combobox items={manufacturers} value={selectedManufacturer} onValueChange={(value) => {
                                 setSelectedManufacturer(value)
                                 setSelectedModel("")
                             }}>
-                                <ComboboxInput placeholder="Select a manufacturer" value={selectedManufacturer} />
+                                <ComboboxInput placeholder="Select a manufacturer" />
                                 <ComboboxContent>
                                     <ComboboxEmpty>No items found.</ComboboxEmpty>
                                     <ComboboxList>
@@ -284,10 +284,10 @@ export default function Scenario() {
                         </Field>
                         <Field>
                             <FieldLabel htmlFor="model">Model</FieldLabel>
-                            <Combobox items={modules} onValueChange={(value) => {
+                            <Combobox items={modules} value={selectedModel} onValueChange={(value) => {
                                 setSelectedModel(value)
                             }}>
-                                <ComboboxInput placeholder="Select a model" value={selectedModel} />
+                                <ComboboxInput placeholder="Select a model" />
                                 <ComboboxContent>
                                     <ComboboxEmpty>No items found.</ComboboxEmpty>
                                     <ComboboxList>
