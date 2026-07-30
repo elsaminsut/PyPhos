@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -13,13 +14,17 @@ function scenarioCountLabel(count) {
 }
 
 export default function ProjectCard(props) {
+    console.log("props.scenarioCount", props.scenarioCount)
     return (
         <Card className="hover:bg-muted">
-            <CardHeader>
-                <CardTitle>{props.name}</CardTitle>
-                <CardDescription>
-                    {props.countryCode ? `${props.location}, ${props.countryCode}` : props.location}
-                </CardDescription>
+            <CardHeader className="flex justify-between">
+                <div className="title">
+                    <CardTitle>{props.name}</CardTitle>
+                    <CardDescription>
+                        {props.countryCode ? `${props.location}, ${props.countryCode}` : props.location}
+                    </CardDescription>
+                </div>
+                { !props.scenarioCount ? <Badge variant="outline">Draft</Badge> : ""}
             </CardHeader>
             <CardContent>
                 <p>{scenarioCountLabel(props.scenarioCount)}</p>
