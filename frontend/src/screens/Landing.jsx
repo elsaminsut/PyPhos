@@ -1,19 +1,47 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 import { ArrowRight } from "lucide-react"
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+import Elsa from "../assets/avatar-elsa.jpg"
 import Logo from "../assets/pyphos-logo.svg"
+import LandingBackground from "../assets/landing-background.png"
 
 export default function Landing() {
   const [showAbout, setShowAbout] = useState(false)
+  const [buttonHovered, setButtonHovered] = useState(false)
   const navigate = useNavigate()
+  const cursorRef = useRef(null)
+
+  useEffect(() => {
+    function handleMouseMove(e) {
+      if (!cursorRef.current) return
+      cursorRef.current.style.left = `${e.clientX}px`
+      cursorRef.current.style.top = `${e.clientY}px`
+    }
+    window.addEventListener("mousemove", handleMouseMove)
+    return () => window.removeEventListener("mousemove", handleMouseMove)
+  }, [])
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white">
+    <div
+      className="relative min-h-screen cursor-none overflow-hidden bg-white"
+      style={{
+        backgroundImage: `url(${LandingBackground})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        ref={cursorRef}
+        className={cn(
+          "pointer-events-none fixed top-0 left-0 z-100 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FFCC00] transition-[width,height] duration-200 ease-out",
+          buttonHovered ? "size-16" : "size-6"
+        )}
+      />
       <div
         className={cn(
           "flex min-h-screen flex-col items-center transition-[filter] duration-300",
@@ -37,13 +65,15 @@ export default function Landing() {
             PyPhos calculates the real-world performance of any solar installation at your exact location.
           </p>
           <p className="font-instrument-sans mt-1 text-sm font-medium text-foreground">
-            Pick a module - Set your site - Get the numbers
+            Pick a module. Set your site. Get the numbers
           </p>
 
           <Button
             size="lg"
-            className="mt-8 h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/90"
+            className="mt-8 h-11 cursor-none rounded-full bg-foreground px-6 text-base text-background hover:-translate-y-0.5 hover:bg-foreground/70"
             onClick={() => navigate("/projects")}
+            onMouseEnter={() => setButtonHovered(true)}
+            onMouseLeave={() => setButtonHovered(false)}
           >
             Run a calculation
             <ArrowRight />
@@ -53,7 +83,7 @@ export default function Landing() {
         <footer className="pb-10">
           <button
             onClick={() => setShowAbout(true)}
-            className="font-instrument-sans cursor-pointer text-sm text-muted-foreground hover:text-foreground"
+            className="font-instrument-sans cursor-none text-sm text-muted-foreground hover:text-foreground hover:underline"
           >
             About
           </button>
@@ -61,9 +91,16 @@ export default function Landing() {
       </div>
 
       {showAbout && (
-        <div className="absolute inset-0 z-50 flex items-center">
-          <div className="max-w-xs px-10 sm:px-16">
+        <div
+          className="absolute inset-0 z-50 flex items-center"
+          onClick={() => setShowAbout(false)}
+        >
+          <div
+            className="max-w-xs px-10 sm:px-16"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Avatar className="mb-3" size="lg">
+              <AvatarImage src={Elsa} />
               <AvatarFallback>E</AvatarFallback>
             </Avatar>
             <p className="font-instrument-sans text-sm font-semibold text-foreground">
