@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 import { ArrowRight } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { AuthContext } from "../lib/AuthContext"
 
 import Elsa from "../assets/avatar-elsa.jpg"
 import Logo from "../assets/pyphos-logo.svg"
@@ -15,6 +16,7 @@ export default function Landing() {
   const [buttonHovered, setButtonHovered] = useState(false)
   const navigate = useNavigate()
   const cursorRef = useRef(null)
+  const { continueAsGuest } = useContext(AuthContext)
 
   useEffect(() => {
     function handleMouseMove(e) {
@@ -25,6 +27,11 @@ export default function Landing() {
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
+
+  function handleClick() {
+    continueAsGuest()
+    navigate("/projects")
+  }
 
   return (
     <div
@@ -71,7 +78,7 @@ export default function Landing() {
           <Button
             size="lg"
             className="mt-8 h-11 cursor-none rounded-full bg-foreground px-6 text-base text-background hover:-translate-y-0.5 hover:bg-foreground/70"
-            onClick={() => navigate("/projects")}
+            onClick={handleClick}
             onMouseEnter={() => setButtonHovered(true)}
             onMouseLeave={() => setButtonHovered(false)}
           >
