@@ -156,12 +156,16 @@ const Project = () => {
                         (selectedScenario ?
                         <div id="report">
                             <div id="tabs-section" className="flex justify-between sticky top-16 bg-background z-50">
-                                <Tabs defaultValue="overview" className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border 
+                                <Tabs
+                                    defaultValue={scenarios[0]?.id}
+                                    className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border
                                 scrollbar-none  ">
                                     <TabsList variant="line">
                                         {scenarios.map(scenario => (
-                                            <TabsTrigger value={scenario.name} key={scenario.id}
-                                            onClick={(e) => setSelectedScenario(scenario)}
+                                            <TabsTrigger
+                                                value={scenario.id}
+                                                key={scenario.id}
+                                                onClick={() => setSelectedScenario(scenario)}
                                             >{scenario.name}</TabsTrigger>
                                         ))}
                                     </TabsList>
