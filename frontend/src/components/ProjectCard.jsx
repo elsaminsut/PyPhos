@@ -14,7 +14,6 @@ function scenarioCountLabel(count) {
 }
 
 export default function ProjectCard(props) {
-    console.log("props.scenarioCount", props.scenarioCount)
     return (
         <Card className="hover:bg-muted">
             <CardHeader className="flex justify-between">
