@@ -1,0 +1,95 @@
+import { useState } from "react"
+import { useNavigate } from "react-router"
+import { ArrowRight } from "lucide-react"
+
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+
+import Logo from "../assets/pyphos-logo.svg"
+
+export default function Landing() {
+  const [showAbout, setShowAbout] = useState(false)
+  const navigate = useNavigate()
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-white">
+      <div
+        className={cn(
+          "flex min-h-screen flex-col items-center transition-[filter] duration-300",
+          showAbout && "pointer-events-none blur-md select-none"
+        )}
+      >
+        <header className="pt-10">
+          <img src={Logo} alt="PyPhos" className="h-6 w-auto" />
+        </header>
+
+        <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+          <h1 className="font-instrument-serif text-[60px] leading-none text-balance">
+            Know
+            <br />
+            <span className="italic">your solar output</span>
+            <br />
+            before you install
+          </h1>
+
+          <p className="font-instrument-sans mt-8 max-w-sm text-sm text-muted-foreground text-balance">
+            PyPhos calculates the real-world performance of any solar installation at your exact location.
+          </p>
+          <p className="font-instrument-sans mt-1 text-sm font-medium text-foreground">
+            Pick a module - Set your site - Get the numbers
+          </p>
+
+          <Button
+            size="lg"
+            className="mt-8 h-11 rounded-full bg-foreground px-6 text-base text-background hover:bg-foreground/90"
+            onClick={() => navigate("/projects")}
+          >
+            Run a calculation
+            <ArrowRight />
+          </Button>
+        </main>
+
+        <footer className="pb-10">
+          <button
+            onClick={() => setShowAbout(true)}
+            className="font-instrument-sans cursor-pointer text-sm text-muted-foreground hover:text-foreground"
+          >
+            About
+          </button>
+        </footer>
+      </div>
+
+      {showAbout && (
+        <div className="absolute inset-0 z-50 flex items-center">
+          <div className="max-w-xs px-10 sm:px-16">
+            <Avatar className="mb-3" size="lg">
+              <AvatarFallback>E</AvatarFallback>
+            </Avatar>
+            <p className="font-instrument-sans text-sm font-semibold text-foreground">
+              PyPhos is built in the open by Elsa Minsut and always improving.
+            </p>
+            <p className="font-instrument-sans mt-3 text-sm text-muted-foreground">
+              To follow updates and new features, keep an eye on the{" "}
+              <a
+                href="https://github.com/elsaminsut/pyphos"
+                target="_blank"
+                rel="noreferrer"
+                className="text-foreground underline underline-offset-2"
+              >
+                GitHub repo
+              </a>
+              .
+            </p>
+            <button
+              onClick={() => setShowAbout(false)}
+              className="font-instrument-sans mt-6 cursor-pointer text-sm text-muted-foreground hover:text-foreground"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
