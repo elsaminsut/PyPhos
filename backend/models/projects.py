@@ -22,8 +22,9 @@ class Project(ProjectBase, table=True): # table model
     lon: float
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
+    is_demo: bool = Field(default=False)
 
-    user_id: int = Field(foreign_key="users.id", index=True) # indexing for faster lookups
+    user_id: int | None = Field(foreign_key="users.id", index=True) # indexing for faster lookups
     owner: Optional["User"] = Relationship(back_populates="projects")
 
     scenarios: list["Scenario"] = Relationship(back_populates="project", cascade_delete=True)
