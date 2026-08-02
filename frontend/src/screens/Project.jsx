@@ -265,7 +265,7 @@ const Project = () => {
                                                 </CardHeader>
                                                 <CardContent className="flex flex-col gap-3">
                                                     <div className="flex items-baseline gap-1.5">
-                                                        <span className="text-4xl font-bold tabular-nums">{report.specific_yield}</span>
+                                                        <span className="text-4xl font-bold">{report.specific_yield}</span>
                                                         <span className="text-sm text-muted-foreground">kWh/kWp</span>
                                                     </div>
                                                     <Progress value={Math.min(100, (report.specific_yield / report.radiation) * 100)} />
@@ -280,7 +280,7 @@ const Project = () => {
                                                 </CardHeader>
                                                 <CardContent className="flex flex-col gap-3">
                                                     <div className="flex items-baseline gap-1.5">
-                                                        <span className="text-4xl font-bold tabular-nums">{report.perf_ratio}</span>
+                                                        <span className="text-4xl font-bold">{report.perf_ratio}</span>
                                                         <span className="text-sm text-muted-foreground">%</span>
                                                     </div>
                                                     <Progress value={Math.min(100, Math.max(0, report.perf_ratio))} />
