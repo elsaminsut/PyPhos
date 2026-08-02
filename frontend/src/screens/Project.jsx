@@ -215,7 +215,7 @@ const Project = () => {
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell className="font-semibold">Installed power</TableCell>
-                                                <TableCell className="tabular-nums">{selectedScenario.installed_power.toLocaleString(undefined, { maximumFractionDigits: 0 })} kWp</TableCell>
+                                                <TableCell>{(selectedScenario.installed_power / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} kWp</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell className="font-semibold">Tilt</TableCell>
