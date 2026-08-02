@@ -57,9 +57,14 @@ export default function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Avatar>
-          <AvatarFallback>{avatarLetter}</AvatarFallback>
-        </Avatar>
+        <div className="flex gap-4 items-center">          
+            <a href="/login" className="text-sm font-medium hover:text-muted-foreground transition-colors">
+              Log in
+            </a>
+            <Button variant="outline" onClick={() => navigate('/signup')}>
+              Sign up
+            </Button>
+        </div>
       )}
     </header>
   )
