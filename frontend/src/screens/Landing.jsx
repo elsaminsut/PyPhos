@@ -28,6 +28,18 @@ export default function Landing() {
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
+  useEffect(() => {
+    if (!showAbout) return
+
+    function handleKeyDown(e) {
+      if (e.key === "Escape") {
+        setShowAbout(false)
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [showAbout])
+
   function handleClick() {
     continueAsGuest()
     navigate("/projects")
@@ -105,13 +117,23 @@ export default function Landing() {
           <div
             className="max-w-xs px-10 sm:px-16"
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
           >
             <Avatar className="mb-3" size="lg">
               <AvatarImage src={Elsa} />
               <AvatarFallback>E</AvatarFallback>
             </Avatar>
             <p className="font-instrument-sans text-sm font-semibold text-foreground">
-              PyPhos is built in the open by Elsa Minsut and always improving.
+              PyPhos is built in the open by{" "}
+              <a
+                href="https://elsaminsut.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-foreground cursor-none hover:underline underline-offset-2"
+              >
+              Elsa Minsut 
+              </a>
+              {" "}and always improving.
             </p>
             <p className="font-instrument-sans mt-3 text-sm text-muted-foreground">
               To follow updates and new features, keep an eye on the{" "}
@@ -119,7 +141,7 @@ export default function Landing() {
                 href="https://github.com/elsaminsut/pyphos"
                 target="_blank"
                 rel="noreferrer"
-                className="text-foreground underline underline-offset-2"
+                className="text-foreground cursor-none hover:underline underline-offset-2"
               >
                 GitHub repo
               </a>
@@ -127,7 +149,7 @@ export default function Landing() {
             </p>
             <button
               onClick={() => setShowAbout(false)}
-              className="font-instrument-sans mt-6 cursor-pointer text-sm text-muted-foreground hover:text-foreground"
+              className="font-instrument-sans mt-6 cursor-none text-sm text-muted-foreground hover:text-foreground"
             >
               Close
             </button>
