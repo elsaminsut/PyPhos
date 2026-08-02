@@ -29,7 +29,19 @@ python -m backend.utils.seed_modules
 
 The script checks for duplicates and won't re-insert if they already exist.
 
-## 3. Verify Setup
+## 3. Seed Demo Projects
+
+A handful of read-only demo projects (`is_demo=True`) are seeded for guest users to browse without
+an account. This must run **after** step 2 — the demo scenarios reference specific module ids from
+the CEC modules table, so seeding demos against an empty `modules` table will fail with a foreign
+key violation:
+
+```powershell
+python -m backend.utils.seed_demo_projects
+```
+The script also checks for duplicates and won't re-insert if they already exist.
+
+## 4. Verify Setup
 
 You can verify modules were added:
 
