@@ -44,6 +44,54 @@ def create_project(current_user: CurrentUser, project: ProjectCreate, session: S
             detail="Failed to create project"
         )
 
+@router.get("/demo", response_model=list[ProjectListItem])
+def read_demo_projects(session: SessionDep):
+    """Get a list of all demo projects, including each project's scenario count."""
+    try:
+        results = session.exec(
+            select(Project, func.count(Scenario.id))
+            .join(Scenario, Scenario.project_id == Project.id, isouter=True)
+            .where(Project.is_demo == True)
+            .group_by(Project.id)
+            .order_by(Project.created_at)
+        ).all()
+
+        return [
+            ProjectListItem(**project.model_dump(), scenario_count=scenario_count)
+            for project, scenario_count in results
+        ]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving project"
+        )
+
+@router.get("/demo/{project_id}", response_model=ProjectPublic)
+def read_demo_project(project_id: int, session: SessionDep) -> Project:
+    """Get a single demo project by ID."""
+    try:
+        project = session.exec(
+            select(Project).where(Project.is_demo == True, Project.id == project_id)
+        ).first()
+
+        if not project:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Demo project not found"
+            )
+
+        return project
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving project"
+        )
+
+
 @router.get("", response_model=list[ProjectListItem])
 def read_projects(current_user: CurrentUser, session: SessionDep):
     """Get a list of all projects owned by the current user, including each project's scenario count."""
@@ -71,7 +119,13 @@ def read_project(current_user: CurrentUser, project_id: int, session: SessionDep
     """Get a single project by ID, only if it exists and belongs to the current user."""
     try:
         project = validate_user_owns_project(project_id, current_user, session)
+        if not project:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Project not found"
+            )
         return project
+
     except HTTPException:
         raise
     except Exception as e:

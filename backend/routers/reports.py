@@ -1,7 +1,7 @@
 from backend.utils.auth import get_current_user, oauth2_scheme
 from backend.utils.database import SessionDep
 from backend.utils.pv_calcs import pv_calculation
-from backend.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project
+from backend.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project, validate_project_is_demo
 from backend.models.scenarios import Scenario
 from backend.models.reports import Report, ReportBase, ReportPublic, CalculationRequest
 from backend.models.users import User
@@ -103,6 +103,28 @@ def get_all_reports(current_user: CurrentUser, project_id: int, session: Session
             detail="Error retrieving reports"
         )
 
+@router.get("/projects/demo/{project_id}/scenarios/{scenario_id}/report", response_model=ReportPublic)
+def get_demo_report_by_scenario(project_id: int, scenario_id: int, session: SessionDep):
+    """Get the report for a specific scenario. Returns a single report or 404 if not found."""
+    try:
+        validate_project_is_demo(project_id, session)
+        validate_scenario_belongs_to_project(scenario_id, project_id, session)
+        
+        report = session.exec(select(Report).where(Report.scenario_id == scenario_id)).first()
+        if not report:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No report found for this scenario"
+            )
+        return report
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving report"
+        )
+    
 @router.get("/projects/{project_id}/scenarios/{scenario_id}/report", response_model=ReportPublic)
 def get_report_by_scenario(current_user: CurrentUser, project_id: int, scenario_id: int, session: SessionDep):
     """Get the report for a specific scenario. Returns a single report or 404 if not found."""
@@ -124,7 +146,6 @@ def get_report_by_scenario(current_user: CurrentUser, project_id: int, scenario_
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error retrieving report"
         )
-    
 
 def _render_report_pdf(url: str, token: str) -> bytes:
     """

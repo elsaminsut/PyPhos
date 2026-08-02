@@ -1,6 +1,6 @@
 from backend.utils.auth import get_current_user
 from backend.utils.database import SessionDep
-from backend.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project
+from backend.utils.utils import validate_user_owns_project, validate_scenario_belongs_to_project, validate_project_is_demo
 from backend.models.modules import Module
 from backend.models.scenarios import Scenario, ScenarioPublic, ScenarioCreate, ScenarioUpdate
 from backend.models.users import User
@@ -56,6 +56,39 @@ def create_scenario(current_user: CurrentUser, project_id: int, scenario: Scenar
             detail="Failed to create scenario"
         )
 
+@router.get("/projects/demo/{project_id}/scenarios", response_model=list[ScenarioPublic])
+def read_demo_scenarios(project_id: int, session: SessionDep):
+    """Get a list of all scenarios for a demo project, only if the project exists and is a demo project."""
+    try:
+        validate_project_is_demo(project_id, session)
+        scenarios = session.exec(
+            select(Scenario).where(Scenario.project_id == project_id).order_by(Scenario.created_at)
+        ).all()
+        return scenarios
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving scenarios"
+        )
+
+@router.get("/projects/demo/{project_id}/scenarios/{scenario_id}", response_model=ScenarioPublic)
+def read_demo_scenario(project_id: int, scenario_id: int, session: SessionDep) -> Scenario:
+    """Get a single scenario by ID, only if the project exists and is a demo project."""
+    try:
+        validate_project_is_demo(project_id, session)
+        scenario = validate_scenario_belongs_to_project(scenario_id, project_id, session)
+        session.refresh(scenario, ["module"])  # explicitly load the relationship
+        return scenario
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving scenario"
+        )
+    
 @router.get("/projects/{project_id}/scenarios", response_model=list[ScenarioPublic])
 def read_scenarios(current_user: CurrentUser, project_id: int, session: SessionDep):
     """Get a list of all scenarios for a project, only if the project exists and belongs to the current user."""
