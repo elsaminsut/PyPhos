@@ -89,7 +89,7 @@ export default function Report() {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-semibold">Installed power</TableCell>
-                                        <TableCell className="tabular-nums">{scenario.installed_power.toLocaleString(undefined, { maximumFractionDigits: 0 })} kWp</TableCell>
+                                        <TableCell>{(scenario.installed_power / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} kWp</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-semibold">Tilt</TableCell>
@@ -154,7 +154,7 @@ export default function Report() {
                                         </CardHeader>
                                         <CardContent className="flex flex-col gap-3">
                                             <div className="flex items-baseline gap-1.5">
-                                                <span className="text-4xl font-bold tabular-nums">{report.perf_ratio}</span>
+                                                <span className="text-4xl font-bold">{report.perf_ratio}</span>
                                                 <span className="text-sm text-muted-foreground">%</span>
                                             </div>
                                             <Progress value={Math.min(100, Math.max(0, report.perf_ratio))} />
