@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { ArrowLeft } from 'lucide-react'
 
 import { AuthContext } from '@/lib/AuthContext'
 import { Button } from "@/components/ui/button"
@@ -15,7 +16,8 @@ import { Input } from "@/components/ui/input"
 import { validateEmail, validateLoginPassword } from "@/lib/validators"
 
 import FacadeImg from "../assets/martin-woortman-NzW5ytrqi34-unsplash.jpg"
-import '../index.css'
+import LandingBackground from "../assets/landing-background.png"
+import Logo from "../assets/pyphos-logo.svg"
 
 const LoginPage = () => {
   const [email, setEmail] = useState('')
@@ -68,25 +70,31 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+    <div
+      className="font-instrument-sans flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10"
+      style={{
+        backgroundImage: `url(${LandingBackground})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">
+        <ArrowLeft className="size-4" />
+      </Link>
       <div className="w-full max-w-sm md:max-w-4xl">
         <div className="flex flex-col gap-6">
-              <Card className="overflow-hidden p-0">
+              <Card className="overflow-hidden rounded-2xl p-0 shadow-lg">
                 <CardContent className="grid p-0 md:grid-cols-2">
                   <form onSubmit={handleSubmit} className="p-6 md:p-8">
+                    <img src={Logo} alt="PyPhos Logo" className="mb-10 h-6 w-auto" />
                     <FieldGroup>
-                      <div className="flex flex-col items-center gap-2 text-center">
-                        <h1 className="text-2xl font-bold">Welcome back!</h1>
-                        <p className="text-balance text-muted-foreground">
-                          Login to your PyPhos account
-                        </p>
-                      </div>
+                      <h1 className="font-instrument-serif text-4xl font-normal">Welcome back!</h1>
                       <Field data-invalid={touched.email && !emailCheck.valid}>
                         <FieldLabel htmlFor="email">Email</FieldLabel>
                         <Input
                           id="email"
                           type="email"
-                          placeholder="me@example.com"
+                          placeholder="me@example.io"
                           autoComplete="email"
                           value={email}
                           aria-invalid={touched.email && !emailCheck.valid}
@@ -99,9 +107,7 @@ const LoginPage = () => {
                         )}
                       </Field>
                       <Field data-invalid={touched.password && !passwordCheck.valid}>
-                        <div className="flex items-center">
-                          <FieldLabel htmlFor="password">Password</FieldLabel>
-                        </div>
+                        <FieldLabel htmlFor="password">Password</FieldLabel>
                         <Input
                           id="password"
                           type="password"
@@ -116,21 +122,28 @@ const LoginPage = () => {
                         )}
                       </Field>
                       <Field>
-                        <Button type="submit" disabled={!isFormValid}>Login</Button>
+                        <Button
+                          type="submit"
+                          disabled={!isFormValid}
+                          className="h-10 rounded-full bg-foreground text-background hover:bg-foreground/80"
+                        >
+                          Log in
+                        </Button>
                         {loginError && (
                           <p className="text-sm text-destructive text-center">{loginError}</p>
                         )}
                       </Field>
                       <FieldDescription className="text-center">
-                        Don&apos;t have an account? <a href="/signup">Sign up</a>
+                        Don&apos;t have an account?{" "}
+                        <a href="/signup" className="text-foreground underline underline-offset-2">Sign up</a>
                       </FieldDescription>
                     </FieldGroup>
                   </form>
-                  <div className="relative hidden bg-muted md:block">
+                  <div className="relative hidden md:block">
                     <img
                       src={FacadeImg}
                       alt="Image"
-                      className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                      className="absolute inset-2 h-[calc(100%-1rem)] w-[calc(100%-1rem)] rounded-xl object-cover dark:brightness-[0.2] dark:grayscale"
                     />
                   </div>
                 </CardContent>
