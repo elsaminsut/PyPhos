@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { ArrowLeft, InfoIcon } from 'lucide-react'
 
 import { AuthContext } from '@/lib/AuthContext'
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,8 @@ import { Input } from "@/components/ui/input"
 import { validateEmail, validatePassword } from "@/lib/validators"
 
 import FacadeImg from "../assets/martin-woortman-NzW5ytrqi34-unsplash.jpg"
+import LandingBackground from "../assets/landing-background.png"
+import Logo from "../assets/pyphos-logo.svg"
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -88,25 +91,31 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+    <div
+      className="font-instrument-sans flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10"
+      style={{
+        backgroundImage: `url(${LandingBackground})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">
+        <ArrowLeft className="size-4" />
+      </Link>
       <div className="w-full max-w-sm md:max-w-4xl">
         <div className="flex flex-col gap-6">
-            <Card className="overflow-hidden p-0">
+            <Card className="overflow-hidden rounded-2xl p-0 shadow-lg">
                 <CardContent className="grid p-0 md:grid-cols-2">
                 <form onSubmit={handleSubmit} className="p-6 md:p-8">
+                    <img src={Logo} alt="PyPhos Logo" className="mb-10 h-6 w-auto" />
                     <FieldGroup>
-                    <div className="flex flex-col items-center gap-2 text-center">
-                        <h1 className="text-2xl font-bold">Create your account</h1>
-                        <p className="text-sm text-balance text-muted-foreground">
-                        Enter your email below to create your account
-                        </p>
-                    </div>
+                    <h1 className="font-instrument-serif text-4xl font-normal">Create your account</h1>
                     <Field data-invalid={touched.email && !emailCheck.valid}>
                         <FieldLabel htmlFor="email">Email</FieldLabel>
                         <Input
                         id="email"
                         type="email"
-                        placeholder="me@example.com"
+                        placeholder="me@example.io"
                         autoComplete="email"
                         value={email}
                         aria-invalid={touched.email && !emailCheck.valid}
@@ -119,7 +128,6 @@ export default function SignupPage() {
                         ) : "" }
                     </Field>
                     <Field>
-                        <Field className="grid grid-cols-2 gap-4">
                         <Field data-invalid={touched.password && !passwordCheck.valid}>
                             <FieldLabel htmlFor="password">Password</FieldLabel>
                             <Input id="password" type="password"
@@ -132,7 +140,7 @@ export default function SignupPage() {
                         </Field>
                         <Field data-invalid={touched.confirmPassword && !confirmCheck.valid}>
                             <FieldLabel htmlFor="confirm-password">
-                            Confirm Password
+                            Repeat password
                             </FieldLabel>
                             <Input id="confirm-password" type="password"
                             autoComplete="new-password"
@@ -142,43 +150,44 @@ export default function SignupPage() {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required />
                         </Field>
-                        </Field>
                         {touched.password && !passwordCheck.valid ? (
                         <FieldError>{passwordCheck.message}</FieldError>
                         ) : touched.confirmPassword && !confirmCheck.valid ? (
                         <FieldError>{confirmCheck.message}</FieldError>
                         ) : (
-                        <FieldDescription>
-                        Between 8 and 16 characters, with at least one uppercase letter, one number, and one symbol
-                        </FieldDescription>
+                        <div className="flex items-start gap-2 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
+                            <InfoIcon className="mt-0.5 size-3.5 shrink-0" />
+                            <p>Between 8 and 16 characters, with at least one uppercase letter, one number, and one symbol</p>
+                        </div>
                         )}
                     </Field>
                     <Field>
-                        <Button type="submit" disabled={!isFormValid || submitting}>
-                        {submitting ? "Creating account..." : "Create Account"}
+                        <Button
+                        type="submit"
+                        disabled={!isFormValid || submitting}
+                        className="h-10 rounded-full bg-foreground text-background hover:bg-foreground/80"
+                        >
+                        {submitting ? "Creating account..." : "Create account"}
                         </Button>
                         {signupError && (
                         <p className="text-sm text-destructive text-center">{signupError}</p>
                         )}
                     </Field>
                     <FieldDescription className="text-center">
-                        Already have an account? <a href="/login">Sign in</a>
+                        Already have an account?{" "}
+                        <a href="/login" className="text-foreground underline underline-offset-2">Sign in</a>
                     </FieldDescription>
                     </FieldGroup>
                 </form>
-                <div className="relative hidden bg-muted md:block">
+                <div className="relative hidden md:block">
                     <img
                     src={FacadeImg}
                     alt="Image"
-                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                    className="absolute inset-2 h-[calc(100%-1rem)] w-[calc(100%-1rem)] rounded-xl object-cover dark:brightness-[0.2] dark:grayscale"
                     />
                 </div>
                 </CardContent>
             </Card>
-            <FieldDescription className="px-6 text-center">
-                By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
-            </FieldDescription>
         </div>
       </div>
     </div>
