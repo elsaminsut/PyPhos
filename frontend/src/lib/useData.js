@@ -81,32 +81,36 @@ export function useDeleteProject() {
     }
 }
 
-export function useScenarios(projectId) {
+export function useScenarios(projectId, isDemo) {
     const { isGuest } = useContext(AuthContext)
-    const demoResult = useApi(`/api/projects/demo/${projectId}/scenarios`)
-    const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios`)
+    const demoEndpoint = isDemo ? `/api/projects/demo/${projectId}/scenarios` : null
+    const apiEndpoint = isDemo === false && !isGuest ? `/api/projects/${projectId}/scenarios` : null
+    const demoResult = useApi(demoEndpoint)
+    const apiResult = useApi(apiEndpoint)
     const localResult = useMemo(
-        () => (isGuest ? getLocalScenarios(projectId) : null),
-        [isGuest, projectId]
+        () => (isDemo === false && isGuest ? getLocalScenarios(projectId) : null),
+        [isGuest, isDemo, projectId]
     )
 
-    if (demoResult.data) return demoResult
-    if (isGuest) return { data: localResult, loading: demoResult.loading, error: null }
-    return { data: apiResult.data, loading: demoResult.loading || apiResult.loading, error: demoResult.data ? null : apiResult.error }
+    if (isDemo === undefined) return { data: null, loading: true, error: null }
+    if (isDemo) return demoResult
+    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
 
-export function useScenario(projectId, scenarioId) {
+export function useScenario(projectId, scenarioId, isDemo) {
     const { isGuest } = useContext(AuthContext)
-    const demoResult = useApi(`/api/projects/demo/${projectId}/scenarios/${scenarioId}`)
-    const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios/${scenarioId}`)
+    const demoEndpoint = isDemo ? `/api/projects/demo/${projectId}/scenarios/${scenarioId}` : null
+    const apiEndpoint = isDemo === false && !isGuest ? `/api/projects/${projectId}/scenarios/${scenarioId}` : null
+    const demoResult = useApi(demoEndpoint)
+    const apiResult = useApi(apiEndpoint)
     const localResult = useMemo(
-        () => (isGuest ? getLocalScenario(scenarioId) : null),
-        [isGuest, scenarioId]
+        () => (isDemo === false && isGuest ? getLocalScenario(scenarioId) : null),
+        [isGuest, isDemo, scenarioId]
     )
 
-    if (demoResult.data) return demoResult
-    if (isGuest) return { data: localResult, loading: demoResult.loading, error: null }
-    return { data: apiResult.data, loading: demoResult.loading || apiResult.loading, error: demoResult.data ? null : apiResult.error }
+    if (isDemo === undefined) return { data: null, loading: true, error: null }
+    if (isDemo) return demoResult
+    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
 }
 
 export function useCreateScenario() {
@@ -150,17 +154,17 @@ export function useDeleteScenario() {
     }
 }
 
-export function useReport(projectId, scenarioId) {
+export function useReport() {
     const { isGuest, token } = useContext(AuthContext)
 
-    return async function getReport(projectId, scenarioId) {
-        try {
-            return await getDemoReportApi(projectId, scenarioId)
-        } catch (error) {
-            return isGuest
-                ? getLocalScenario(scenarioId)?.report ?? null
-                : getReportApi(token, projectId, scenarioId)
+    return function getReport(projectId, scenarioId, isDemo) {
+        if (isDemo) {
+            return getDemoReportApi(projectId, scenarioId)
         }
+
+        return isGuest
+            ? getLocalScenario(scenarioId)?.report ?? null
+            : getReportApi(token, projectId, scenarioId)
     }
 }
 
