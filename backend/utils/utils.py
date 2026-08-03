@@ -9,7 +9,7 @@ def validate_user_owns_project(project_id: int, user: User, session: SessionDep)
     project = session.get(Project, project_id)
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    if project.is_demo == True:
+    if project.is_demo:
         raise HTTPException(status_code=400, detail="Demo projects are read-only")
     if project.user_id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
