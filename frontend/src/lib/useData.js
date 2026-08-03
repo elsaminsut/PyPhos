@@ -39,16 +39,33 @@ export function useProjects() {
 
 export function useProject(projectId) {
     const { isGuest } = useContext(AuthContext)
-    const demoResult = useApi(`/api/projects/demo/${projectId}`)
+
+    // Logged-in users: try the real per-user endpoint first (the common case —
+    // most projects aren't demos), only falling back to the demo endpoint if
+    // that comes back empty.
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}`)
+    const apiSettledEmpty = !isGuest && !apiResult.loading && !apiResult.data
+
+    // Guests have no token, so they always try the (unauthenticated) demo
+    // endpoint first, falling back to their own local storage.
+    const demoResult = useApi(isGuest || apiSettledEmpty ? `/api/projects/demo/${projectId}` : null)
+
     const localResult = useMemo(
-        () => (isGuest ? getLocalProject(projectId) : null),
-        [isGuest, projectId]
+        () => (isGuest && !demoResult.loading && !demoResult.data ? getLocalProject(projectId) : null),
+        [isGuest, projectId, demoResult.loading, demoResult.data]
     )
 
+    if (!isGuest) {
+        if (apiResult.loading) return { data: null, loading: true, error: null }
+        if (apiResult.data) return apiResult
+        if (demoResult.loading) return { data: null, loading: true, error: null }
+        if (demoResult.data) return demoResult
+        return apiResult // neither matched - surface the original (more meaningful) error
+    }
+
+    if (demoResult.loading) return { data: null, loading: true, error: null }
     if (demoResult.data) return demoResult
-    if (isGuest) return { data: localResult, loading: demoResult.loading, error: null }
-    return { data: apiResult.data, loading: demoResult.loading || apiResult.loading, error: demoResult.data ? null : apiResult.error }
+    return { data: localResult, loading: false, error: null }
 }
 
 export function useCreateProject() {
