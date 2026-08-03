@@ -58,7 +58,7 @@ export default function Scenario() {
     const { projectId, scenarioId } = useParams();
     const navigate = useNavigate()
     const { data: project, loading: projLoading, error: projError } = useProject(projectId)
-    const { data: scenario, loading: scenLoading, error: scenError } = useScenario(projectId, scenarioId)
+    const { data: scenario, loading: scenLoading, error: scenError } = useScenario(projectId, scenarioId, project?.is_demo)
     const { data: manufacturers } = useApi("/api/modules/manufacturers")
     const updateScenario = useUpdateScenario()
     const deleteScenario = useDeleteScenario()

@@ -49,7 +49,7 @@ const Project = () => {
     const { projectId } = useParams();
     const { token } = useContext(AuthContext)
     const { data: project, loading: projLoading, error: projError } = useProject(projectId)
-    const { data: scenarios, loading: scenLoading, error: scenError } = useScenarios(projectId)
+    const { data: scenarios, loading: scenLoading, error: scenError } = useScenarios(projectId, project?.is_demo)
     const getReport = useReport()
     
     const [projectName, setProjectName] = useState("")
@@ -84,7 +84,7 @@ const Project = () => {
 
         const fetchReport = async () => {
             try {
-                const data = await getReport(projectId, selectedScenario.id)
+                const data = await getReport(projectId, selectedScenario.id, project?.is_demo)
                 setReport(data)
             } catch (error) {
                 setReport(null)
