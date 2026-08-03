@@ -171,26 +171,30 @@ const Project = () => {
                                     </TabsList>
                                 </Tabs>
                                 <div className="flex flex-nowrap gap-2">
-                                    <Tooltip>
-                                        <TooltipTrigger render={
-                                            <Link to={`/projects/${project.id}/scenarios/create`}>
-                                                <Button size="icon" variant="outline"><Plus/></Button>
-                                            </Link>
-                                        } />
-                                        <TooltipContent>
-                                            <p>Create scenario</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger render={
-                                            <Link to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
-                                                <Button size="icon" variant="outline"><Pencil/></Button>
-                                            </Link>
-                                        } />
-                                        <TooltipContent>
-                                            <p>Edit scenario</p>
-                                        </TooltipContent>
-                                    </Tooltip>
+                                    { !project.is_demo && 
+                                    <div className="action-buttons flex flex-nowrap gap-2">
+                                        <Tooltip>
+                                            <TooltipTrigger render={
+                                                <Link to={`/projects/${project.id}/scenarios/create`}>
+                                                    <Button size="icon" variant="outline"><Plus/></Button>
+                                                </Link>
+                                            } />
+                                            <TooltipContent>
+                                                <p>Create scenario</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger render={
+                                                <Link to={`/projects/${project.id}/scenarios/${selectedScenario.id}`}>
+                                                    <Button size="icon" variant="outline"><Pencil/></Button>
+                                                </Link>
+                                            } />
+                                            <TooltipContent>
+                                                <p>Edit scenario</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                    }
                                     <Tooltip>
                                         <TooltipTrigger render={
                                             <Button size="icon" variant="outline" onClick={pdfDownload}><Download/></Button>
