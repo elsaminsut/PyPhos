@@ -61,6 +61,7 @@ export function createLocalProject(projectData) {
         lat: projectData.lat ?? null,
         lon: projectData.lon ?? null,
         user_id: "guest",
+        is_demo: false,
     }
 
     localStorage.setItem(`project_${project.id}`, JSON.stringify(project))
