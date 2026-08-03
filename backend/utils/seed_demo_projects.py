@@ -2,15 +2,17 @@
 Seed script to save a few demo projects in the database.
 """
 from backend.models.projects import Project
+from backend.models.reports import Report
 from backend.models.scenarios import Scenario
 from backend.utils.database import engine
+from backend.utils.pv_calcs import pv_calculation
 from sqlmodel import Session, select
 
 
 DEMO_PROJECTS = [
     {
         "name": "Villa del Sol",
-        "location": "Seville, Spain",
+        "location": "Seville",
         "country_code": "ES",
         "lat": 37.3891,
         "lon": -5.9845,
@@ -18,7 +20,7 @@ DEMO_PROJECTS = [
     },
     {
         "name": "Amsterdam Office Park",
-        "location": "Amsterdam, Netherlands",
+        "location": "Amsterdam",
         "country_code": "NL",
         "lat": 52.3676,
         "lon": 4.9041,
@@ -26,7 +28,7 @@ DEMO_PROJECTS = [
     },
     {
         "name": "Alpine Chalet",
-        "location": "Innsbruck, Austria",
+        "location": "Innsbruck",
         "country_code": "AT",
         "lat": 47.2692,
         "lon": 11.4041,
@@ -105,15 +107,14 @@ DEMO_SCENARIOS = [
 def seed_demos():
     with Session(engine) as session:
         project_ids = []
-        newly_created_indices = set()
 
-        for i, p in enumerate(DEMO_PROJECTS):
+        for p in DEMO_PROJECTS:
             existing = session.exec(
                 select(Project).where(Project.name == p["name"], Project.is_demo == True)
             ).first()
 
             if existing:
-                print(f"Demo project '{p['name']}' already exists — skipping")
+                print(f"Demo project '{p['name']}' already exists - skipping")
                 project_ids.append(existing.id)
                 continue
 
@@ -121,16 +122,46 @@ def seed_demos():
             session.add(project)
             session.flush()  # flush to get the generated id
             project_ids.append(project.id)
-            newly_created_indices.add(i)
 
         for s in DEMO_SCENARIOS:
             idx = s.pop("project_index")
-            if idx not in newly_created_indices:
-                # project already existed, so its scenarios were seeded alongside it previously
+            project_id = project_ids[idx]
+
+            scenario = session.exec(
+                select(Scenario).where(Scenario.project_id == project_id, Scenario.name == s["name"])
+            ).first()
+
+            if not scenario:
+                scenario = Scenario(**s, project_id=project_id)
+                session.add(scenario)
+                session.flush()
+
+            existing_report = session.exec(select(Report).where(Report.scenario_id == scenario.id)).first()
+            if existing_report:
+                print(f"Report for scenario '{scenario.name}' already exists - skipping")
                 continue
 
-            scenario = Scenario(**s, project_id=project_ids[idx])
-            session.add(scenario)
+            project_row = session.get(Project, project_id)
+            print(f"Calculating report for scenario '{scenario.name}'...")
+            results = pv_calculation(
+                latitude=project_row.lat,
+                longitude=project_row.lon,
+                installed_power=scenario.installed_power,
+                tilt=scenario.tilt,
+                azimuth=scenario.azimuth,
+                losses=scenario.losses,
+            )
+
+            session.add(Report(
+                scenario_id=scenario.id,
+                energy_yield=results["energy_yield"],
+                monthly_yield=results["monthly_energy_yield"],
+                radiation=results["radiation"],
+                monthly_radiation=results["monthly_radiation"],
+                specific_yield=results["spec_yield"],
+                perf_ratio=results["perf_ratio"],
+                chart_data=results["chart_data"],
+            ))
 
         session.commit()
 
