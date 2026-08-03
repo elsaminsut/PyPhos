@@ -9,6 +9,7 @@ import {
     deleteScenarioApi,
     calculateScenarioApi,
     getReportApi,
+    getDemoReportApi,
     updateResource,
 } from './api'
 import {
@@ -27,22 +28,27 @@ import {
 
 export function useProjects() {
     const { isGuest } = useContext(AuthContext)
+    const demoResult = useApi("/api/projects/demo")
     const apiResult = useApi(isGuest ? null : `/api/projects`)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const localResult = useMemo(() => getLocalProjects(), [isGuest])
+    const projects = isGuest ? localResult : (apiResult.data ?? [])
 
-    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
+    return { data: [...(demoResult.data ?? []), ...projects], loading: false, error: null }
 }
 
 export function useProject(projectId) {
     const { isGuest } = useContext(AuthContext)
+    const demoResult = useApi(`/api/projects/demo/${projectId}`)
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}`)
     const localResult = useMemo(
         () => (isGuest ? getLocalProject(projectId) : null),
         [isGuest, projectId]
     )
 
-    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
+    if (demoResult.data) return demoResult
+    if (isGuest) return { data: localResult, loading: demoResult.loading, error: null }
+    return { data: apiResult.data, loading: demoResult.loading || apiResult.loading, error: demoResult.data ? null : apiResult.error }
 }
 
 export function useCreateProject() {
@@ -77,24 +83,30 @@ export function useDeleteProject() {
 
 export function useScenarios(projectId) {
     const { isGuest } = useContext(AuthContext)
+    const demoResult = useApi(`/api/projects/demo/${projectId}/scenarios`)
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios`)
     const localResult = useMemo(
         () => (isGuest ? getLocalScenarios(projectId) : null),
         [isGuest, projectId]
     )
 
-    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
+    if (demoResult.data) return demoResult
+    if (isGuest) return { data: localResult, loading: demoResult.loading, error: null }
+    return { data: apiResult.data, loading: demoResult.loading || apiResult.loading, error: demoResult.data ? null : apiResult.error }
 }
 
 export function useScenario(projectId, scenarioId) {
     const { isGuest } = useContext(AuthContext)
+    const demoResult = useApi(`/api/projects/demo/${projectId}/scenarios/${scenarioId}`)
     const apiResult = useApi(isGuest ? null : `/api/projects/${projectId}/scenarios/${scenarioId}`)
     const localResult = useMemo(
         () => (isGuest ? getLocalScenario(scenarioId) : null),
         [isGuest, scenarioId]
     )
 
-    return isGuest ? { data: localResult, loading: false, error: null } : apiResult
+    if (demoResult.data) return demoResult
+    if (isGuest) return { data: localResult, loading: demoResult.loading, error: null }
+    return { data: apiResult.data, loading: demoResult.loading || apiResult.loading, error: demoResult.data ? null : apiResult.error }
 }
 
 export function useCreateScenario() {
@@ -141,10 +153,14 @@ export function useDeleteScenario() {
 export function useReport(projectId, scenarioId) {
     const { isGuest, token } = useContext(AuthContext)
 
-    return function getReport(projectId, scenarioId) {
-        return isGuest
-            ? getLocalScenario(scenarioId)?.report ?? null
-            : getReportApi(token, projectId, scenarioId)
+    return async function getReport(projectId, scenarioId) {
+        try {
+            return await getDemoReportApi(projectId, scenarioId)
+        } catch (error) {
+            return isGuest
+                ? getLocalScenario(scenarioId)?.report ?? null
+                : getReportApi(token, projectId, scenarioId)
+        }
     }
 }
 

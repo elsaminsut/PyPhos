@@ -157,6 +157,18 @@ export function getReportApi(token, projectId, scenarioId) {
     })
 }
 
+export async function getDemoReportApi(projectId, scenarioId) {
+    const response = await fetch(`${BASE_URL}/projects/demo/${projectId}/scenarios/${scenarioId}/report`)
+
+    if (!response.ok) {
+        const error = new Error("API request failed")
+        error.status = response.status
+        throw error
+    }
+
+    return response.json()
+}
+
 export async function downloadReport(token, projectId, scenarioId) {
     const response = await fetch(`${BASE_URL}/projects/${projectId}/scenarios/${scenarioId}/report/pdf`, {
         headers: { Authorization: `Bearer ${token}` }
