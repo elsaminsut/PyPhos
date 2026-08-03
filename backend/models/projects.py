@@ -36,7 +36,7 @@ class ProjectPublic(ProjectBase):
     country_code: str | None # nullable: None for projects created before this field existed
     lat: float
     lon: float
-    user_id: int
+    user_id: int | None # nullable: demo projects (is_demo=True) have no owner
 
 
 class ProjectListItem(ProjectPublic):
