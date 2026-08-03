@@ -37,6 +37,7 @@ class ProjectPublic(ProjectBase):
     lat: float
     lon: float
     user_id: int | None # nullable: demo projects (is_demo=True) have no owner
+    is_demo: bool
 
 
 class ProjectListItem(ProjectPublic):
