@@ -21,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import GuestAlert from "./GuestAlert"
 import Logo from "../assets/pyphos-logo.svg"
 
 export default function Header() {
@@ -34,8 +35,9 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-background sticky top-0 z-50 isolate">
-      <div className="page-container flex justify-between items-center py-4">
+    <div className="sticky top-0 z-50 isolate w-full bg-background">
+      {isGuest && <GuestAlert />}
+      <header className="page-container flex justify-between items-center py-4">
         <img src={Logo} alt="PyPhos Logo" className="h-8 w-auto"/>
         {!isGuest ? (
           <DropdownMenu>
@@ -66,7 +68,7 @@ export default function Header() {
               </Button>
           </div>
         )}
-      </div>
-    </header>
+      </header>
+    </div>
   )
 }
