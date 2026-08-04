@@ -104,7 +104,7 @@ export default function CreateScenario() {
             })
             await calculateReport(projectId, scenario.id)
             toast.success("Scenario created", { position: "top-center" })
-            navigate(`/projects/${projectId}`)
+            navigate(`/projects/${projectId}`, { state: { selectedScenarioId: scenario.id } })
         } catch (error) {
             console.error("Error creating scenario:", error)
         }

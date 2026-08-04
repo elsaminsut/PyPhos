@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { Link, useParams } from "react-router"
+import { Link, useLocation, useParams } from "react-router"
 
 import {
     Breadcrumb,
@@ -47,6 +47,7 @@ import { getCompassDirection } from "../components/AngleSlider"
 
 const Project = () => {
     const { projectId } = useParams();
+    const location = useLocation()
     const { token } = useContext(AuthContext)
     const { data: project, loading: projLoading, error: projError } = useProject(projectId)
     const { data: scenarios, loading: scenLoading, error: scenError } = useScenarios(projectId, project?.is_demo)
@@ -75,7 +76,9 @@ const Project = () => {
 
     useEffect(() => {
         if (scenarios && scenarios.length != 0) {
-            setSelectedScenario(scenarios.at(0))
+            const preselected = location.state?.selectedScenarioId
+                && scenarios.find((s) => s.id === location.state.selectedScenarioId)
+            setSelectedScenario(preselected || scenarios.at(0))
         }
     }, [scenarios])
 
@@ -157,7 +160,7 @@ const Project = () => {
                         <div id="report">
                             <div id="tabs-section" className="flex justify-between sticky top-16 bg-background z-50">
                                 <Tabs
-                                    defaultValue={scenarios[0]?.id}
+                                    value={selectedScenario.id}
                                     className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border
                                 scrollbar-none  ">
                                     <TabsList variant="line">

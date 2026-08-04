@@ -148,7 +148,7 @@ export default function Scenario() {
             })
             await calculateReport(projectId, scenario.id)
             toast.success("Scenario updated", { position: "top-center" })
-            navigate(`/projects/${projectId}`)
+            navigate(`/projects/${projectId}`, { state: { selectedScenarioId: scenario.id } })
         } catch (error) {
             console.error("Error saving scenario:", error)
         }
