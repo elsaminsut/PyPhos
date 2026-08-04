@@ -31,7 +31,7 @@ const AllProjects = () => {
     return (
     <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="max-w-[1000px] mx-auto px-8 flex-1 flex flex-col w-full">
+        <main className="page-container flex-1 flex flex-col w-full">
             <header className="mb-8">
                 <div className="flex justify-between items-center my-4">
                     <h1 className="text-xl font-semibold">Your Projects</h1>
