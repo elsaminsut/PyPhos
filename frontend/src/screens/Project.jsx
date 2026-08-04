@@ -48,7 +48,7 @@ import { getCompassDirection } from "../components/AngleSlider"
 const Project = () => {
     const { projectId } = useParams();
     const location = useLocation()
-    const { token } = useContext(AuthContext)
+    const { token, isGuest } = useContext(AuthContext)
     const { data: project, loading: projLoading, error: projError } = useProject(projectId)
     const { data: scenarios, loading: scenLoading, error: scenError } = useScenarios(projectId, project?.is_demo)
     const getReport = useReport()
@@ -158,7 +158,7 @@ const Project = () => {
                     {scenarios.length != 0 ?
                         (selectedScenario ?
                         <div id="report">
-                            <div id="tabs-section" className="flex justify-between sticky top-16 bg-background z-50">
+                            <div id="tabs-section" className={`flex justify-between sticky ${isGuest ? "top-[var(--header-height-guest)]" : "top-[var(--header-height)]"} bg-background z-50`}>
                                 <Tabs
                                     value={selectedScenario.id}
                                     className="flex flex-nowrap gap-4 overflow-x-auto border-b border-border
