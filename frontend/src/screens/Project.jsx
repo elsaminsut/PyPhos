@@ -130,7 +130,7 @@ const Project = () => {
     return (
     <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="max-w-[1000px] mx-auto px-8 flex-1 flex flex-col w-full">
+        <main className="page-container flex-1 flex flex-col w-full">
             <header className="flex-col">
                 <Breadcrumb className="my-4">
                     <BreadcrumbList>

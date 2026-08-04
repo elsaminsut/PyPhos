@@ -34,38 +34,39 @@ export default function Header() {
   }
 
   return (
-    <header className="flex justify-between items-center px-8 py-4 bg-background
-    sticky top-0 z-50 isolate">
-      <img src={Logo} alt="PyPhos Logo" className="h-8 w-auto"/>
-      {!isGuest ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
-              <AvatarFallback>{avatarLetter}</AvatarFallback>
-            </Avatar></Button>} />
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => navigate('/settings')}>
-                <SettingsIcon />
-                Settings
+    <header className="bg-background sticky top-0 z-50 isolate">
+      <div className="page-container flex justify-between items-center py-4">
+        <img src={Logo} alt="PyPhos Logo" className="h-8 w-auto"/>
+        {!isGuest ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
+                <AvatarFallback>{avatarLetter}</AvatarFallback>
+              </Avatar></Button>} />
+            <DropdownMenuContent align="end">
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                  <SettingsIcon />
+                  Settings
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logOut}>
+                <LogOutIcon />
+                Sign Out
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logOut}>
-              <LogOutIcon />
-              Sign Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <div className="flex gap-4 items-center">          
-            <a href="/login" className="text-sm font-medium hover:text-muted-foreground transition-colors">
-              Log in
-            </a>
-            <Button variant="outline" onClick={() => navigate('/signup')}>
-              Sign up
-            </Button>
-        </div>
-      )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex gap-4 items-center">
+              <a href="/login" className="text-sm font-medium hover:text-muted-foreground transition-colors">
+                Log in
+              </a>
+              <Button variant="outline" onClick={() => navigate('/signup')}>
+                Sign up
+              </Button>
+          </div>
+        )}
+      </div>
     </header>
   )
 }
