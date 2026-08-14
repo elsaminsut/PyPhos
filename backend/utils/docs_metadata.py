@@ -37,8 +37,8 @@ Create a project for a location, add scenarios with different module configurati
 trigger a yield calculation, and retrieve the results as a report.
 
 ## Authentication
-All endpoints except `/register` and `/login` require a Bearer JWT token.
-Obtain a token via `POST /login`.
+Most endpoints require a Bearer JWT token. A few are public to support guest access: `/api/register` and `/api/login`, location search, PV modules, the stateless guest yield calculation (`/api/calculate`), and the read-only demo project routes (`/api/projects/demo/...`).
+Obtain a token via `POST /api/login`.
     """
 
 index_response = {
@@ -51,33 +51,33 @@ index_response = {
         },
         "endpoints": {
             "auth": {
-                "register": "/register",
-                "login": "/login"
+                "register": "/api/register",
+                "login": "/api/login"
             },
             "projects": {
-                "create": "/projects/",
-                "list": "/projects/",
-                "get": "/projects/{project_id}",
-                "update": "/projects/{project_id}",
-                "delete": "/projects/{project_id}",
+                "create": "/api/projects/",
+                "list": "/api/projects/",
+                "get": "/api/projects/{project_id}",
+                "update": "/api/projects/{project_id}",
+                "delete": "/api/projects/{project_id}",
             },
             "scenarios": {
-                "create": "/projects/{project_id}/scenarios/",
-                "list": "/projects/{project_id}/scenarios/",
-                "get": "/projects/{project_id}/scenarios/{scenario_id}",
-                "update": "/projects/{project_id}/scenarios/{scenario_id}",
-                "delete": "/projects/{project_id}/scenarios/{scenario_id}",
+                "create": "/api/projects/{project_id}/scenarios/",
+                "list": "/api/projects/{project_id}/scenarios/",
+                "get": "/api/projects/{project_id}/scenarios/{scenario_id}",
+                "update": "/api/projects/{project_id}/scenarios/{scenario_id}",
+                "delete": "/api/projects/{project_id}/scenarios/{scenario_id}",
             },
             "reports": {
-                "create": "/projects/{project_id}/scenarios/{scenario_id}/calculate",
-                "list": "/projects/{project_id}/reports",
-                "get": "/projects/{project_id}/scenarios/{scenario_id}/report",
+                "create": "/api/projects/{project_id}/scenarios/{scenario_id}/calculate",
+                "list": "/api/projects/{project_id}/reports",
+                "get": "/api/projects/{project_id}/scenarios/{scenario_id}/report",
             },
             "users": {
-                "create": "/users/",
-                "list": "/users/",
-                "update": "/users/{user_id}",
-                "delete": "/users/{user_id}"
+                "create": "/api/users/",
+                "list": "/api/users/",
+                "update": "/api/users/{user_id}",
+                "delete": "/api/users/{user_id}"
             }
         }
     }
