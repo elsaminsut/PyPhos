@@ -81,7 +81,7 @@ export default function Settings() {
         setSubmitting(true)
 
         try {
-            const updated = await updateUser(token, user.id, {
+            const updated = await updateUser(token, {
                 email: email.trim(),
                 ...(password ? { password } : {}),
             })
@@ -100,7 +100,7 @@ export default function Settings() {
         setDeleting(true)
 
         try {
-            await deleteUser(token, user.id)
+            await deleteUser(token)
             logout()
             navigate("/")
         } catch (err) {

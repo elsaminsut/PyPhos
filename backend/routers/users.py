@@ -12,18 +12,12 @@ router = APIRouter(
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
-@router.get("", response_model=list[UserPublic])
-def read_users(session: SessionDep) -> list[User]:
-    """Get a list of all users."""
-    users = session.exec(select(User)).all()
-    return users
-
 @router.get("/me", response_model=UserPublic)
 def read_current_user(current_user: CurrentUser) -> User:
     """Get the currently authenticated user."""
     return current_user
 
-@router.patch("/{user_id}", response_model=UserPublic)
+@router.patch("", response_model=UserPublic)
 def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep):
     """Update the current user's email and/or password."""
     try:
@@ -58,7 +52,7 @@ def update_user(current_user: CurrentUser, user: UserUpdate, session: SessionDep
             detail="Failed to update user"
         )
 
-@router.delete("/{user_id}")
+@router.delete("")
 def delete_user(current_user: CurrentUser, session: SessionDep):
     """Delete the current user's account, along with all of their projects, scenarios, and reports."""
     try:
