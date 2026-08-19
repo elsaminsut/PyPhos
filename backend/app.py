@@ -7,12 +7,18 @@ from backend.routers import users
 from backend.routers import scenarios
 from backend.routers import reports
 from backend.routers import modules
-from backend.utils.database import lifespan
-from fastapi import FastAPI
+from backend.utils.database import lifespan, SessionDep
+from backend.utils.pv_calcs import client as pvgis_client
+from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pathlib import Path
+from sqlmodel import text
+import logging
+import requests
 import uvicorn
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     lifespan=lifespan,
@@ -64,6 +70,57 @@ async def add_security_headers(request, call_next):
         )
 
     return response
+
+@app.get("/api/health", tags=["General"])
+def health_check(response: Response, session: SessionDep):
+    checks = {}
+    healthy = True
+
+    try:
+        session.exec(text("SELECT 1"))
+        checks["database"] = "ok"
+    except Exception:
+        logger.exception("Health check: database is unreachable")
+        checks["database"] = "unreachable"
+        healthy = False
+
+    response.status_code = status.HTTP_200_OK if healthy else status.HTTP_503_SERVICE_UNAVAILABLE
+
+    return {
+        "status": "ok" if healthy else "error",
+        "checks": checks,
+    }
+
+@app.get("/api/health/pvgis", tags=["General"])
+def health_check_pvgis(response: Response):
+    """
+    Separate from /api/health on purpose: PVGIS is a third-party dependency
+    with its own latency, so a slow or briefly-down PVGIS shouldn't flip the
+    main liveness/readiness check (used by things like container restarts)
+    to unhealthy. Poll this one independently if you care about it.
+    """
+    checks = {}
+    healthy = True
+
+    try:
+        # HEAD request against the API root: cheap, network-only reachability
+        # check, deliberately not a real calculation call (which does real
+        # server-side work on PVGIS's end and shouldn't be triggered by a
+        # health poll).
+        requests.head(pvgis_client.BASE_URL, timeout=5)
+        checks["pvgis"] = "ok"
+    except requests.exceptions.RequestException:
+        logger.exception("Health check: PVGIS is unreachable")
+        checks["pvgis"] = "unreachable"
+        healthy = False
+
+    response.status_code = status.HTTP_200_OK if healthy else status.HTTP_503_SERVICE_UNAVAILABLE
+
+    return {
+        "status": "ok" if healthy else "error",
+        "checks": checks,
+    }
+
 
 app.include_router(users.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
