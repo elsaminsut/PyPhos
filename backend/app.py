@@ -37,6 +37,34 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# CSP is skipped for the docs routes: Swagger UI loads its JS/CSS from a CDN
+# and bootstraps itself with an inline <script>, both of which a strict CSP
+# would block.
+DOCS_PATHS = {"/docs", "/redoc", "/openapi.json"}
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+
+    if request.url.path not in DOCS_PATHS:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: https://*.basemaps.cartocdn.com; "
+            "font-src 'self'; "
+            "connect-src 'self'; "
+            "object-src 'none'; "
+            "base-uri 'self'; "
+            "frame-ancestors 'none'"
+        )
+
+    return response
+
 app.include_router(users.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(locations.router, prefix="/api")
