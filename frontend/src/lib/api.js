@@ -129,12 +129,12 @@ export function deleteProjectApi(token, projectId) {
     })
 }
 
-export function updateUser(token, userId, updates) {
-    return updateResource(token, `/users/${userId}`, updates)
+export function updateUser(token, updates) {
+    return updateResource(token, "/users", updates)
 }
 
-export function deleteUser(token, userId) {
-    return request(`/users/${userId}`, token, {
+export function deleteUser(token) {
+    return request("/users", token, {
         method: "DELETE"
     })
 }

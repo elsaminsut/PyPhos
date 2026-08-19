@@ -74,10 +74,9 @@ index_response = {
                 "get": "/api/projects/{project_id}/scenarios/{scenario_id}/report",
             },
             "users": {
-                "create": "/api/users/",
-                "list": "/api/users/",
-                "update": "/api/users/{user_id}",
-                "delete": "/api/users/{user_id}"
+                "get_current": "/api/users/me",
+                "update_current": "/api/users",
+                "delete_current": "/api/users"
             }
         }
     }
