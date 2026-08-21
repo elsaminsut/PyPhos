@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react"
-import { AuthContext } from "./AuthContext"
+import { AuthContext } from "./auth-context"
 
 const BASE_URL = "/api"
 

@@ -9,7 +9,7 @@ import {
     ComboboxList,
 } from "@/components/ui/combobox"
 
-import { AuthContext } from "../lib/AuthContext"
+import { AuthContext } from "../lib/auth-context"
 import { searchLocations } from "../lib/api"
 
 const DEBOUNCE_MS = 300

@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 
-import { AuthContext } from '@/lib/AuthContext'
+import { AuthContext } from '@/lib/auth-context'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {

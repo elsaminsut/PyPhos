@@ -33,7 +33,7 @@ import Header from "../components/Header"
 import { Input } from "@/components/ui/input"
 import { Trash2 } from "lucide-react"
 
-import { AuthContext } from "../lib/AuthContext"
+import { AuthContext } from "../lib/auth-context"
 import { deleteUser, updateUser } from "../lib/api"
 import { validateEmail, validatePassword } from "../lib/validators"
 
