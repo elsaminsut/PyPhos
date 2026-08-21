@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router"
 
-import { Button } from "@/components/ui/button"
 import {
     Card,
     CardContent,
@@ -10,9 +9,7 @@ import {
 } from "@/components/ui/card"
 import { ChartBarInteractive } from "../components/BarChart";
 import Footer from "../components/Footer"
-import Header from "../components/Header";
 import Map from "../components/Map";
-import { Download, Pencil, Plus } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import {
     Table,
@@ -21,11 +18,6 @@ import {
     TableCell,
     TableRow,
 } from "@/components/ui/table"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 import { AuthContext } from "../lib/AuthContext"
 import Logo from "../assets/pyphos-logo.svg"
@@ -34,10 +26,9 @@ import "../styles/print.css"
 
 export default function Report() {
     const { projectId, scenarioId } = useParams();
-    const { token } = useContext(AuthContext)
     const { data: project, loading: projLoading, error: projError } = useApi(`/api/projects/${projectId}`)
     const { data: scenario, loading: scenLoading, error: scenError } = useApi(`/api/projects/${projectId}/scenarios/${scenarioId}`)
-    const { data: report, loading: reportLoading, error: reportError } = useApi(`/api/projects/${projectId}/scenarios/${scenarioId}/report`)
+    const { data: report } = useApi(`/api/projects/${projectId}/scenarios/${scenarioId}/report`)
     
     const [projectName, setProjectName] = useState("")
     const [projectLocation, setProjectLocation] = useState("")

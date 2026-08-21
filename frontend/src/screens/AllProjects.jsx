@@ -1,18 +1,8 @@
 import { Link } from "react-router"
 import { useContext, useEffect } from "react"
 
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import CreateProjectDialog from "../components/CreateProjectDialog"
-import { Button } from "@/components/ui/button"
 import Footer from "../components/Footer"
-import GuestAlert from "../components/GuestAlert";
 import Header from "../components/Header";
 import ProjectCard from "../components/ProjectCard"
 
@@ -21,7 +11,6 @@ import { useProjects } from "../lib/useData"
 
 
 const AllProjects = () => {
-    const { isGuest } = useContext(AuthContext)
     const { data: projects, loading, error } = useProjects()
 
     useEffect(() => {

@@ -1,9 +1,7 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge"
 
-import { useContext } from "react"
 import { jwtDecode } from "jwt-decode"
-import { AuthContext } from './AuthContext'
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));

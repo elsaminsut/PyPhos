@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router'
 
 import {
   SettingsIcon,
-  BellIcon,
-  CreditCardIcon,
   LogOutIcon,
 } from "lucide-react"
 import {
