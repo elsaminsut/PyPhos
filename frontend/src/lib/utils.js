@@ -16,3 +16,10 @@ export function isTokenValid(token) {
         return false
     }
 }
+
+export function getCompassDirection(azimuth) {
+  // Azimuth convention used across the app: South is 0°, West is positive, East is negative.
+  const COMPASS_DIRECTIONS = ["S", "SW", "W", "NW", "N", "NE", "E", "SE"]
+  const normalized = ((azimuth % 360) + 360) % 360
+  return COMPASS_DIRECTIONS[Math.round(normalized / 45) % 8]
+}
