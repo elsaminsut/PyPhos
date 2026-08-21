@@ -1,48 +1,48 @@
-import { useContext, useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router"
-import { ArrowRight } from "lucide-react"
+import { useContext, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
+import { ArrowRight } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { AuthContext } from "../lib/auth-context"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { AuthContext } from "../lib/auth-context";
 
-import Elsa from "../assets/avatar-elsa.jpg"
-import Logo from "../assets/pyphos-logo.svg"
-import LandingBackground from "../assets/landing-background.png"
+import Elsa from "../assets/avatar-elsa.jpg";
+import Logo from "../assets/pyphos-logo.svg";
+import LandingBackground from "../assets/landing-background.png";
 
 export default function Landing() {
-  const [showAbout, setShowAbout] = useState(false)
-  const [buttonHovered, setButtonHovered] = useState(false)
-  const navigate = useNavigate()
-  const cursorRef = useRef(null)
-  const { continueAsGuest } = useContext(AuthContext)
+  const [showAbout, setShowAbout] = useState(false);
+  const [buttonHovered, setButtonHovered] = useState(false);
+  const navigate = useNavigate();
+  const cursorRef = useRef(null);
+  const { continueAsGuest } = useContext(AuthContext);
 
   useEffect(() => {
     function handleMouseMove(e) {
-      if (!cursorRef.current) return
-      cursorRef.current.style.left = `${e.clientX}px`
-      cursorRef.current.style.top = `${e.clientY}px`
+      if (!cursorRef.current) return;
+      cursorRef.current.style.left = `${e.clientX}px`;
+      cursorRef.current.style.top = `${e.clientY}px`;
     }
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [])
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   useEffect(() => {
-    if (!showAbout) return
+    if (!showAbout) return;
 
     function handleKeyDown(e) {
       if (e.key === "Escape") {
-        setShowAbout(false)
+        setShowAbout(false);
       }
     }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [showAbout])
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showAbout]);
 
   function handleClick() {
-    continueAsGuest()
-    navigate("/projects")
+    continueAsGuest();
+    navigate("/projects");
   }
 
   return (
@@ -58,13 +58,13 @@ export default function Landing() {
         ref={cursorRef}
         className={cn(
           "pointer-events-none fixed top-0 left-0 z-100 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FFCC00] transition-[width,height] duration-200 ease-out",
-          buttonHovered ? "size-16" : "size-6"
+          buttonHovered ? "size-16" : "size-6",
         )}
       />
       <div
         className={cn(
           "flex min-h-screen flex-col items-center transition-[filter] duration-300",
-          showAbout && "pointer-events-none blur-md select-none"
+          showAbout && "pointer-events-none blur-md select-none",
         )}
       >
         <header className="pt-10">
@@ -81,7 +81,8 @@ export default function Landing() {
           </h1>
 
           <p className="font-instrument-sans mt-8 max-w-sm text-sm text-muted-foreground text-balance">
-            PyPhos calculates the real-world performance of any solar installation at your exact location.
+            PyPhos calculates the real-world performance of any solar
+            installation at your exact location.
           </p>
           <p className="font-instrument-sans mt-1 text-sm font-medium text-foreground">
             Pick a module. Set your site. Get the numbers
@@ -131,9 +132,9 @@ export default function Landing() {
                 rel="noreferrer"
                 className="text-foreground cursor-none hover:underline underline-offset-2"
               >
-              Elsa Minsut 
-              </a>
-              {" "}and always improving.
+                Elsa Minsut
+              </a>{" "}
+              and always improving.
             </p>
             <p className="font-instrument-sans mt-3 text-sm text-muted-foreground">
               To follow updates and new features, keep an eye on the{" "}
@@ -157,5 +158,5 @@ export default function Landing() {
         </div>
       )}
     </div>
-  )
+  );
 }

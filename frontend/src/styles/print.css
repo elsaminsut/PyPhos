@@ -1,16 +1,16 @@
 @media print {
-    @page {
-        size: A4;
-        margin: 5mm;
-    }
+  @page {
+    size: A4;
+    margin: 5mm;
+  }
 
-    /* force a page break before an element */
-    .page-break {
-        break-before: page;
-    }
+  /* force a page break before an element */
+  .page-break {
+    break-before: page;
+  }
 
-    /* keep an element together, never split across pages */
-    .keep-together {
-        break-inside: avoid;
-    }
+  /* keep an element together, never split across pages */
+  .keep-together {
+    break-inside: avoid;
+  }
 }

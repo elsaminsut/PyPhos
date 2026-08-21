@@ -1,16 +1,10 @@
-import { AuthContext } from '@/lib/auth-context'
-import { useContext } from "react"
-import { useNavigate } from 'react-router'
+import { AuthContext } from "@/lib/auth-context";
+import { useContext } from "react";
+import { useNavigate } from "react-router";
 
-import {
-  SettingsIcon,
-  LogOutIcon,
-} from "lucide-react"
-import {
-  Avatar,
-  AvatarFallback,
-} from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { SettingsIcon, LogOutIcon } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,33 +12,39 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import GuestAlert from "./GuestAlert"
-import Logo from "../assets/pyphos-logo.svg"
+} from "@/components/ui/dropdown-menu";
+import GuestAlert from "./GuestAlert";
+import Logo from "../assets/pyphos-logo.svg";
 
 export default function Header() {
-  const { isGuest, user, logout } = useContext(AuthContext)
-  const navigate = useNavigate()
-  const avatarLetter = user?.email?.[0]?.toUpperCase() ?? "G"
+  const { isGuest, user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const avatarLetter = user?.email?.[0]?.toUpperCase() ?? "G";
 
   function logOut() {
-      logout()
-      navigate('/')
+    logout();
+    navigate("/");
   }
 
   return (
     <div className="sticky top-0 z-50 isolate w-full bg-background">
       {isGuest && <GuestAlert />}
       <header className="page-container flex justify-between items-center py-4">
-        <img src={Logo} alt="PyPhos Logo" className="h-8 w-auto"/>
+        <img src={Logo} alt="PyPhos Logo" className="h-8 w-auto" />
         {!isGuest ? (
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
-                <AvatarFallback>{avatarLetter}</AvatarFallback>
-              </Avatar></Button>} />
+            <DropdownMenuTrigger
+              render={
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Avatar>
+                    <AvatarFallback>{avatarLetter}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              }
+            />
             <DropdownMenuContent align="end">
               <DropdownMenuGroup>
-                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                <DropdownMenuItem onClick={() => navigate("/settings")}>
                   <SettingsIcon />
                   Settings
                 </DropdownMenuItem>
@@ -58,15 +58,18 @@ export default function Header() {
           </DropdownMenu>
         ) : (
           <div className="flex gap-4 items-center">
-              <a href="/login" className="text-sm font-medium hover:text-muted-foreground transition-colors">
-                Log in
-              </a>
-              <Button variant="outline" onClick={() => navigate('/signup')}>
-                Sign up
-              </Button>
+            <a
+              href="/login"
+              className="text-sm font-medium hover:text-muted-foreground transition-colors"
+            >
+              Log in
+            </a>
+            <Button variant="outline" onClick={() => navigate("/signup")}>
+              Sign up
+            </Button>
           </div>
         )}
       </header>
     </div>
-  )
+  );
 }

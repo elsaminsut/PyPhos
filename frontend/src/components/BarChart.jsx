@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import * as React from "react";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import {
   Card,
@@ -9,14 +9,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "An interactive bar chart"
+export const description = "An interactive bar chart";
 
 const chartConfig = {
   yield: {
@@ -27,24 +27,24 @@ const chartConfig = {
     label: "Solar radiation",
     color: "var(--chart-1)",
   },
-}
+};
 
 export function ChartBarInteractive({ data, height = 250 }) {
-  const [activeChart, setActiveChart] = React.useState("yield")
+  const [activeChart, setActiveChart] = React.useState("yield");
 
   const totals = React.useMemo(
     () => ({
       yield: data?.reduce((acc, curr) => acc + curr.yield, 0) ?? 0,
       radiation: data?.reduce((acc, curr) => acc + curr.radiation, 0) ?? 0,
     }),
-    [data]
-  )
+    [data],
+  );
 
   if (!data || data.length === 0) {
-    return null
+    return null;
   }
 
-  const units = { yield: "kWh", radiation: "kWh/m²" }
+  const units = { yield: "kWh", radiation: "kWh/m²" };
 
   return (
     <Card className="py-0">
@@ -67,7 +67,9 @@ export function ChartBarInteractive({ data, height = 250 }) {
                 {chartConfig[key].label}
               </span>
               <span className="text-lg leading-none font-bold sm:text-3xl">
-                {totals[key].toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                {totals[key].toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
                 <span className="ml-1 text-xs font-normal text-muted-foreground">
                   {units[key]}
                 </span>
@@ -114,5 +116,5 @@ export function ChartBarInteractive({ data, height = 250 }) {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

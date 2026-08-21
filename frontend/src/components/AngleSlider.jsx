@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { getCompassDirection } from "@/lib/utils"
-
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { getCompassDirection } from "@/lib/utils";
 
 export function AngleSlider({ name, min, max, value, onValueChange, tag }) {
   return (
@@ -22,5 +21,5 @@ export function AngleSlider({ name, min, max, value, onValueChange, tag }) {
         max={max}
       />
     </div>
-  )
+  );
 }
