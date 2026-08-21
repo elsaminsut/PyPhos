@@ -25,4 +25,13 @@ export default defineConfig([
       }],
     },
   },
+  {
+    // Vendored shadcn/ui components: many co-export a variants function
+    // (e.g. buttonVariants) alongside their component by design, which
+    // trips this rule. That's expected here, not an app bug.
+    files: ['src/components/ui/**/*.{js,jsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])
