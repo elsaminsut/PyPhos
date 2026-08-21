@@ -28,7 +28,7 @@ import LocationCombobox from "./LocationCombobox"
 export default function EditProjectDialog({ onSaved }) {
     const { projectId } = useParams();
     const navigate = useNavigate()
-    const { data: project, loading: projLoading, error: projError } = useProject(projectId)
+    const { data: project } = useProject(projectId)
     const updateProject = useUpdateProject()
     const deleteProject = useDeleteProject()
 
