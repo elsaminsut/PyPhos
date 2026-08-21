@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useState } from "react"
 import { useParams } from "react-router"
 
 import {
@@ -19,7 +19,6 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-import { AuthContext } from "../lib/AuthContext"
 import Logo from "../assets/pyphos-logo.svg"
 import { useApi } from "../lib/api"
 import "../styles/print.css"
@@ -34,15 +33,15 @@ export default function Report() {
     const [projectLocation, setProjectLocation] = useState("")
     const [projectCountryCode, setProjectCountryCode] = useState("")
     const [projectCoords, setProjectCoords] = useState({ lat: null, lon: null })
+    const [loadedProjectId, setLoadedProjectId] = useState(null)
 
-    useEffect(() => {
-        if (project) {
-            setProjectName(project.name ?? "")
-            setProjectLocation(project.location ?? "")
-            setProjectCountryCode(project.country_code ?? "")
-            setProjectCoords({ lat: project.lat ?? null, lon: project.lon ?? null })
-        }
-    }, [project])
+    if (project && project.id !== loadedProjectId) {
+        setLoadedProjectId(project.id)
+        setProjectName(project.name ?? "")
+        setProjectLocation(project.location ?? "")
+        setProjectCountryCode(project.country_code ?? "")
+        setProjectCoords({ lat: project.lat ?? null, lon: project.lon ?? null })
+    }
 
     if (projLoading || scenLoading) return <p className="grid h-screen place-items-center">Loading...</p>
     if (projError || scenError) return <div className="grid h-screen place-items-center"><p>Something went wrong.</p></div>

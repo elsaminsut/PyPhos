@@ -37,28 +37,36 @@ export default function LocationCombobox({ id, value, onSelect, ariaInvalid, onB
     }
 
     useEffect(() => {
-        setQuery(formatLocation(value))
+        function syncQuery() {
+            setQuery(formatLocation(value))
+        }
+
+        syncQuery()
     }, [value])
 
     useEffect(() => {
-        if (!query.trim() || query === formatLocation(value)) {
-            setLoading(false)
-            return
+        function search() {
+            if (!query.trim() || query === formatLocation(value)) {
+                setLoading(false)
+                return
+            }
+
+            setLoading(true)
+            const timeout = setTimeout(async () => {
+                try {
+                    const candidates = await searchLocations(token, query)
+                    setResults(candidates ?? [])
+                } catch {
+                    setResults([])
+                } finally {
+                    setLoading(false)
+                }
+            }, DEBOUNCE_MS)
+
+            return () => clearTimeout(timeout)
         }
 
-        setLoading(true)
-        const timeout = setTimeout(async () => {
-            try {
-                const candidates = await searchLocations(token, query)
-                setResults(candidates ?? [])
-            } catch {
-                setResults([])
-            } finally {
-                setLoading(false)
-            }
-        }, DEBOUNCE_MS)
-
-        return () => clearTimeout(timeout)
+        return search()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query, token])
 

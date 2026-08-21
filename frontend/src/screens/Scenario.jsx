@@ -86,31 +86,25 @@ export default function Scenario() {
 
     const [deleting, setDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState(null)
+    const [loadedScenarioId, setLoadedScenarioId] = useState(null) // avoid useEffect for resetting form fields when a new scenario loads
 
     function markTouched(field) {
         setTouched((t) => ({ ...t, [field]: true }))
     }
 
-    useEffect(() => {
-        if (scenario) {
-                setScenarioName(scenario.name ?? "")
-                setModuleAmount(scenario.module_amount ?? "")
-                setTilt(scenario.tilt ?? "")
-                setAzimuth(scenario.azimuth ?? "")
-                setSelectedManufacturer(scenario.module?.manufacturer ?? "")
-                setSelectedModel(scenario.module?.model ?? "")
-            }
-        }, [scenario])
+    if (scenario && scenario.id !== loadedScenarioId) {
+        setLoadedScenarioId(scenario.id)
+        setScenarioName(scenario.name ?? "")
+        setModuleAmount(scenario.module_amount ?? "")
+        setTilt(scenario.tilt ?? "")
+        setAzimuth(scenario.azimuth ?? "")
+        setSelectedManufacturer(scenario.module?.manufacturer ?? "")
+        setSelectedModel(scenario.module?.model ?? "")
+    }
 
-    useEffect(() => {
-        if (!modules || modules.length === 0) return
-
-        const stillValid = modules.some((m) => m.model === selectedModel)
-        if (!stillValid) {
-            setSelectedModel(modules[0].model)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [modules])
+    if (modules && modules.length > 0 && !modules.some((m) => m.model === selectedModel)) {
+        setSelectedModel(modules[0].model)
+    }
 
     async function handleNameSubmit(e) {
         e?.preventDefault?.()

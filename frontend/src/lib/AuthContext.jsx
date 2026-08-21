@@ -39,18 +39,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken);
+    async function syncUser() {
+      if (!token || isGuest) {
+        setUser(null);
+        return;
+      }
+      setUser(await fetchCurrentUser(token));
     }
-  }, []);
 
-  useEffect(() => {
-    if (!token || isGuest) {
-      setUser(null);
-      return;
-    }
-    fetchCurrentUser(token).then(setUser);
+    syncUser();
   }, [token, isGuest]);
 
   return (

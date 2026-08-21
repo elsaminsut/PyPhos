@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router"
 
 import {
@@ -42,25 +42,25 @@ export default function EditProjectDialog({ onSaved }) {
     const [touched, setTouched] = useState({})
     const [deleting, setDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState(null)
+    const [loadedProjectId, setLoadedProjectId] = useState(null)
 
     const nameCheck = validateName(projectName, "Project name")
     const locationCheck = validateRequired(locationQuery, "Location")
     const isFormValid = nameCheck.valid && locationCheck.valid
 
-    useEffect(() => {
-        if (project) {
-            setProjectName(project.name ?? "")
-            setLocation({
-                name: project.location,
-                country_code: project.country_code,
-                admin1: null,
-                lat: project.lat,
-                lon: project.lon,
-            })
-            setLocationQuery(project.location ?? "")
-            setLocationChanged(false)
-        }
-    }, [project])
+    if (project && project.id !== loadedProjectId) {
+        setLoadedProjectId(project.id)
+        setProjectName(project.name ?? "")
+        setLocation({
+            name: project.location,
+            country_code: project.country_code,
+            admin1: null,
+            lat: project.lat,
+            lon: project.lon,
+        })
+        setLocationQuery(project.location ?? "")
+        setLocationChanged(false)
+    }
 
     function markTouched(field) {
         setTouched((t) => ({ ...t, [field]: true }))
