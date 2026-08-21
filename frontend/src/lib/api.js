@@ -12,11 +12,11 @@ export function useApi(endpoint) {
     useEffect(() => {
         if (!endpoint) return
 
-        setLoading(true)
-        setData(null)
-        setError(null)
-
         const fetchContent = async () => {
+            setLoading(true)
+            setData(null)
+            setError(null)
+
             try {
                 const response = await fetch(endpoint, {
                     headers: token ? { Authorization: `Bearer ${token}` } : {}

@@ -49,6 +49,7 @@ export default function Settings() {
     const [submitSuccess, setSubmitSuccess] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState(null)
+    const [loadedUserId, setLoadedUserId] = useState(null)
 
     useEffect(() => {
         document.title = `Pyphos - Settings`
@@ -58,11 +59,10 @@ export default function Settings() {
     const passwordCheck = password === "" ? { valid: true, message: null } : validatePassword(password)
     const isFormValid = emailCheck.valid && passwordCheck.valid
 
-    useEffect(() => {
-        if (user) {
-            setEmail(user.email ?? "")
-        }
-    }, [user])
+    if (user && user.id !== loadedUserId) {
+        setLoadedUserId(user.id)
+        setEmail(user.email ?? "")
+    }
 
     function markTouched(field) {
         setTouched((t) => ({ ...t, [field]: true }))

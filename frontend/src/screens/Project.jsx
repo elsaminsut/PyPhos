@@ -57,6 +57,7 @@ const Project = () => {
     const [projectLocation, setProjectLocation] = useState("")
     const [projectCountryCode, setProjectCountryCode] = useState("")
     const [projectCoords, setProjectCoords] = useState({ lat: null, lon: null })
+    const [loadedProjectId, setLoadedProjectId] = useState(null)
 
     useEffect(() => {
         document.title = `Pyphos - ${projectName || "Project"}`
@@ -64,23 +65,22 @@ const Project = () => {
 
     const [selectedScenario, setSelectedScenario] = useState(null)
     const [report, setReport] = useState("")
+    const [scenariosInitialized, setScenariosInitialized] = useState(false)
 
-    useEffect(() => {
-        if (project) {
-            setProjectName(project.name ?? "")
-            setProjectLocation(project.location ?? "")
-            setProjectCountryCode(project.country_code ?? "")
-            setProjectCoords({ lat: project.lat ?? null, lon: project.lon ?? null })
-        }
-    }, [project])
+    if (project && project.id !== loadedProjectId) {
+        setLoadedProjectId(project.id)
+        setProjectName(project.name ?? "")
+        setProjectLocation(project.location ?? "")
+        setProjectCountryCode(project.country_code ?? "")
+        setProjectCoords({ lat: project.lat ?? null, lon: project.lon ?? null })
+    }
 
-    useEffect(() => {
-        if (scenarios && scenarios.length != 0) {
-            const preselected = location.state?.selectedScenarioId
-                && scenarios.find((s) => s.id === location.state.selectedScenarioId)
-            setSelectedScenario(preselected || scenarios.at(0))
-        }
-    }, [scenarios])
+    if (scenarios && scenarios.length != 0 && !scenariosInitialized) {
+        setScenariosInitialized(true)
+        const preselected = location.state?.selectedScenarioId
+            && scenarios.find((s) => s.id === location.state.selectedScenarioId)
+        setSelectedScenario(preselected || scenarios.at(0))
+    }
 
     useEffect(() => {
         if (!selectedScenario) return
@@ -89,7 +89,7 @@ const Project = () => {
             try {
                 const data = await getReport(projectId, selectedScenario.id, project?.is_demo)
                 setReport(data)
-            } catch (error) {
+            } catch (_error) {
                 setReport(null)
             }
         }
@@ -122,7 +122,7 @@ const Project = () => {
             document.body.removeChild(link)
 
             URL.revokeObjectURL(url)
-        } catch (error) {
+        } catch (_error) {
             toast.error("Failed to download report", { position: "top-center" })
         }
     }
