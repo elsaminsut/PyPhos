@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 
-import { AuthContext } from "../lib/AuthContext"
+import { AuthContext } from "../lib/auth-context"
 import { downloadReport } from "../lib/api"
 import { useProject, useReport, useScenarios } from "../lib/useData"
 import { getCompassDirection } from "../components/AngleSlider"
@@ -93,7 +93,6 @@ const Project = () => {
                 setReport(null)
             }
         }
-
         fetchReport()
     }, [selectedScenario])
 

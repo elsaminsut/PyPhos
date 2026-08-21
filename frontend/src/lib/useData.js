@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { AuthContext } from './AuthContext'
+import { AuthContext } from './auth-context'
 import {
     useApi,
     createProject as createProjectApi,

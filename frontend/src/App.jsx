@@ -1,7 +1,8 @@
 import { useContext } from "react"
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router"
 
-import { AuthProvider, AuthContext } from './lib/AuthContext';
+import { AuthProvider } from './lib/AuthContext';
+import { AuthContext } from './lib/auth-context';
 import { isTokenValid } from './lib/utils';
 import { Toaster } from '@/components/ui/sonner'
 import Landing from './screens/Landing'

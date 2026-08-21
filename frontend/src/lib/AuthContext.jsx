@@ -1,6 +1,5 @@
-import { createContext, useState, useEffect } from 'react';
-
-export const AuthContext = createContext();
+import { useState, useEffect } from 'react';
+import { AuthContext } from './auth-context';
 
 async function fetchCurrentUser(token) {
   const response = await fetch('/api/users/me', {
