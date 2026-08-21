@@ -23,15 +23,15 @@ Talks to the [PyPhos backend API](../backend/README.md) for authentication, proj
 
 ## Screens
 
-| Screen | Route | Description |
-|---|---|---|
-| `Login` | `/login` | Sign in |
-| `Signup` | `/signup` | Create an account |
-| `AllProjects` | `/projects` | List and create projects |
-| `Project` | `/projects/:projectId` | View a project's details, its scenarios and their reports |
-| `CreateScenario` | `/projects/:projectId/scenarios/create` | Configure a new scenario |
-| `Scenario` | `/projects/:projectId/scenarios/:scenarioId` | Edit scenario details |
-| `Settings` | `/settings` | Manage account settings |
+| Screen           | Route                                        | Description                                               |
+| ---------------- | -------------------------------------------- | --------------------------------------------------------- |
+| `Login`          | `/login`                                     | Sign in                                                   |
+| `Signup`         | `/signup`                                    | Create an account                                         |
+| `AllProjects`    | `/projects`                                  | List and create projects                                  |
+| `Project`        | `/projects/:projectId`                       | View a project's details, its scenarios and their reports |
+| `CreateScenario` | `/projects/:projectId/scenarios/create`      | Configure a new scenario                                  |
+| `Scenario`       | `/projects/:projectId/scenarios/:scenarioId` | Edit scenario details                                     |
+| `Settings`       | `/settings`                                  | Manage account settings                                   |
 
 All routes except `/login` and `/signup` are behind `PrivateRoute`, which checks for a valid JWT and redirects to `/login` otherwise.
 
