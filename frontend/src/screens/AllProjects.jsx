@@ -1,12 +1,11 @@
 import { Link } from "react-router"
-import { useContext, useEffect } from "react"
+import { useEffect } from "react"
 
 import CreateProjectDialog from "../components/CreateProjectDialog"
 import Footer from "../components/Footer"
 import Header from "../components/Header";
 import ProjectCard from "../components/ProjectCard"
 
-import { AuthContext } from "../lib/AuthContext"
 import { useProjects } from "../lib/useData"
 
 
