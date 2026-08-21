@@ -1,4 +1,4 @@
-name: PyPhos CI
+name: pyphos-ci
 
 on:
   push:
@@ -30,9 +30,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install backend dependencies
-        run: |
-          pip install -r backend/requirements.txt
-          pip install pytest
+        run: pip install -r backend/requirements-dev.txt
 
       - name: Run backend tests
         run: python -m pytest -v
